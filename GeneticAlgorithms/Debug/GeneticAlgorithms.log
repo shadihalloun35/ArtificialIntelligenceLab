@@ -1,0 +1,3 @@
+﻿  Genetic5.cpp
+c:\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(97): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  GeneticAlgorithms.vcxproj -> C:\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe
