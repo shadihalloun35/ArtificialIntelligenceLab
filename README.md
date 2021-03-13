@@ -1,4 +1,4 @@
-# ArtificialIntelligenceLab
+# Artificial Intelligence Lab
 ## Students Team data
 
 
