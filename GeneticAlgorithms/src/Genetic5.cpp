@@ -58,7 +58,7 @@ void calc_fitness(ga_vector &population)
 	int tsize = target.size();
 	unsigned int fitness;
 	float sumFitness = 0;
-	float SD = 0;
+	float std = 0;
 	float average = 0;
 	float deviation = 0;
 
@@ -76,10 +76,10 @@ void calc_fitness(ga_vector &population)
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
-		SD += pow(population[i].fitness - average, 2);
+		std += pow(population[i].fitness - average, 2);
 	}
 
-	deviation = sqrt(SD / GA_POPSIZE);		   //calculating the std deviation
+	deviation = sqrt(std / GA_POPSIZE);		   //calculating the std deviation
 
 
 	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen
