@@ -22,6 +22,7 @@
 #define GA_TARGET		std::string("Hello world!")
 
 using namespace std;				// polluting global namespace, but hey...
+int operatorPoint = 1;
 
 struct ga_struct
 {
@@ -121,22 +122,71 @@ void mutate(ga_struct &member)
 
 void mate(ga_vector &population, ga_vector &buffer)
 {
+
 	int esize = GA_POPSIZE * GA_ELITRATE;
-	int tsize = GA_TARGET.size(), spos, i1, i2;
+	int tsize = GA_TARGET.size(), spos,spos2, i1, i2;
 
 	elitism(population, buffer, esize);
 
-	// Mate the rest
-	for (int i = esize; i < GA_POPSIZE; i++) {
-		i1 = rand() % (GA_POPSIZE / 2);
-		i2 = rand() % (GA_POPSIZE / 2);
-		spos = rand() % tsize;
+	switch (operatorPoint) {
 
-		buffer[i].str = population[i1].str.substr(0, spos) +
-			population[i2].str.substr(spos, tsize - spos);
+	case 1:						// Single Point Operator
 
-		if (rand() < GA_MUTATION) mutate(buffer[i]);
+		for (int i = esize; i < GA_POPSIZE; i++) {
+			i1 = rand() % (GA_POPSIZE / 2);
+			i2 = rand() % (GA_POPSIZE / 2);
+			spos = rand() % tsize;
+
+			buffer[i].str = population[i1].str.substr(0, spos) +
+				population[i2].str.substr(spos, tsize - spos);
+
+			if (rand() < GA_MUTATION) mutate(buffer[i]);
+		}
+
+		break;
+
+	case 2:				// Two Point Operator
+
+		for (int i = esize; i < GA_POPSIZE; i++) {
+			i1 = rand() % (GA_POPSIZE / 2);
+			i2 = rand() % (GA_POPSIZE / 2);
+			spos = rand() % tsize;
+			spos2 = rand() % tsize;
+
+			buffer[i].str = population[i1].str.substr(0, std::min(spos,spos2)) +
+				population[i2].str.substr(std::min(spos, spos2), std::max(spos, spos2) - std::min(spos, spos2)) +
+				population[i1].str.substr(std::max(spos, spos2), tsize - std::max(spos, spos2));
+
+			if (rand() < GA_MUTATION) mutate(buffer[i]);
+		}
+		break;
+
+	case 3:				//// Uniform Point Operator
+
+		for (int i = esize; i < GA_POPSIZE; i++) {
+			i1 = rand() % (GA_POPSIZE / 2);
+			i2 = rand() % (GA_POPSIZE / 2);
+			string myStr;
+			myStr.erase();
+			for (int j = 0; j < tsize; j++) {
+				spos = rand() % 2;
+
+				if (spos == 0)
+				{
+					myStr += population[i1].str.substr(j, 1);
+				}
+				if (spos == 1)
+				{
+					myStr += population[i2].str.substr(j, 1);
+				}
+
+			}
+			buffer[i].str = myStr;
+			if (rand() < GA_MUTATION) mutate(buffer[i]);
+		}
+		break;
 	}
+
 }
 
 inline void print_best(ga_vector &gav)
@@ -150,12 +200,55 @@ inline void swap(ga_vector *&population,
 	ga_vector *temp = population; population = buffer; buffer = temp;
 }
 
+int checkInputOperator()
+{
+	double operatorInput;
+
+	std::cout << "For Single Point Operator -  Press 1\n";
+	std::cout << "For Two Point Operator -  Press 2\n";
+	std::cout << "For Uniform Point Operator -  Press 3\n";
+
+	while (1)
+	{
+		try {
+
+			cin >> operatorInput;
+
+			if (!cin)
+			{
+				cin.clear(); // reset failbit
+				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				throw new std::string("Invalid Input !, Please Try Again\n");
+			}
+
+			if (operatorInput == 1 || operatorInput == 2 || operatorInput == 3)
+				break;
+
+			else {
+				throw new std::string("Number Must be from 1 to 3!, Please Try Again\n");
+			}
+
+
+		}
+		catch (std::string *caught) {
+			cout << *caught << endl;
+			continue; // go again
+		}
+
+	}
+
+	operatorPoint = int(operatorInput);
+
+	return operatorPoint;
+}
+
 int main()
 {
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
 	const auto before = clock::now();
 	int numOfGenerations = 0;
+	int operatorPoint;
 	srand(unsigned(time(NULL)));
 
 	ga_vector pop_alpha, pop_beta;
@@ -164,7 +257,9 @@ int main()
 	init_population(pop_alpha, pop_beta);
 	population = &pop_alpha;
 	buffer = &pop_beta;
+	operatorPoint = checkInputOperator();
 
+	
 	for (int i = 0; i < GA_MAXITER; i++) {
 		clock_t begin = std::clock();
 
@@ -192,6 +287,7 @@ int main()
 	const sec duration = clock::now() - before;
 	std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;
 
+	getchar();
 	getchar();
 
 	return 0;
