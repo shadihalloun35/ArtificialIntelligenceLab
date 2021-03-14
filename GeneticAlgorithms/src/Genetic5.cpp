@@ -24,6 +24,8 @@ struct ga_struct
 {
 	string str;						// the string
 	unsigned int fitness;			// its fitness
+	float average;					// its average
+	float deviation;				// its deviation
 };
 
 typedef vector<ga_struct> ga_vector;// for brevity
@@ -38,6 +40,8 @@ void init_population(ga_vector &population,
 
 		citizen.fitness = 0;
 		citizen.str.erase();
+		citizen.average = 0;
+		citizen.deviation = 0;
 
 		for (int j = 0; j < tsize; j++)
 			citizen.str += (rand() % 90) + 32;
@@ -53,6 +57,10 @@ void calc_fitness(ga_vector &population)
 	string target = GA_TARGET;
 	int tsize = target.size();
 	unsigned int fitness;
+	float sumFitness = 0;
+	float SD = 0;
+	float average = 0;
+	float deviation = 0;
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = 0;
@@ -61,7 +69,25 @@ void calc_fitness(ga_vector &population)
 		}
 
 		population[i].fitness = fitness;
+		sumFitness += fitness;
 	}
+
+	average = sumFitness / GA_POPSIZE;			//calculating the average
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+
+		SD += pow(population[i].fitness - average, 2);
+	}
+
+	deviation = sqrt(SD / GA_POPSIZE);		   //calculating the std deviation
+
+
+	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen
+
+		population[i].average = average;
+		population[i].deviation = deviation;
+	}
+
 }
 
 bool fitness_sort(ga_struct x, ga_struct y)
@@ -144,6 +170,8 @@ int main()
 		mate(*population, *buffer);		// mate the population together
 		swap(population, buffer);		// swap buffers
 	}
+
+	getchar();
 
 	return 0;
 }
