@@ -10,6 +10,9 @@
 #include <algorithm>				// for sort algorithm
 #include <time.h>					// for random seed
 #include <math.h>					// for abs()
+#include <chrono>					// for elapsed time
+#include <ctime>					// for clock ticks
+
 
 #define GA_POPSIZE		2048		// ga population size
 #define GA_MAXITER		16384		// maximum iterations
@@ -57,8 +60,6 @@ void calc_fitness(ga_vector &population)
 	string target = GA_TARGET;
 	int tsize = target.size();
 	unsigned int fitness;
-	float sumFitness = 0;
-	float std = 0;
 	float average = 0;
 	float deviation = 0;
 
@@ -69,20 +70,20 @@ void calc_fitness(ga_vector &population)
 		}
 
 		population[i].fitness = fitness;
-		sumFitness += fitness;
+		average += fitness;
 	}
 
-	average = sumFitness / GA_POPSIZE;			//calculating the average
+	average = average / GA_POPSIZE;			//calculating the average
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
-		std += pow(population[i].fitness - average, 2);
+		deviation += pow(population[i].fitness - average, 2);
 	}
 
-	deviation = sqrt(std / GA_POPSIZE);		   //calculating the std deviation
+	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
 
 
-	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen
+	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen for the current generation
 
 		population[i].average = average;
 		population[i].deviation = deviation;
@@ -151,6 +152,10 @@ inline void swap(ga_vector *&population,
 
 int main()
 {
+	using clock = std::chrono::system_clock;
+	using sec = std::chrono::duration<double>;
+	const auto before = clock::now();
+	int numOfGenerations = 0;
 	srand(unsigned(time(NULL)));
 
 	ga_vector pop_alpha, pop_beta;
@@ -161,6 +166,8 @@ int main()
 	buffer = &pop_beta;
 
 	for (int i = 0; i < GA_MAXITER; i++) {
+		clock_t begin = std::clock();
+
 		calc_fitness(*population);		// calculate fitness
 		sort_by_fitness(*population);	// sort them
 		print_best(*population);		// print the best one
@@ -169,7 +176,21 @@ int main()
 
 		mate(*population, *buffer);		// mate the population together
 		swap(population, buffer);		// swap buffers
+
+		clock_t end = std::clock();
+		float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
+		numOfGenerations += 1;
+		std::cout << "Average: " << (*population)[0].average << std::endl;
+		std::cout << "Standard Deviation: " << (*population)[0].deviation << std::endl;
+
+		std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
+
 	}
+
+	std::cout << "Number of Generations: " << numOfGenerations << std::endl;
+
+	const sec duration = clock::now() - before;
+	std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;
 
 	getchar();
 
