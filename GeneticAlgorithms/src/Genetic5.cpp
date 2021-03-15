@@ -22,7 +22,8 @@
 #define GA_TARGET		std::string("Hello world!")
 
 using namespace std;				// polluting global namespace, but hey...
-int operatorPoint = 1;
+int operatorPoint = 1;				// for Reproduction Operators
+int hueristic = 2;					// The Givin Hueristic or Bull's Eye Hueristic
 
 struct ga_struct
 {
@@ -91,6 +92,54 @@ void calc_fitness(ga_vector &population)
 	}
 
 }
+
+void BullsEye_calc_fitness(ga_vector &population)
+{
+	string target = GA_TARGET;
+	int tsize = target.size();
+	unsigned int fitness;
+	float average = 0;
+	float deviation = 0;
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		fitness = tsize * 10;
+
+		for (int j = 0; j < tsize; j++) {
+			if (population[i].str[j] == target[j]) {
+				fitness -= 10;
+			}
+
+			else {
+				for (int k = 0; k < tsize; k++) {
+					if (population[i].str[j] == target[k]) {
+						fitness -= 1;
+						break;
+					}
+				}
+			}
+		}
+		population[i].fitness = fitness;
+		average += fitness;
+	}
+
+	average = average / GA_POPSIZE;			//calculating the average
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+
+		deviation += pow(population[i].fitness - average, 2);
+	}
+
+	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
+
+
+	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen for the current generation
+
+		population[i].average = average;
+		population[i].deviation = deviation;
+	}
+
+}
+
 
 bool fitness_sort(ga_struct x, ga_struct y)
 {
@@ -263,7 +312,16 @@ int main()
 	for (int i = 0; i < GA_MAXITER; i++) {
 		clock_t begin = std::clock();
 
-		calc_fitness(*population);		// calculate fitness
+		switch (hueristic)
+		{
+		case 1:
+			calc_fitness(*population);		// calculate fitness using the given hueristic
+			break;
+
+		case 2:
+			BullsEye_calc_fitness(*population);		// calculate fitness using Bull's eye hueristic
+			break;
+		}
 		sort_by_fitness(*population);	// sort them
 		print_best(*population);		// print the best one
 
