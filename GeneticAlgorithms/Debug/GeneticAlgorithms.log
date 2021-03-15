@@ -1,3 +1,7 @@
 ﻿  Genetic5.cpp
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(175): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  GeneticAlgorithms.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(193): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(276): warning C4244: '=': conversion from 'double' to 'char', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(405): warning C4101: 'operatorPoint': unreferenced local variable
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(409): warning C4101: 'buffer': unreferenced local variable
+Genetic5.obj : error LNK2001: unresolved external symbol "public: static class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > ga_struct::globalBest" (?globalBest@ga_struct@@2V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@A)
+C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe : fatal error LNK1120: 1 unresolved externals

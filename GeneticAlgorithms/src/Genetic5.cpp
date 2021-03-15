@@ -20,20 +20,36 @@
 #define GA_MUTATIONRATE	0.25f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
 #define GA_TARGET		std::string("Hello world!")
+#define C1	2						// for exploration
+#define C2	2						// for exploitation
+#define W	0.5						// for Inertia
+
+
 
 using namespace std;				// polluting global namespace, but hey...
 int operatorPoint = 1;				// for Reproduction Operators
 int hueristic = 2;					// The Givin Hueristic or Bull's Eye Hueristic
 
+
+
+
 struct ga_struct
 {
 	string str;						// the string
-	unsigned int fitness;			// its fitness
-	float average;					// its average
-	float deviation;				// its deviation
+	unsigned int fitness;		   // its fitness
+	string localBest;             // its local best
+	string velocity;			 // its velocity
+	static string globalBest;
 };
 
-typedef vector<ga_struct> ga_vector;// for brevity
+float average;					// its average
+float deviation;			   // its deviation
+
+
+typedef vector<ga_struct> ga_vector;	// for brevity
+
+int calc_fitness_citizen(string citizenStr);
+void init_pso(ga_vector &population, ga_struct *tempCitizen);
 
 void init_population(ga_vector &population,
 	ga_vector &buffer)
@@ -45,8 +61,8 @@ void init_population(ga_vector &population,
 
 		citizen.fitness = 0;
 		citizen.str.erase();
-		citizen.average = 0;
-		citizen.deviation = 0;
+//		citizen.average = 0;
+	//	citizen.deviation = 0;
 
 		for (int j = 0; j < tsize; j++)
 			citizen.str += (rand() % 90) + 32;
@@ -62,8 +78,8 @@ void calc_fitness(ga_vector &population)
 	string target = GA_TARGET;
 	int tsize = target.size();
 	unsigned int fitness;
-	float average = 0;
-	float deviation = 0;
+	average = 0;
+	deviation = 0;
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = 0;
@@ -84,12 +100,13 @@ void calc_fitness(ga_vector &population)
 
 	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
 
-
+	/**
 	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen for the current generation
 
 		population[i].average = average;
 		population[i].deviation = deviation;
 	}
+	*/
 
 }
 
@@ -98,8 +115,8 @@ void BullsEye_calc_fitness(ga_vector &population)
 	string target = GA_TARGET;
 	int tsize = target.size();
 	unsigned int fitness;
-	float average = 0;
-	float deviation = 0;
+	average = 0;
+	deviation = 0;
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = tsize * 10;
@@ -131,12 +148,13 @@ void BullsEye_calc_fitness(ga_vector &population)
 
 	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
 
-
+	/**
 	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen for the current generation
 
 		population[i].average = average;
 		population[i].deviation = deviation;
 	}
+	*/
 
 }
 
@@ -237,6 +255,93 @@ void mate(ga_vector &population, ga_vector &buffer)
 	}
 
 }
+void PSO(ga_vector &population)
+{
+	ga_struct tempCitizen;
+	init_pso(population, &tempCitizen);
+	int tsize = GA_TARGET.size();
+
+	for (int i = 0; i < GA_MAXITER; i++)
+	{
+		if (tempCitizen.fitness == 0) break;
+
+		for (int i = 0; i < GA_POPSIZE; i++) {
+
+			for (int j = 0; j < tsize; j++) {
+
+				double r1 = (double)rand() / (RAND_MAX);
+				double r2 = (double)rand() / (RAND_MAX);
+				population[i].velocity[j] = W * population[i].velocity[j] 
+					+ C1 * r1 * (population[i].localBest[j] - population[i].str[j])
+					+ C2 * r2 * (population[i].globalBest[j] - population[i].str[j]);
+
+				population[i].str[j] += population[i].str[j] + population[i].velocity[j]; //+32
+
+			}
+
+			if (calc_fitness_citizen(population[i].str) < calc_fitness_citizen(population[i].localBest))
+			{
+				population[i].localBest = population[i].str;
+				
+				if (calc_fitness_citizen(population[i].localBest) < calc_fitness_citizen(population[i].globalBest))
+				{
+					population[i].globalBest = population[i].localBest;
+				}
+			}
+		}
+
+	}
+}
+
+void init_pso(ga_vector &population, ga_struct *tempCitizen)
+{
+	int tsize = GA_TARGET.size();
+
+	(*tempCitizen).globalBest.erase();
+	(*tempCitizen).globalBest = (rand() % 90) + 32;
+	(*tempCitizen).fitness = calc_fitness_citizen((*tempCitizen).str);
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		ga_struct citizen;
+
+		citizen.fitness = 0;
+		citizen.str.erase();
+		citizen.localBest.erase();
+		citizen.velocity.erase();
+
+		
+		for (int j = 0; j < tsize; j++)
+		{
+			citizen.str += (rand() % 90) + 32;
+			citizen.localBest = citizen.str;
+			citizen.velocity += (rand() % 90) + 32;
+
+		}
+
+		population.push_back(citizen);
+		citizen.fitness = calc_fitness_citizen(citizen.str);		// calculate fitness using the given hueristic
+
+		if (citizen.fitness < (*tempCitizen).fitness)
+		{
+			(*tempCitizen).fitness = citizen.fitness;
+		}
+	}
+
+}
+
+int calc_fitness_citizen(string citizenStr)
+{
+	string target = GA_TARGET;
+	int tsize = target.size();
+	unsigned int fitness;
+
+	fitness = 0;
+	for (int j = 0; j < tsize; j++) {
+		fitness += abs(int(citizenStr[j] - target[j]));
+	}
+
+	return fitness;
+}
 
 inline void print_best(ga_vector &gav)
 {
@@ -302,13 +407,16 @@ int main()
 
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
+	population = &pop_alpha;
+	PSO(*population);
+	sort_by_fitness(*population);	// sort them
+	print_best(*population);		// print the best one
 
+	/**
 	init_population(pop_alpha, pop_beta);
 	population = &pop_alpha;
 	buffer = &pop_beta;
 	operatorPoint = checkInputOperator();
-
-	
 	for (int i = 0; i < GA_MAXITER; i++) {
 		clock_t begin = std::clock();
 
@@ -333,13 +441,13 @@ int main()
 		clock_t end = std::clock();
 		float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
 		numOfGenerations += 1;
-		std::cout << "Average: " << (*population)[0].average << std::endl;
-		std::cout << "Standard Deviation: " << (*population)[0].deviation << std::endl;
+		std::cout << "Average: " << average << std::endl;
+		std::cout << "Standard Deviation: " << deviation << std::endl;
 
 		std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
 
 	}
-
+	*/
 	std::cout << "Number of Generations: " << numOfGenerations << std::endl;
 
 	const sec duration = clock::now() - before;
