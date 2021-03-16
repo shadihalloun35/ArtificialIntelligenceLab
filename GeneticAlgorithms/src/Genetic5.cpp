@@ -12,9 +12,9 @@
 #include <math.h>					// for abs()
 #include <chrono>					// for elapsed time
 #include <ctime>					// for clock ticks
+#include "Particle.h"
 
-
-#define GA_POPSIZE		2048		// ga population size
+#define GA_POPSIZE		1000		// ga population size
 #define GA_MAXITER		16384		// maximum iterations
 #define GA_ELITRATE		0.10f		// elitism rate
 #define GA_MUTATIONRATE	0.25f		// mutation rate
@@ -32,24 +32,19 @@ int hueristic = 2;					// The Givin Hueristic or Bull's Eye Hueristic
 
 
 
-
 struct ga_struct
 {
 	string str;						// the string
-	unsigned int fitness;		   // its fitness
-	string localBest;             // its local best
-	string velocity;			 // its velocity
-	static string globalBest;
+	unsigned int fitness;		   // its fitness;
 };
 
 float average;					// its average
 float deviation;			   // its deviation
 
 
-typedef vector<ga_struct> ga_vector;	// for brevity
-
-int calc_fitness_citizen(string citizenStr);
-void init_pso(ga_vector &population, ga_struct *tempCitizen);
+typedef vector<ga_struct> ga_vector;		 // for brevity
+vector<Particle> particle_vector;	        // for particles
+string globalBest;						   // for global best
 
 void init_population(ga_vector &population,
 	ga_vector &buffer)
@@ -71,6 +66,15 @@ void init_population(ga_vector &population,
 	}
 
 	buffer.resize(GA_POPSIZE);
+}
+
+void init_global_best()
+{
+	int tsize = GA_TARGET.size();
+	globalBest.erase();
+
+	for (int j = 0; j < tsize; j++)
+		globalBest += (rand() % 90) + 32;
 }
 
 void calc_fitness(ga_vector &population)
@@ -158,15 +162,27 @@ void BullsEye_calc_fitness(ga_vector &population)
 
 }
 
-
-bool fitness_sort(ga_struct x, ga_struct y)
+template <class  T>
+bool fitness_sort(T x, T y)
 {
+	/**
+	if (std::is_same<T, Particle>::value)
+	{
+		return (x.get_fitness() < y.get_fitness());
+
+	}
+
 	return (x.fitness < y.fitness);
+	*/
+
+	return (x.get_fitness() < y.get_fitness());
+
 }
 
-inline void sort_by_fitness(ga_vector &population)
+template <class  T>
+inline void sort_by_fitness(T &population)
 {
-	sort(population.begin(), population.end(), fitness_sort);
+	sort(population.begin(), population.end(), fitness_sort<Particle>);
 }
 
 void elitism(ga_vector &population,
@@ -255,93 +271,87 @@ void mate(ga_vector &population, ga_vector &buffer)
 	}
 
 }
-void PSO(ga_vector &population)
+
+void init_pso()
 {
-	ga_struct tempCitizen;
-	init_pso(population, &tempCitizen);
+
 	int tsize = GA_TARGET.size();
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+
+		Particle particle;
+		particle_vector.push_back(particle);
+
+		if (particle.get_fitness() < particle.calc_fitness_particle(globalBest))
+		{
+			globalBest = particle.get_str();
+		}
+	}
+}
+
+void PSO()
+{
+	init_pso();
+	int tsize = GA_TARGET.size();
+	Particle global_particle;
 
 	for (int i = 0; i < GA_MAXITER; i++)
 	{
-		if (tempCitizen.fitness == 0) break;
+		if (global_particle.calc_fitness_particle(globalBest) == 0) break;
 
 		for (int i = 0; i < GA_POPSIZE; i++) {
+
+			string myVelocity;
+			string myStr;
+
+			myVelocity.erase();
+			myStr.erase();
 
 			for (int j = 0; j < tsize; j++) {
 
 				double r1 = (double)rand() / (RAND_MAX);
 				double r2 = (double)rand() / (RAND_MAX);
-				population[i].velocity[j] = W * population[i].velocity[j] 
-					+ C1 * r1 * (population[i].localBest[j] - population[i].str[j])
-					+ C2 * r2 * (population[i].globalBest[j] - population[i].str[j]);
+				//cout << particle_vector[i].get_velocity() << endl;
+				//cout << particle_vector[i].get_str() << endl;
+				//cout << particle_vector[i].get_localBest() << endl;
+				//cout << globalBest << endl;
+				//cout << "--------------\n";
 
-				population[i].str[j] += population[i].str[j] + population[i].velocity[j]; //+32
+				myVelocity += W * (double)particle_vector[i].get_velocity()[j]
+					+ C1 * r1 * (double)(particle_vector[i].get_localBest()[j] - particle_vector[i].get_str()[j])
+					+ C2 * r2 * (double)(globalBest[j] - particle_vector[i].get_str()[j]);
+
+				//cout << myVelocity << endl;
+
+				myStr += particle_vector[i].get_str()[j] + particle_vector[i].get_velocity()[j]; //+32
 
 			}
 
-			if (calc_fitness_citizen(population[i].str) < calc_fitness_citizen(population[i].localBest))
+			particle_vector[i].set_velocity(myVelocity);
+			particle_vector[i].set_str(myStr);
+			particle_vector[i].set_fitness(particle_vector[i].calc_fitness_particle(myStr));
+
+
+			if (particle_vector[i].get_fitness() 
+				< particle_vector[i].calc_fitness_particle(particle_vector[i].get_localBest()))
 			{
-				population[i].localBest = population[i].str;
-				
-				if (calc_fitness_citizen(population[i].localBest) < calc_fitness_citizen(population[i].globalBest))
+				particle_vector[i].set_localBest(particle_vector[i].get_str());
+
+				if (particle_vector[i].calc_fitness_particle(particle_vector[i].get_localBest())
+					< particle_vector[i].calc_fitness_particle(globalBest))
 				{
-					population[i].globalBest = population[i].localBest;
+					globalBest = particle_vector[i].get_localBest();
 				}
 			}
 		}
 
 	}
-}
-
-void init_pso(ga_vector &population, ga_struct *tempCitizen)
-{
-	int tsize = GA_TARGET.size();
-
-	(*tempCitizen).globalBest.erase();
-	(*tempCitizen).globalBest = (rand() % 90) + 32;
-	(*tempCitizen).fitness = calc_fitness_citizen((*tempCitizen).str);
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		ga_struct citizen;
-
-		citizen.fitness = 0;
-		citizen.str.erase();
-		citizen.localBest.erase();
-		citizen.velocity.erase();
-
-		
-		for (int j = 0; j < tsize; j++)
-		{
-			citizen.str += (rand() % 90) + 32;
-			citizen.localBest = citizen.str;
-			citizen.velocity += (rand() % 90) + 32;
-
-		}
-
-		population.push_back(citizen);
-		citizen.fitness = calc_fitness_citizen(citizen.str);		// calculate fitness using the given hueristic
-
-		if (citizen.fitness < (*tempCitizen).fitness)
-		{
-			(*tempCitizen).fitness = citizen.fitness;
-		}
-	}
 
 }
 
-int calc_fitness_citizen(string citizenStr)
-{
-	string target = GA_TARGET;
-	int tsize = target.size();
-	unsigned int fitness;
 
-	fitness = 0;
-	for (int j = 0; j < tsize; j++) {
-		fitness += abs(int(citizenStr[j] - target[j]));
-	}
 
-	return fitness;
-}
+
 
 inline void print_best(ga_vector &gav)
 {
@@ -407,11 +417,14 @@ int main()
 
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
-	population = &pop_alpha;
-	PSO(*population);
-	sort_by_fitness(*population);	// sort them
-	print_best(*population);		// print the best one
 
+	init_global_best();					//initialize global best
+	PSO();
+
+	sort_by_fitness<vector<Particle>>(particle_vector);
+	cout << "Best: " << particle_vector[0].get_str() << " (" << particle_vector[0].get_fitness() << ")" << endl;
+
+	
 	/**
 	init_population(pop_alpha, pop_beta);
 	population = &pop_alpha;
@@ -448,7 +461,8 @@ int main()
 
 	}
 	*/
-	std::cout << "Number of Generations: " << numOfGenerations << std::endl;
+
+	//std::cout << "Number of Generations: " << numOfGenerations << std::endl;
 
 	const sec duration = clock::now() - before;
 	std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;
