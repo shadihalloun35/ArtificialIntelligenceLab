@@ -12,6 +12,7 @@
 #include <math.h>					// for abs()
 #include <chrono>					// for elapsed time
 #include <ctime>					// for clock ticks
+#include "Genetic5.h"
 #include "Particle.h"
 
 #define GA_POPSIZE		1000		// ga population size
@@ -28,7 +29,7 @@
 
 using namespace std;				// polluting global namespace, but hey...
 int operatorPoint = 1;				// for Reproduction Operators
-int hueristic = 2;					// The Givin Hueristic or Bull's Eye Hueristic
+int heuristic = 2;					// The Givin Hueristic or Bull's Eye Hueristic
 
 
 
@@ -45,6 +46,12 @@ float deviation;			   // its deviation
 typedef vector<ga_struct> ga_vector;		 // for brevity
 vector<Particle> particle_vector;	        // for particles
 string globalBest;						   // for global best
+
+
+int Genetic5::getHueristic()				// get the current heuristic 
+{
+	return heuristic;
+}
 
 void init_population(ga_vector &population,
 	ga_vector &buffer)
@@ -278,7 +285,6 @@ void init_pso()
 	int tsize = GA_TARGET.size();
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
-
 		Particle particle;
 		particle_vector.push_back(particle);
 
@@ -287,18 +293,21 @@ void init_pso()
 			globalBest = particle.get_str();
 		}
 	}
+
 }
 
 void PSO()
 {
 	init_pso();
+	//cout << "Best: " << particle_vector[0].get_str() << " (" << particle_vector[0].get_fitness() << ")" << endl;
+	//cout << "Best: " << particle_vector[2].get_str() << " (" << particle_vector[2].get_fitness() << ")" << endl;
+	//cout << "Best: " << particle_vector[50].get_str() << " (" << particle_vector[50].get_fitness() << ")" << endl;
+
 	int tsize = GA_TARGET.size();
 	Particle global_particle;
 
 	for (int i = 0; i < GA_MAXITER; i++)
 	{
-		if (global_particle.calc_fitness_particle(globalBest) == 0) break;
-
 		for (int i = 0; i < GA_POPSIZE; i++) {
 
 			string myVelocity;
@@ -311,19 +320,11 @@ void PSO()
 
 				double r1 = (double)rand() / (RAND_MAX);
 				double r2 = (double)rand() / (RAND_MAX);
-				//cout << particle_vector[i].get_velocity() << endl;
-				//cout << particle_vector[i].get_str() << endl;
-				//cout << particle_vector[i].get_localBest() << endl;
-				//cout << globalBest << endl;
-				//cout << "--------------\n";
+				myVelocity += W * particle_vector[i].get_velocity()[j]
+					+ C1 * r1 * (particle_vector[i].get_localBest()[j] - particle_vector[i].get_str()[j])
+					+ C2 * r2 * (globalBest[j] - particle_vector[i].get_str()[j]);
 
-				myVelocity += W * (double)particle_vector[i].get_velocity()[j]
-					+ C1 * r1 * (double)(particle_vector[i].get_localBest()[j] - particle_vector[i].get_str()[j])
-					+ C2 * r2 * (double)(globalBest[j] - particle_vector[i].get_str()[j]);
-
-				//cout << myVelocity << endl;
-
-				myStr += particle_vector[i].get_str()[j] + particle_vector[i].get_velocity()[j]; //+32
+				myStr += particle_vector[i].get_str()[j] + myVelocity[j]; 
 
 			}
 
@@ -337,6 +338,7 @@ void PSO()
 			{
 				particle_vector[i].set_localBest(particle_vector[i].get_str());
 
+
 				if (particle_vector[i].calc_fitness_particle(particle_vector[i].get_localBest())
 					< particle_vector[i].calc_fitness_particle(globalBest))
 				{
@@ -344,6 +346,8 @@ void PSO()
 				}
 			}
 		}
+
+		if (global_particle.calc_fitness_particle(globalBest) == 0) break;
 
 	}
 
@@ -420,9 +424,12 @@ int main()
 
 	init_global_best();					//initialize global best
 	PSO();
-
+	
 	sort_by_fitness<vector<Particle>>(particle_vector);
+
 	cout << "Best: " << particle_vector[0].get_str() << " (" << particle_vector[0].get_fitness() << ")" << endl;
+	//cout << "Best: " << particle_vector[2].get_str() << " (" << particle_vector[2].get_fitness() << ")" << endl;
+	//cout << "Best: " << particle_vector[50].get_str() << " (" << particle_vector[50].get_fitness() << ")" << endl;
 
 	
 	/**
@@ -433,14 +440,14 @@ int main()
 	for (int i = 0; i < GA_MAXITER; i++) {
 		clock_t begin = std::clock();
 
-		switch (hueristic)
+		switch (heuristic)
 		{
 		case 1:
-			calc_fitness(*population);		// calculate fitness using the given hueristic
+			calc_fitness(*population);		// calculate fitness using the given heuristic
 			break;
 
 		case 2:
-			BullsEye_calc_fitness(*population);		// calculate fitness using Bull's eye hueristic
+			BullsEye_calc_fitness(*population);		// calculate fitness using Bull's eye heuristic
 			break;
 		}
 		sort_by_fitness(*population);	// sort them

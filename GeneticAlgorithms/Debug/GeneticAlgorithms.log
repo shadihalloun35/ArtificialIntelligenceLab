@@ -1,11 +1,11 @@
 ﻿  Genetic5.cpp
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(209): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(322): warning C4244: 'argument': conversion from 'double' to '_Elem', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(216): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(325): warning C4244: 'argument': conversion from 'double' to '_Elem', possible loss of data
           with
           [
               _Elem=char
           ]
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(416): warning C4101: 'operatorPoint': unreferenced local variable
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(420): warning C4101: 'population': unreferenced local variable
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(420): warning C4101: 'buffer': unreferenced local variable
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(419): warning C4101: 'operatorPoint': unreferenced local variable
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(423): warning C4101: 'population': unreferenced local variable
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(423): warning C4101: 'buffer': unreferenced local variable
   GeneticAlgorithms.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe

@@ -1,4 +1,6 @@
 #include "Particle.h"
+#include "Genetic5.h"
+
 
 
 Particle::Particle()
@@ -62,21 +64,43 @@ string Particle::get_velocity()
 
 int Particle::calc_fitness_particle(string citizenStr)
 {
-	//cout << citizenStr << endl;
 	string target = GA_TARGET;
 	int tsize = target.size();
 	unsigned int fitness;
 	fitness = 0;
-	for (int j = 0; j < tsize; j++) {
-		//cout << citizenStr << endl;
-		//cout << target << endl;
-		//cout << fitness << endl;
 
+	switch (Genetic5::getHueristic())
+	{
 
-		fitness += abs(int(citizenStr[j] - target[j]));
+	case 1:
+		for (int j = 0; j < tsize; j++) {
+			fitness += abs(int(citizenStr[j] - target[j]));
+		}
+		break;
+
+	case 2:
+
+		fitness = tsize * 10;
+		for (int j = 0; j < tsize; j++) {
+			if (citizenStr[j] == target[j]) {
+				fitness -= 10;
+			}
+
+			else {
+				for (int k = 0; k < tsize; k++) {
+					if (citizenStr[j] == target[k]) {
+						fitness -= 1;
+						break;
+					}
+				}
+			}
+		}
+		break;
+
 	}
-
+		
 	return fitness;
+
 }
 
 
