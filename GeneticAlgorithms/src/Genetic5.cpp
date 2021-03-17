@@ -24,12 +24,12 @@
 #define C1	2						// for exploration
 #define C2	2						// for exploitation
 #define W	0.5						// for Inertia
-
+#define algorithm	2				// The given algorithm or PSO
+#define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
 
 
 using namespace std;				// polluting global namespace, but hey...
 int operatorPoint = 1;				// for Reproduction Operators
-int heuristic = 2;					// The Givin Hueristic or Bull's Eye Hueristic
 
 
 
@@ -39,11 +39,11 @@ struct ga_struct
 	unsigned int fitness;		   // its fitness;
 };
 
-float average;					// its average
-float deviation;			   // its deviation
 
 
-typedef vector<ga_struct> ga_vector;		 // for brevity
+typedef vector<ga_struct> ga_vector;		   // for brevity
+vector<float> averages;					      // for averages
+vector<float> deviations;					 // for standard deviations
 vector<Particle> particle_vector;	        // for particles
 string globalBest;						   // for global best
 
@@ -63,8 +63,6 @@ void init_population(ga_vector &population,
 
 		citizen.fitness = 0;
 		citizen.str.erase();
-//		citizen.average = 0;
-	//	citizen.deviation = 0;
 
 		for (int j = 0; j < tsize; j++)
 			citizen.str += (rand() % 90) + 32;
@@ -89,8 +87,8 @@ void calc_fitness(ga_vector &population)
 	string target = GA_TARGET;
 	int tsize = target.size();
 	unsigned int fitness;
-	average = 0;
-	deviation = 0;
+	float average = 0;
+	float deviation = 0;
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = 0;
@@ -103,6 +101,7 @@ void calc_fitness(ga_vector &population)
 	}
 
 	average = average / GA_POPSIZE;			//calculating the average
+	averages.push_back(average);
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
@@ -110,14 +109,7 @@ void calc_fitness(ga_vector &population)
 	}
 
 	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
-
-	/**
-	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen for the current generation
-
-		population[i].average = average;
-		population[i].deviation = deviation;
-	}
-	*/
+	deviations.push_back(deviation);
 
 }
 
@@ -126,8 +118,8 @@ void BullsEye_calc_fitness(ga_vector &population)
 	string target = GA_TARGET;
 	int tsize = target.size();
 	unsigned int fitness;
-	average = 0;
-	deviation = 0;
+	float average = 0;
+	float deviation = 0;
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = tsize * 10;
@@ -150,7 +142,8 @@ void BullsEye_calc_fitness(ga_vector &population)
 		average += fitness;
 	}
 
-	average = average / GA_POPSIZE;			//calculating the average
+	average = average / GA_POPSIZE;						//calculating the average
+	averages.push_back(average);
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
@@ -158,38 +151,29 @@ void BullsEye_calc_fitness(ga_vector &population)
 	}
 
 	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
-
-	/**
-	for (int i = 0; i < GA_POPSIZE; i++) {		//updating the average and the deviation for each citizen for the current generation
-
-		population[i].average = average;
-		population[i].deviation = deviation;
-	}
-	*/
+	deviations.push_back(deviation);
 
 }
 
-template <class  T>
-bool fitness_sort(T x, T y)
+template <class  S>
+bool fitness_sort(S x, S y)
 {
-	/**
-	if (std::is_same<T, Particle>::value)
+	
+	if (is_same<S, Particle>::value == true)					// for particles, fitness variable is private
 	{
-		return (x.get_fitness() < y.get_fitness());
+		//cout << "a";
+		//return (x.get_fitness() < y.get_fitness());
 
 	}
 
 	return (x.fitness < y.fitness);
-	*/
-
-	return (x.get_fitness() < y.get_fitness());
 
 }
 
-template <class  T>
+template <class  T,class S>
 inline void sort_by_fitness(T &population)
 {
-	sort(population.begin(), population.end(), fitness_sort<Particle>);
+	sort(population.begin(), population.end(), fitness_sort<S>);
 }
 
 void elitism(ga_vector &population,
@@ -298,13 +282,11 @@ void init_pso()
 
 void PSO()
 {
-	init_pso();
-	//cout << "Best: " << particle_vector[0].get_str() << " (" << particle_vector[0].get_fitness() << ")" << endl;
-	//cout << "Best: " << particle_vector[2].get_str() << " (" << particle_vector[2].get_fitness() << ")" << endl;
-	//cout << "Best: " << particle_vector[50].get_str() << " (" << particle_vector[50].get_fitness() << ")" << endl;
+	init_pso();							// for initlizing the global , local and velocity randomly
 
 	int tsize = GA_TARGET.size();
-	Particle global_particle;
+
+	Particle global_particle;			// for calculating the fitness of the global particle
 
 	for (int i = 0; i < GA_MAXITER; i++)
 	{
@@ -316,7 +298,8 @@ void PSO()
 			myVelocity.erase();
 			myStr.erase();
 
-			for (int j = 0; j < tsize; j++) {
+			for (int j = 0; j < tsize; j++) {						// implementation the algorithm 
+																   // like described in the class
 
 				double r1 = (double)rand() / (RAND_MAX);
 				double r2 = (double)rand() / (RAND_MAX);
@@ -328,12 +311,12 @@ void PSO()
 
 			}
 
-			particle_vector[i].set_velocity(myVelocity);
+			particle_vector[i].set_velocity(myVelocity);					// updating the velocity and the fitness
 			particle_vector[i].set_str(myStr);
 			particle_vector[i].set_fitness(particle_vector[i].calc_fitness_particle(myStr));
 
 
-			if (particle_vector[i].get_fitness() 
+			if (particle_vector[i].get_fitness()							// updating the local and global best
 				< particle_vector[i].calc_fitness_particle(particle_vector[i].get_localBest()))
 			{
 				particle_vector[i].set_localBest(particle_vector[i].get_str());
@@ -347,7 +330,15 @@ void PSO()
 			}
 		}
 
-		if (global_particle.calc_fitness_particle(globalBest) == 0) break;
+		cout << "Best: " << globalBest << " (" << global_particle.calc_fitness_particle(globalBest) << ")" << endl;
+
+		cout << "Best: " << particle_vector[i].get_localBest() << " (" << global_particle.calc_fitness_particle(particle_vector[i].get_localBest()) << ")" << endl;
+
+		cout << "Best: " << particle_vector[i].get_str() << " (" << particle_vector[i].get_fitness() << ")" << endl;
+
+		cout << "------------------------------------------------------" << endl;
+
+		if (global_particle.calc_fitness_particle(globalBest) == 0) break;		//our termination criterion 
 
 	}
 
@@ -384,7 +375,7 @@ int checkInputOperator()
 
 			if (!cin)
 			{
-				cin.clear(); // reset failbit
+				cin.clear();						// reset failbit
 				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				throw new std::string("Invalid Input !, Please Try Again\n");
 			}
@@ -400,7 +391,7 @@ int checkInputOperator()
 		}
 		catch (std::string *caught) {
 			cout << *caught << endl;
-			continue; // go again
+			continue;									// go again
 		}
 
 	}
@@ -416,61 +407,61 @@ int main()
 	using sec = std::chrono::duration<double>;
 	const auto before = clock::now();
 	int numOfGenerations = 0;
-	int operatorPoint;
-	srand(unsigned(time(NULL)));
-
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
-
-	init_global_best();					//initialize global best
-	PSO();
+	srand(unsigned(time(NULL)));
 	
-	sort_by_fitness<vector<Particle>>(particle_vector);
+	switch (algorithm)
+	{
+	case 1:
+		int operatorPoint;
+		init_population(pop_alpha, pop_beta);
+		population = &pop_alpha;
+		buffer = &pop_beta;
+		operatorPoint = checkInputOperator();
+		for (int i = 0; i < GA_MAXITER; i++) {
 
-	cout << "Best: " << particle_vector[0].get_str() << " (" << particle_vector[0].get_fitness() << ")" << endl;
-	//cout << "Best: " << particle_vector[2].get_str() << " (" << particle_vector[2].get_fitness() << ")" << endl;
-	//cout << "Best: " << particle_vector[50].get_str() << " (" << particle_vector[50].get_fitness() << ")" << endl;
+			clock_t begin = std::clock();		// for clock ticks
 
-	
-	/**
-	init_population(pop_alpha, pop_beta);
-	population = &pop_alpha;
-	buffer = &pop_beta;
-	operatorPoint = checkInputOperator();
-	for (int i = 0; i < GA_MAXITER; i++) {
-		clock_t begin = std::clock();
+			switch (heuristic)
+			{
+			case 1:
+				calc_fitness(*population);		// calculate fitness using the given heuristic
+				break;
 
-		switch (heuristic)
-		{
-		case 1:
-			calc_fitness(*population);		// calculate fitness using the given heuristic
-			break;
+			case 2:
+				BullsEye_calc_fitness(*population);		// calculate fitness using Bull's eye heuristic
+				break;
+			}
+			sort_by_fitness<vector<ga_struct>,ga_struct>(*population);	// sort them
+			print_best(*population);		// print the best one
 
-		case 2:
-			BullsEye_calc_fitness(*population);		// calculate fitness using Bull's eye heuristic
-			break;
+			if ((*population)[0].fitness == 0) break;
+
+			mate(*population, *buffer);		// mate the population together
+			swap(population, buffer);		// swap buffers
+
+			clock_t end = std::clock();
+			float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
+			numOfGenerations += 1;
+			std::cout << "Average: " << averages[i] << std::endl;
+			std::cout << "Standard Deviation: " << deviations[i] << std::endl;
+
+			std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
+
 		}
-		sort_by_fitness(*population);	// sort them
-		print_best(*population);		// print the best one
 
-		if ((*population)[0].fitness == 0) break;
+		std::cout << "Number of Generations: " << numOfGenerations << std::endl;
+		break;
 
-		mate(*population, *buffer);		// mate the population together
-		swap(population, buffer);		// swap buffers
-
-		clock_t end = std::clock();
-		float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
-		numOfGenerations += 1;
-		std::cout << "Average: " << average << std::endl;
-		std::cout << "Standard Deviation: " << deviation << std::endl;
-
-		std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
-
+	case 2:									 // PSO algorithm
+		init_global_best();					//initialize global best
+		PSO();
+		//sort_by_fitness<vector<Particle>,Particle>(particle_vector);
+		break;
 	}
-	*/
 
-	//std::cout << "Number of Generations: " << numOfGenerations << std::endl;
-
+	
 	const sec duration = clock::now() - before;
 	std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;
 
