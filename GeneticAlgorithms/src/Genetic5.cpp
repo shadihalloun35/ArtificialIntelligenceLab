@@ -332,11 +332,11 @@ void PSO()
 
 		cout << "Best: " << globalBest << " (" << global_particle.calc_fitness_particle(globalBest) << ")" << endl;
 
-		cout << "Best: " << particle_vector[i].get_localBest() << " (" << global_particle.calc_fitness_particle(particle_vector[i].get_localBest()) << ")" << endl;
+		//cout << "Best: " << particle_vector[i].get_localBest() << " (" << global_particle.calc_fitness_particle(particle_vector[i].get_localBest()) << ")" << endl;
 
-		cout << "Best: " << particle_vector[i].get_str() << " (" << particle_vector[i].get_fitness() << ")" << endl;
+		//cout << "Best: " << particle_vector[i].get_str() << " (" << particle_vector[i].get_fitness() << ")" << endl;
 
-		cout << "------------------------------------------------------" << endl;
+		//cout << "------------------------------------------------------" << endl;
 
 		if (global_particle.calc_fitness_particle(globalBest) == 0) break;		//our termination criterion 
 
@@ -369,7 +369,7 @@ int checkInputOperator()
 
 	while (1)
 	{
-		try {
+		try {									     // checking if the input is valid
 
 			cin >> operatorInput;
 
@@ -405,7 +405,7 @@ int main()
 {
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
-	const auto before = clock::now();
+	const auto before = clock::now();				// for elapsed time
 	int numOfGenerations = 0;
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
@@ -418,7 +418,7 @@ int main()
 		init_population(pop_alpha, pop_beta);
 		population = &pop_alpha;
 		buffer = &pop_beta;
-		operatorPoint = checkInputOperator();
+		operatorPoint = checkInputOperator();		 		// choose which operator to use
 		for (int i = 0; i < GA_MAXITER; i++) {
 
 			clock_t begin = std::clock();		// for clock ticks
