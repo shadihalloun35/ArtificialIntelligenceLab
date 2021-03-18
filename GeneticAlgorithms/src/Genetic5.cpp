@@ -26,6 +26,7 @@
 #define W	0.5						// for Inertia
 #define algorithm	2				// The given algorithm or PSO
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
+#define SELECTION	1				// for selecting parents method
 
 
 using namespace std;				// polluting global namespace, but hey...
@@ -163,7 +164,6 @@ bool fitness_sort(S x, S y)
 	{
 		//cout << "a";
 		//return (x.get_fitness() < y.get_fitness());
-
 	}
 
 	return (x.fitness < y.fitness);
@@ -344,6 +344,11 @@ void PSO()
 
 }
 
+void RWS(ga_vector &population, ga_vector &buffer)
+
+{
+
+}
 
 
 
@@ -438,9 +443,18 @@ int main()
 
 			if ((*population)[0].fitness == 0) break;
 
-			mate(*population, *buffer);		// mate the population together
-			swap(population, buffer);		// swap buffers
+			switch (SELECTION)
+			{
+			case 1:
+				mate(*population, *buffer);		// mate the population together
+				break;
 
+			case 2:
+				RWS(*population, *buffer);
+				break;
+			}
+			
+			swap(population, buffer);		// swap buffers
 			clock_t end = std::clock();
 			float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
 			numOfGenerations += 1;
