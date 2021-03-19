@@ -27,6 +27,8 @@
 #define algorithm	2				// The given algorithm or PSO
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
 #define SELECTION	1				// for selecting parents method
+#define	K	5						//Tournament size 
+
 
 
 using namespace std;				// polluting global namespace, but hey...
@@ -291,6 +293,7 @@ int* selectParents(ga_vector &population)
 {
 	int esize = (int)GA_POPSIZE * GA_ELITRATE;
 	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *parents = new int[numOfParents];			// the selected parents
 	int *points = new int[numOfParents];			// list of (sorted)random numbers from 0 to the total fitness
 	int totalFitness;
 
@@ -301,7 +304,7 @@ int* selectParents(ga_vector &population)
 	switch (SELECTION)
 	{
 	case 1:
-		return Naïve();						  // naive method for selecting parents
+		parents = Naïve();						  // naive method for selecting parents
 		break;
 
 	case 2:									//RWS + Scaling
@@ -312,14 +315,39 @@ int* selectParents(ga_vector &population)
 			*(points + i) = rand() % (totalFitness + 1);		   // random numbers from 0 to total fitness. 
 		}
 		sort(points, points + numOfParents);						// sorting the array
-		return RWS(population,points);								   // RWS method for selecting parents
+		parents = RWS(population,points);								   // RWS method for selecting parents
 		break;
 
 	case 3:								// SUS method for selecting parents
-		SUS(population, totalFitness);
+		parents = SUS(population, totalFitness);
+		break;
+
+	case 4:								// Tournament selection
+		parents = Tournament(population);
 		break;
 	}
+
+	return parents;
 }
+int PlayTournament(ga_vector &population, int* players) {
+
+}
+int* Tournament(ga_vector &population)
+{
+	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *parents = new int[numOfParents];			// the selected parents
+	int* players = new int[K];						// K players in the tournament
+
+	for (int i = 0; i < numOfParents; i++) {
+		for (int j = 0; j < K; j++) {
+			players[j] = rand() % GA_POPSIZE;
+		}
+		
+		parents[i] = PlayTournament(population, players);;
+	}
+}
+
 
 void mate(ga_vector &population, ga_vector &buffer)
 {
@@ -459,12 +487,6 @@ void PSO()
 		}
 
 		cout << "Best: " << globalBest << " (" << global_particle.calc_fitness_particle(globalBest) << ")" << endl;
-
-		//cout << "Best: " << particle_vector[i].get_localBest() << " (" << global_particle.calc_fitness_particle(particle_vector[i].get_localBest()) << ")" << endl;
-
-		//cout << "Best: " << particle_vector[i].get_str() << " (" << particle_vector[i].get_fitness() << ")" << endl;
-
-		//cout << "------------------------------------------------------" << endl;
 
 		if (global_particle.calc_fitness_particle(globalBest) == 0) break;		//our termination criterion 
 
