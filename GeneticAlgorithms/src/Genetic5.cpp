@@ -83,7 +83,7 @@ void init_global_best()
 		globalBest += (rand() % 90) + 32;
 }
 
-void calc_fitness(ga_vector &population)
+void Naïve_calc_fitness(ga_vector &population)
 {
 	string target = GA_TARGET;
 	int tsize = target.size();
@@ -156,6 +156,21 @@ void BullsEye_calc_fitness(ga_vector &population)
 
 }
 
+void calc_fitness(ga_vector &population)
+{
+	switch (heuristic)
+	{
+	case 1:
+		Naïve_calc_fitness(population);		// calculate fitness using the given heuristic
+		break;
+
+	case 2:
+		BullsEye_calc_fitness(population);		// calculate fitness using Bull's eye heuristic
+		break;
+	}
+}
+
+
 template <class  S>
 bool fitness_sort(S x, S y)
 {
@@ -194,21 +209,134 @@ void mutate(ga_struct &member)
 	member.str[ipos] = ((member.str[ipos] + delta) % 122);
 }
 
+int* Naïve()
+{
+	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *parents = new int[numOfParents];
+
+	for (int i = 0; i < numOfParents; i++) {
+		*(parents + i) = rand() % (GA_POPSIZE / 2);
+	}
+
+	return parents;
+}
+
+int* RWS(ga_vector &population,int *points)
+{
+	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *parents = new int[numOfParents];			 // the selected parents
+	
+	 
+	for (int i = 0; i < numOfParents; i++) {		// Roulette Wheel Selection 
+		int sumFitness = 0;
+		int j = 0;
+
+
+		while (1)
+		{
+			for (int k = 0; k <= j; k++)
+			{
+				sumFitness += population[k].fitness;
+			}
+
+			if(sumFitness < *(points + i))
+				break;
+			j++;
+		}
+
+		*(parents + i) = j;
+	}
+
+	return parents;
+
+}
+
+int* SUS(ga_vector &population,int totalFitness)
+{
+	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *parents = new int[numOfParents];			    // the selected parents
+	int distance = totalFitness / numOfParents;	        // distance between the pointers
+	int start = rand() % (distance + 1);			    // random number between 0 and distance
+	int *points = new int[GA_POPSIZE - esize];		    // list of (sorted)random numbers from 0 to the total fitness
+
+	for (int i = 0; i < numOfParents; i++) {				// points is a (sorted) list of	random numbers														   
+		*(points + i) = start + i * distance;		        // from 0 to total fitness with constant steps. 
+	}
+
+	return RWS(population, points);								   
+
+}
+
+void Scaling(ga_vector &population)
+{
+	unsigned int a = population[0].fitness, b = population[0].fitness;					//our constants
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+
+		a = min(population[i].fitness, a);
+		b = max(population[i].fitness, b);
+	}
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+
+		population[i].fitness = a * population[i].fitness + b;				// linear transformation
+	}
+
+}
+
+int* selectParents(ga_vector &population)
+{
+	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *points = new int[numOfParents];			// list of (sorted)random numbers from 0 to the total fitness
+	int totalFitness;
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		totalFitness += population[i].fitness;
+	}
+
+	switch (SELECTION)
+	{
+	case 1:
+		return Naïve();						  // naive method for selecting parents
+		break;
+
+	case 2:									//RWS + Scaling
+
+		Scaling(population);			   // Linear scaling
+
+		for (int i = 0; i < numOfParents; i++) {				// points is a (sorted) list of																   
+			*(points + i) = rand() % (totalFitness + 1);		   // random numbers from 0 to total fitness. 
+		}
+		sort(points, points + numOfParents);						// sorting the array
+		return RWS(population,points);								   // RWS method for selecting parents
+		break;
+
+	case 3:								// SUS method for selecting parents
+		SUS(population, totalFitness);
+		break;
+	}
+}
+
 void mate(ga_vector &population, ga_vector &buffer)
 {
 
-	int esize = GA_POPSIZE * GA_ELITRATE;
+	int esize = (int)GA_POPSIZE * GA_ELITRATE;
 	int tsize = GA_TARGET.size(), spos,spos2, i1, i2;
-
+	int *parents = selectParents(population);
 	elitism(population, buffer, esize);
+
 
 	switch (operatorPoint) {
 
 	case 1:						// Single Point Operator
 
 		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = rand() % (GA_POPSIZE / 2);
-			i2 = rand() % (GA_POPSIZE / 2);
+			i1 = parents[2 * (i - esize)];
+			i2 = parents[2 * (i - esize) + 1];
 			spos = rand() % tsize;
 
 			buffer[i].str = population[i1].str.substr(0, spos) +
@@ -222,8 +350,8 @@ void mate(ga_vector &population, ga_vector &buffer)
 	case 2:				// Two Point Operator
 
 		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = rand() % (GA_POPSIZE / 2);
-			i2 = rand() % (GA_POPSIZE / 2);
+			i1 = parents[2 * (i - esize)];
+			i2 = parents[2 * (i - esize) + 1];
 			spos = rand() % tsize;
 			spos2 = rand() % tsize;
 
@@ -238,8 +366,8 @@ void mate(ga_vector &population, ga_vector &buffer)
 	case 3:				//// Uniform Point Operator
 
 		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = rand() % (GA_POPSIZE / 2);
-			i2 = rand() % (GA_POPSIZE / 2);
+			i1 = parents[2 * (i - esize)];
+			i2 = parents[2 * (i - esize) + 1];
 			string myStr;
 			myStr.erase();
 			for (int j = 0; j < tsize; j++) {
@@ -344,13 +472,6 @@ void PSO()
 
 }
 
-void RWS(ga_vector &population, ga_vector &buffer)
-
-{
-
-}
-
-
 
 
 inline void print_best(ga_vector &gav)
@@ -427,33 +548,13 @@ int main()
 		for (int i = 0; i < GA_MAXITER; i++) {
 
 			clock_t begin = std::clock();		// for clock ticks
-
-			switch (heuristic)
-			{
-			case 1:
-				calc_fitness(*population);		// calculate fitness using the given heuristic
-				break;
-
-			case 2:
-				BullsEye_calc_fitness(*population);		// calculate fitness using Bull's eye heuristic
-				break;
-			}
+			calc_fitness(*population);		// calculate fitness using the given heuristic
 			sort_by_fitness<vector<ga_struct>,ga_struct>(*population);	// sort them
 			print_best(*population);		// print the best one
 
 			if ((*population)[0].fitness == 0) break;
 
-			switch (SELECTION)
-			{
-			case 1:
-				mate(*population, *buffer);		// mate the population together
-				break;
-
-			case 2:
-				RWS(*population, *buffer);
-				break;
-			}
-			
+			mate(*population, *buffer);		// mate the population together		
 			swap(population, buffer);		// swap buffers
 			clock_t end = std::clock();
 			float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
