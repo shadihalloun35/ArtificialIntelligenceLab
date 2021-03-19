@@ -24,10 +24,12 @@
 #define C1	2						// for exploration
 #define C2	2						// for exploitation
 #define W	0.5						// for Inertia
-#define algorithm	2				// The given algorithm or PSO
+#define algorithm	1				// The given algorithm or PSO
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
-#define SELECTION	1				// for selecting parents method
-#define	K	5						//Tournament size 
+#define SELECTION	5				// for selecting parents method
+#define	K	5						// Tournament size 
+#define MAX_AGE	10					// Maximum age of a citizen
+
 
 
 
@@ -40,6 +42,7 @@ struct ga_struct
 {
 	string str;						// the string
 	unsigned int fitness;		   // its fitness;
+	unsigned int age;
 };
 
 
@@ -65,6 +68,7 @@ void init_population(ga_vector &population,
 		ga_struct citizen;
 
 		citizen.fitness = 0;
+		citizen.age = 1;
 		citizen.str.erase();
 
 		for (int j = 0; j < tsize; j++)
@@ -199,6 +203,7 @@ void elitism(ga_vector &population,
 	for (int i = 0; i < esize; i++) {
 		buffer[i].str = population[i].str;
 		buffer[i].fitness = population[i].fitness;
+		buffer[i].age += 1;
 	}
 }
 
@@ -213,7 +218,7 @@ void mutate(ga_struct &member)
 
 int* Naïve()
 {
-	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 	int *parents = new int[numOfParents];
 
@@ -226,7 +231,7 @@ int* Naïve()
 
 int* RWS(ga_vector &population,int *points)
 {
-	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 	int *parents = new int[numOfParents];			 // the selected parents
 	
@@ -235,15 +240,10 @@ int* RWS(ga_vector &population,int *points)
 		int sumFitness = 0;
 		int j = 0;
 
-
 		while (1)
 		{
-			for (int k = 0; k <= j; k++)
-			{
-				sumFitness += population[k].fitness;
-			}
-
-			if(sumFitness < *(points + i))
+			sumFitness += population[j].fitness;
+			if(sumFitness >= *(points + i))
 				break;
 			j++;
 		}
@@ -257,21 +257,59 @@ int* RWS(ga_vector &population,int *points)
 
 int* SUS(ga_vector &population,int totalFitness)
 {
-	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 	int *parents = new int[numOfParents];			    // the selected parents
 	int distance = totalFitness / numOfParents;	        // distance between the pointers
 	int start = rand() % (distance + 1);			    // random number between 0 and distance
-	int *points = new int[GA_POPSIZE - esize];		    // list of (sorted)random numbers from 0 to the total fitness
+	int *points = new int[numOfParents];		    // list of (sorted)random numbers from 0 to the total fitness
 
 	for (int i = 0; i < numOfParents; i++) {				// points is a (sorted) list of	random numbers														   
-		*(points + i) = start + i * distance;		        // from 0 to total fitness with constant steps. 
+		*(points + i) = start + (i * distance);		        // from 0 to total fitness with constant steps. 
 	}
 
 	return RWS(population, points);								   
 
 }
 
+int* SUS1(ga_vector &population, int y)
+{
+	int esize = GA_POPSIZE * GA_ELITRATE;
+
+	//elitism(population, buffer, esize);		//insert best 0.1 citizens of the population to the buffer
+
+	int totalFitness = 0;
+	int dbp;				//distance between the pointers
+	int start;
+	int parents = 2 * (GA_POPSIZE - esize);
+	int* pointers = new int[parents];
+	int* sumFitness = new int[GA_POPSIZE];
+	int* Fitness = new int[GA_POPSIZE];
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		Fitness[i] = (-1 * (population[i].fitness));
+		Fitness[i] += population[GA_POPSIZE - 1].fitness;
+	}
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		totalFitness += Fitness[i];
+		sumFitness[i] = totalFitness;
+	}
+
+	dbp = totalFitness / parents;
+	start = (rand() % (dbp + 1));
+	for (int j = 0; j < parents; j++) {
+		int k = 0;
+		int x = start + j * dbp;
+		while (sumFitness[k] < x) {
+			k++;
+		}
+		pointers[j] = k;
+	}
+
+	random_shuffle(&pointers[0], &pointers[parents]);		//to prevent bias
+	return pointers;
+}
 void Scaling(ga_vector &population)
 {
 	unsigned int a = population[0].fitness, b = population[0].fitness;					//our constants
@@ -289,13 +327,81 @@ void Scaling(ga_vector &population)
 
 }
 
+
+int PlayTournament(ga_vector &population, int* players) {
+
+	int winner = players[0];
+
+	for (int i = 0; i < K; i++) {
+		if (population[players[i]].fitness < population[winner].fitness)
+			winner = players[i];
+	}
+
+	return winner;
+}
+
+int* Tournament(ga_vector &population)
+{
+	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
+	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *parents = new int[numOfParents];			// the selected parents
+	int* players = new int[K];						// K players in the tournament
+
+	for (int i = 0; i < numOfParents; i++) {
+		for (int j = 0; j < K; j++) {
+			players[j] = rand() % GA_POPSIZE;
+		}
+
+		parents[i] = PlayTournament(population, players);
+	}
+
+	return parents;
+}
+
+int* Aging(ga_vector &population)
+{
+	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
+	int tsize = GA_TARGET.size();
+	int numOfParents = 2 * (GA_POPSIZE - esize);
+	int *parents = new int[numOfParents];			// the selected parents
+
+
+	for (int i = esize; i < GA_POPSIZE; i++) {
+		if (population[i].age > MAX_AGE) {
+			ga_struct citizen;
+			citizen.fitness = 0;
+			citizen.age = 0;				//reset age
+			citizen.str.erase();
+
+			for (int j = 0; j < tsize; j++)
+				citizen.str += (rand() % 90) + 32;
+			population[i] = citizen;
+		}
+	}
+
+	for (int i = 0; i < numOfParents; i++) {
+
+		while (1)
+		{
+			parents[i] = rand() % GA_POPSIZE;
+			
+			if (population[parents[i]].age > 0)
+				break;
+		}
+	}
+
+	return parents;
+
+}
+
+
 int* selectParents(ga_vector &population)
 {
-	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 	int *parents = new int[numOfParents];			// the selected parents
 	int *points = new int[numOfParents];			// list of (sorted)random numbers from 0 to the total fitness
-	int totalFitness;
+	int totalFitness = 0;
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		totalFitness += population[i].fitness;
@@ -325,34 +431,21 @@ int* selectParents(ga_vector &population)
 	case 4:								// Tournament selection
 		parents = Tournament(population);
 		break;
+
+	case 5:
+		parents = Aging(population);
+		break;
+
 	}
 
 	return parents;
-}
-int PlayTournament(ga_vector &population, int* players) {
-
-}
-int* Tournament(ga_vector &population)
-{
-	int esize = (int)GA_POPSIZE * GA_ELITRATE;
-	int numOfParents = 2 * (GA_POPSIZE - esize);
-	int *parents = new int[numOfParents];			// the selected parents
-	int* players = new int[K];						// K players in the tournament
-
-	for (int i = 0; i < numOfParents; i++) {
-		for (int j = 0; j < K; j++) {
-			players[j] = rand() % GA_POPSIZE;
-		}
-		
-		parents[i] = PlayTournament(population, players);;
-	}
 }
 
 
 void mate(ga_vector &population, ga_vector &buffer)
 {
 
-	int esize = (int)GA_POPSIZE * GA_ELITRATE;
+	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int tsize = GA_TARGET.size(), spos,spos2, i1, i2;
 	int *parents = selectParents(population);
 	elitism(population, buffer, esize);
@@ -371,6 +464,8 @@ void mate(ga_vector &population, ga_vector &buffer)
 				population[i2].str.substr(spos, tsize - spos);
 
 			if (rand() < GA_MUTATION) mutate(buffer[i]);
+			buffer[i].age = 0;
+
 		}
 
 		break;
@@ -388,6 +483,7 @@ void mate(ga_vector &population, ga_vector &buffer)
 				population[i1].str.substr(std::max(spos, spos2), tsize - std::max(spos, spos2));
 
 			if (rand() < GA_MUTATION) mutate(buffer[i]);
+			buffer[i].age = 0;
 		}
 		break;
 
@@ -413,6 +509,8 @@ void mate(ga_vector &population, ga_vector &buffer)
 			}
 			buffer[i].str = myStr;
 			if (rand() < GA_MUTATION) mutate(buffer[i]);
+			buffer[i].age = 0;
+
 		}
 		break;
 	}
@@ -573,7 +671,6 @@ int main()
 			calc_fitness(*population);		// calculate fitness using the given heuristic
 			sort_by_fitness<vector<ga_struct>,ga_struct>(*population);	// sort them
 			print_best(*population);		// print the best one
-
 			if ((*population)[0].fitness == 0) break;
 
 			mate(*population, *buffer);		// mate the population together		

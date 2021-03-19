@@ -1,6 +1,6 @@
 ﻿  Genetic5.cpp
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(200): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(308): warning C4244: 'argument': conversion from 'double' to '_Elem', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(277): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(562): warning C4244: 'argument': conversion from 'double' to '_Elem', possible loss of data
           with
           [
               _Elem=char
