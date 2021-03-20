@@ -24,7 +24,7 @@
 #define C1	2						// for exploration
 #define C2	2						// for exploitation
 #define W	0.5						// for Inertia
-#define algorithm	1				// The given algorithm or PSO
+#define algorithm	2				// The given algorithm or PSO
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
 #define SELECTION	5				// for selecting parents method
 #define	K	5						// Tournament size 

@@ -116,10 +116,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Genetic5.cpp" />
-    <ClCompile Include="src\Particlecpp.cpp" />
+    <ClCompile Include="src\NQueens.cpp" />
+    <ClCompile Include="src\Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Genetic5.h" />
+    <ClInclude Include="src\NQueens.h" />
     <ClInclude Include="src\Particle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
