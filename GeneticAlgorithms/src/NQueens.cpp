@@ -24,7 +24,7 @@
 #define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
-#define N	8						// for the size of the board
+#define N	10						// for the size of the board
 #define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
 #define MUTATION	1				// for mutation method (exchange mutation or insertion mutation)
 
@@ -86,7 +86,6 @@ void printBoard(int* board) {
 void calc_fitness(ga_vector &population)
 {
 	string target = GA_TARGET;
-	int tsize = N;
 	unsigned int fitness;
 	float average = 0;
 	float deviation = 0;
@@ -94,13 +93,14 @@ void calc_fitness(ga_vector &population)
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = 0;
-		for (int j = 0; j < tsize; j++) {
-			for (int k = j + 1; k < tsize; k++)
+		for (int j = 0; j < N; j++) {
+			for (int k = j + 1; k < N; k++)
 			{
 				if ((j - i) == abs(population[i].board[j] - population[i].board[k]))
 					fitness += 1;
 			}
 		}
+
 		population[i].fitness = fitness;
 		average += fitness;
 	}
@@ -117,6 +117,43 @@ void calc_fitness(ga_vector &population)
 	deviations.push_back(deviation);
 }
 
+void calc_fitness1(ga_vector &population)  ////fitness = how may queens are under attack!!!!!
+{
+	int tsize = N;
+	unsigned int fitness;
+
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		fitness = 0;
+		for (int j = 0; j < tsize - 1; j++) {
+			for (int k = j + 1; k < tsize; k++) {
+				//horizontal
+				if (population[i].board[j] == population[i].board[k]) {
+					fitness++;
+				}
+				//diagonal up
+				if (population[i].board[j] - (k - j) >= 0) {
+					if (population[i].board[j] == population[i].board[k] + (k - j)) {
+						fitness++;
+					}
+				}
+				//diagonal down
+				if (population[i].board[j] + (k - j) < N) {
+					if (population[i].board[j] == population[i].board[k] - (k - j)) {
+						fitness++;
+					}
+				}
+
+			}
+		}
+
+		population[i].fitness = fitness;
+
+	}
+
+	for (int i = 0; i < GA_POPSIZE; i++) {
+	}
+}
 
 template <class  S>
 bool fitness_sort(S x, S y)
@@ -579,7 +616,7 @@ int main()
 	for (int i = 0; i < GA_MAXITER; i++) {
 
 		clock_t begin = std::clock();		// for clock ticks
-		calc_fitness(*population);		// calculate fitness using the given heuristic
+		calc_fitness1(*population);		// calculate fitness using the given heuristic
 		sort_by_fitness<vector<ga_struct>, ga_struct>(*population);	// sort them
 		print_best(*population);		// print the best one
 		if ((*population)[0].fitness == 0) break;
