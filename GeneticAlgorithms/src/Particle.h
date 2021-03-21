@@ -1,4 +1,4 @@
-/**
+
 #pragma once
 #pragma warning(disable:4786)		// disable debug warning
 #define GA_TARGET		std::string("Hello world!")
@@ -37,4 +37,3 @@ private:
 	string velocity;			     // its velocity
 };
 
-*/

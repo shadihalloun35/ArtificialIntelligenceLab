@@ -1,7 +1,7 @@
 // NQueens.cpp : Defines the entry point for the console application.
 //
 
-
+/**
 #pragma warning(disable:4786)		// disable debug warning
 
 #include <iostream>					// for cout etc.
@@ -24,8 +24,8 @@
 #define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
-#define N	12						// for the size of the board
-#define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
+#define N	13						// for the size of the board
+#define CROSSOVER	2				// for cross over method ( Partially Matched crossover or Ordered crossover )
 #define MUTATION	1				// for mutation method (exchange mutation or insertion mutation)
 
 
@@ -80,7 +80,6 @@ void printBoard(int* board) {
 	for (int i = 0; i < N; i++) {
 		cout << board[i] << " ";
 	}
-	cout << endl;
 }
 
 void calc_fitness(ga_vector &population)
@@ -267,44 +266,6 @@ int* SUS(ga_vector &population, int totalFitness)
 
 }
 
-int* SUS1(ga_vector &population, int y)
-{
-	int esize = GA_POPSIZE * GA_ELITRATE;
-
-	//elitism(population, buffer, esize);		//insert best 0.1 citizens of the population to the buffer
-
-	int totalFitness = 0;
-	int dbp;				//distance between the pointers
-	int start;
-	int parents = 2 * (GA_POPSIZE - esize);
-	int* pointers = new int[parents];
-	int* sumFitness = new int[GA_POPSIZE];
-	int* Fitness = new int[GA_POPSIZE];
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		Fitness[i] = (-1 * (population[i].fitness));
-		Fitness[i] += population[GA_POPSIZE - 1].fitness;
-	}
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		totalFitness += Fitness[i];
-		sumFitness[i] = totalFitness;
-	}
-
-	dbp = totalFitness / parents;
-	start = (rand() % (dbp + 1));
-	for (int j = 0; j < parents; j++) {
-		int k = 0;
-		int x = start + j * dbp;
-		while (sumFitness[k] < x) {
-			k++;
-		}
-		pointers[j] = k;
-	}
-
-	random_shuffle(&pointers[0], &pointers[parents]);		//to prevent bias
-	return pointers;
-}
 
 void Scaling(ga_vector &population)
 {
@@ -354,7 +315,7 @@ int* Tournament(ga_vector &population)
 	return parents;
 }
 
-/**
+
 int* Aging(ga_vector &population)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
@@ -391,7 +352,7 @@ int* Aging(ga_vector &population)
 
 }
 
-*/
+
 
 int* selectParents(ga_vector &population)
 {
@@ -483,21 +444,28 @@ void OX(ga_vector &population, ga_struct &member1, int i1, int i2)
 	sort(tempArray + N / 2, tempArray + N);
 
 	int pointer = N / 2;												// the index to fill
+	bool flag;															// to break loop
 
 	for (int i = 0; i < N; i++)									        // producing the child as is the first parents
 	{
-		cout << i << endl;
 		member1.board[i] = population[i1].board[i];
 	}
 
 	for (int i = 0; i < N; i++)									        // crossover
 	{
+		flag = false;
+
 		for (int j = 0; j < N/2; j++)
 		{
 			if (population[i2].board[i] == population[i1].board[tempArray[j]])
+			{
+				flag = true;
 				break;
+			}
 
 		}
+
+		if (flag == true) continue;
 
 		member1.board[tempArray[pointer]] = population[i2].board[i];
 		pointer++;
@@ -614,3 +582,4 @@ int main()
 
 	return 0;
 }
+*/

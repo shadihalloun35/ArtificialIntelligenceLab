@@ -15,24 +15,23 @@
 #include "Genetic5.h"
 #include "Particle.h"
 
-#define GA_POPSIZE		1000		// ga population size
+#define GA_POPSIZE		2048		// ga population size
 #define GA_MAXITER		16384		// maximum iterations
 #define GA_ELITRATE		0.10f		// elitism rate
 #define GA_MUTATIONRATE	0.25f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
 #define GA_TARGET		std::string("Hello world!")
-#define C1	2						// for exploration
-#define C2	2						// for exploitation
+#define C1	1.5						// for exploration
+#define C2	1.5						// for exploitation
 #define W	0.5						// for Inertia
-#define algorithm	2				// The given algorithm or PSO
+#define algorithm	1				// The given algorithm or PSO
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
-#define SELECTION	5				// for selecting parents method
+#define SELECTION	3				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
 
 
 
-/**
 using namespace std;				// polluting global namespace, but hey...
 int operatorPoint = 1;				// for Reproduction Operators
 
@@ -229,21 +228,26 @@ int* Naïve()
 	return parents;
 }
 
-int* RWS(ga_vector &population,int *points)
+int* RWS(ga_vector &population,int *points, int* newFitness)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-	int *parents = new int[numOfParents];			 // the selected parents
+	int *parents = new int[numOfParents];									// the selected parents
 	
 	 
+	int* sumFitness = new int[GA_POPSIZE];								    // sum of the fitness till index i
+
+	sumFitness[0] = newFitness[0];
+	for (int i = 1; i < GA_POPSIZE; i++) {
+		sumFitness[i] = sumFitness[i - 1] + newFitness[i];
+
+	}
 	for (int i = 0; i < numOfParents; i++) {		// Roulette Wheel Selection 
-		int sumFitness = 0;
 		int j = 0;
 
 		while (1)
 		{
-			sumFitness += population[j].fitness;
-			if(sumFitness >= *(points + i))
+			if(sumFitness[j] >= *(points + i))
 				break;
 			j++;
 		}
@@ -255,7 +259,8 @@ int* RWS(ga_vector &population,int *points)
 
 }
 
-int* SUS(ga_vector &population,int totalFitness)
+
+int* SUS(ga_vector &population,long totalFitness,int* newFitness)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
@@ -268,48 +273,11 @@ int* SUS(ga_vector &population,int totalFitness)
 		*(points + i) = start + (i * distance);		        // from 0 to total fitness with constant steps. 
 	}
 
-	return RWS(population, points);								   
+	return RWS(population, points,newFitness);								   
 
 }
 
-int* SUS1(ga_vector &population, int y)
-{
-	int esize = GA_POPSIZE * GA_ELITRATE;
 
-	//elitism(population, buffer, esize);		//insert best 0.1 citizens of the population to the buffer
-
-	int totalFitness = 0;
-	int dbp;				//distance between the pointers
-	int start;
-	int parents = 2 * (GA_POPSIZE - esize);
-	int* pointers = new int[parents];
-	int* sumFitness = new int[GA_POPSIZE];
-	int* Fitness = new int[GA_POPSIZE];
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		Fitness[i] = (-1 * (population[i].fitness));
-		Fitness[i] += population[GA_POPSIZE - 1].fitness;
-	}
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		totalFitness += Fitness[i];
-		sumFitness[i] = totalFitness;
-	}
-
-	dbp = totalFitness / parents;
-	start = (rand() % (dbp + 1));
-	for (int j = 0; j < parents; j++) {
-		int k = 0;
-		int x = start + j * dbp;
-		while (sumFitness[k] < x) {
-			k++;
-		}
-		pointers[j] = k;
-	}
-
-	random_shuffle(&pointers[0], &pointers[parents]);		//to prevent bias
-	return pointers;
-}
 void Scaling(ga_vector &population)
 {
 	unsigned int a = population[0].fitness, b = population[0].fitness;					//our constants
@@ -401,10 +369,15 @@ int* selectParents(ga_vector &population)
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 	int *parents = new int[numOfParents];			// the selected parents
 	int *points = new int[numOfParents];			// list of (sorted)random numbers from 0 to the total fitness
-	int totalFitness = 0;
 
+	int* newFitness = new int[GA_POPSIZE];									// the original fitness doesn't work good
 	for (int i = 0; i < GA_POPSIZE; i++) {
-		totalFitness += population[i].fitness;
+		newFitness[i] = ((-1)*(population[i].fitness) + population[GA_POPSIZE - 1].fitness);
+	}
+
+	long totalFitness = 0; 
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		totalFitness += newFitness[i];
 	}
 
 	switch (SELECTION)
@@ -415,17 +388,17 @@ int* selectParents(ga_vector &population)
 
 	case 2:									//RWS + Scaling
 
-		Scaling(population);			   // Linear scaling
+		//Scaling(population);			   // Linear scaling
 
-		for (int i = 0; i < numOfParents; i++) {				// points is a (sorted) list of																   
+		for (int i = 0; i < numOfParents; i++) {				   // points is a (sorted) list of																   
 			*(points + i) = rand() % (totalFitness + 1);		   // random numbers from 0 to total fitness. 
 		}
-		sort(points, points + numOfParents);						// sorting the array
-		parents = RWS(population,points);								   // RWS method for selecting parents
+		sort(points, points + numOfParents);					  // sorting the array
+		//parents = RWS(population,points);						  // RWS method for selecting parents
 		break;
 
 	case 3:								// SUS method for selecting parents
-		parents = SUS(population, totalFitness);
+		parents = SUS(population, totalFitness, newFitness);
 		break;
 
 	case 4:								// Tournament selection
@@ -705,4 +678,3 @@ int main()
 
 	return 0;
 }
-*/
