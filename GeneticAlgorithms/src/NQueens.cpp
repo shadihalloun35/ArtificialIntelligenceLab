@@ -37,7 +37,7 @@ using namespace std;				// polluting global namespace, but hey...
 
 struct ga_struct
 {
-	int *board;					   // the chess board size N
+	int *board = new int[N];	   // the chess board size N
 	unsigned int fitness;		   // its fitness;
 	unsigned int age;
 };
@@ -61,7 +61,6 @@ void init_population(ga_vector &population,
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		ga_struct citizen;
-		citizen.board = new int[N];			// the size of the chess board
 		citizen.fitness = 0;
 		citizen.age = 1;
 
@@ -69,6 +68,7 @@ void init_population(ga_vector &population,
 			citizen.board[j] = j;
 		
 		random_shuffle(citizen.board, citizen.board + N);
+
 		population.push_back(citizen);
 	}
 
@@ -93,11 +93,11 @@ void calc_fitness(ga_vector &population)
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = 0;
-		for (int j = 0; j < N; j++) {
+		for (int j = 0; j < N - 1; j++) {
 			for (int k = j + 1; k < N; k++)
-			{
-				if ((j - i) == abs(population[i].board[j] - population[i].board[k]))
-					fitness += 1;
+			{							
+				if ((k - j) == abs(population[i].board[j] - population[i].board[k]))
+					fitness += 1;				
 			}
 		}
 
@@ -115,44 +115,6 @@ void calc_fitness(ga_vector &population)
 
 	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
 	deviations.push_back(deviation);
-}
-
-void calc_fitness1(ga_vector &population)  ////fitness = how may queens are under attack!!!!!
-{
-	int tsize = N;
-	unsigned int fitness;
-
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		fitness = 0;
-		for (int j = 0; j < tsize - 1; j++) {
-			for (int k = j + 1; k < tsize; k++) {
-				//horizontal
-				if (population[i].board[j] == population[i].board[k]) {
-					fitness++;
-				}
-				//diagonal up
-				if (population[i].board[j] - (k - j) >= 0) {
-					if (population[i].board[j] == population[i].board[k] + (k - j)) {
-						fitness++;
-					}
-				}
-				//diagonal down
-				if (population[i].board[j] + (k - j) < N) {
-					if (population[i].board[j] == population[i].board[k] - (k - j)) {
-						fitness++;
-					}
-				}
-
-			}
-		}
-
-		population[i].fitness = fitness;
-
-	}
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-	}
 }
 
 template <class  S>
@@ -249,6 +211,10 @@ int* Naïve()
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
+
+	if (CROSSOVER == 1)										// this method produces 2 children instead of one child
+		numOfParents = (GA_POPSIZE - esize);
+
 	int *parents = new int[numOfParents];
 
 	for (int i = 0; i < numOfParents; i++) {
@@ -518,6 +484,7 @@ void OX(ga_vector &population, ga_struct &member1, int i1, int i2)
 
 	for (int i = 0; i < N; i++)									        // producing the child as is the first parents
 	{
+		cout << i << endl;
 		member1.board[i] = population[i1].board[i];
 	}
 
@@ -538,7 +505,6 @@ void OX(ga_vector &population, ga_struct &member1, int i1, int i2)
 
 void mate(ga_vector &population, ga_vector &buffer)
 {
-
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int tsize = GA_TARGET.size(), spos, i1, i2;
 	int *parents = selectParents(population);
@@ -616,7 +582,7 @@ int main()
 	for (int i = 0; i < GA_MAXITER; i++) {
 
 		clock_t begin = std::clock();		// for clock ticks
-		calc_fitness1(*population);		// calculate fitness using the given heuristic
+		calc_fitness(*population);		// calculate fitness using the given heuristic
 		sort_by_fitness<vector<ga_struct>, ga_struct>(*population);	// sort them
 		print_best(*population);		// print the best one
 		if ((*population)[0].fitness == 0) break;
