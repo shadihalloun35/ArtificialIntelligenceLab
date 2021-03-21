@@ -32,7 +32,7 @@
 
 
 
-
+/**
 using namespace std;				// polluting global namespace, but hey...
 int operatorPoint = 1;				// for Reproduction Operators
 
@@ -542,8 +542,10 @@ void PSO()
 
 	Particle global_particle;			// for calculating the fitness of the global particle
 
-	for (int i = 0; i < GA_MAXITER; i++)
+	for (int k = 0; k < GA_MAXITER; k++)
 	{
+		if (global_particle.calc_fitness_particle(globalBest) == 0) break;		//our termination criterion 
+
 		for (int i = 0; i < GA_POPSIZE; i++) {
 
 			string myVelocity;
@@ -585,8 +587,6 @@ void PSO()
 		}
 
 		cout << "Best: " << globalBest << " (" << global_particle.calc_fitness_particle(globalBest) << ")" << endl;
-
-		if (global_particle.calc_fitness_particle(globalBest) == 0) break;		//our termination criterion 
 
 	}
 
@@ -647,6 +647,7 @@ int checkInputOperator()
 	return operatorPoint;
 }
 
+
 int main()
 {
 	using clock = std::chrono::system_clock;
@@ -704,3 +705,4 @@ int main()
 
 	return 0;
 }
+*/

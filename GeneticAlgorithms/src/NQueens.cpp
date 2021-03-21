@@ -12,7 +12,6 @@
 #include <math.h>					// for abs()
 #include <chrono>					// for elapsed time
 #include <ctime>					// for clock ticks
-#include "Particle.h"
 #include "NQueens.h"
 
 #define GA_POPSIZE		1000		// ga population size
@@ -21,22 +20,18 @@
 #define GA_MUTATIONRATE	0.25f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
 #define GA_TARGET		std::string("Hello world!")
-#define C1	2						// for exploration
-#define C2	2						// for exploitation
-#define W	0.5						// for Inertia
-#define algorithm	2				// The given algorithm or PSO
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
-#define SELECTION	5				// for selecting parents method
+#define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
 #define N	8						// for the size of the board
-
+#define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
+#define MUTATION	1				// for mutation method (exchange mutation or insertion mutation)
 
 
 
 
 using namespace std;				// polluting global namespace, but hey...
-int operatorPoint = 1;				// for Reproduction Operators
 
 
 
@@ -52,8 +47,6 @@ struct ga_struct
 typedef vector<ga_struct> ga_vector;		   // for brevity
 vector<float> averages;					      // for averages
 vector<float> deviations;					 // for standard deviations
-vector<Particle> particle_vector;	        // for particles
-string globalBest;						   // for global best
 
 
 int NQueens::getHueristic()				// get the current heuristic 
@@ -74,7 +67,7 @@ void init_population(ga_vector &population,
 
 		for (int j = 0; j < N; j++)
 			citizen.board[j] = j;
-
+		
 		random_shuffle(citizen.board, citizen.board + N);
 		population.push_back(citizen);
 	}
@@ -82,29 +75,32 @@ void init_population(ga_vector &population,
 	buffer.resize(GA_POPSIZE);
 }
 
-void init_global_best()
-{
-	int tsize = GA_TARGET.size();
-	globalBest.erase();
 
-	for (int j = 0; j < tsize; j++)
-		globalBest += (rand() % 90) + 32;
+void printBoard(int* board) {
+	for (int i = 0; i < N; i++) {
+		cout << board[i] << " ";
+	}
+	cout << endl;
 }
 
-void Naïve_calc_fitness(ga_vector &population)
+void calc_fitness(ga_vector &population)
 {
 	string target = GA_TARGET;
-	int tsize = target.size();
+	int tsize = N;
 	unsigned int fitness;
 	float average = 0;
 	float deviation = 0;
 
+
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = 0;
 		for (int j = 0; j < tsize; j++) {
-			fitness += abs(int(population[i].str[j] - target[j]));
+			for (int k = j + 1; k < tsize; k++)
+			{
+				if ((j - i) == abs(population[i].board[j] - population[i].board[k]))
+					fitness += 1;
+			}
 		}
-
 		population[i].fitness = fitness;
 		average += fitness;
 	}
@@ -119,63 +115,6 @@ void Naïve_calc_fitness(ga_vector &population)
 
 	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
 	deviations.push_back(deviation);
-
-}
-
-void BullsEye_calc_fitness(ga_vector &population)
-{
-	string target = GA_TARGET;
-	int tsize = target.size();
-	unsigned int fitness;
-	float average = 0;
-	float deviation = 0;
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		fitness = tsize * 10;
-
-		for (int j = 0; j < tsize; j++) {
-			if (population[i].str[j] == target[j]) {
-				fitness -= 10;
-			}
-
-			else {
-				for (int k = 0; k < tsize; k++) {
-					if (population[i].str[j] == target[k]) {
-						fitness -= 1;
-						break;
-					}
-				}
-			}
-		}
-		population[i].fitness = fitness;
-		average += fitness;
-	}
-
-	average = average / GA_POPSIZE;						//calculating the average
-	averages.push_back(average);
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-
-		deviation += pow(population[i].fitness - average, 2);
-	}
-
-	deviation = sqrt(deviation / GA_POPSIZE);		   //calculating the std deviation
-	deviations.push_back(deviation);
-
-}
-
-void calc_fitness(ga_vector &population)
-{
-	switch (heuristic)
-	{
-	case 1:
-		Naïve_calc_fitness(population);		// calculate fitness using the given heuristic
-		break;
-
-	case 2:
-		BullsEye_calc_fitness(population);		// calculate fitness using Bull's eye heuristic
-		break;
-	}
 }
 
 
@@ -183,14 +122,7 @@ template <class  S>
 bool fitness_sort(S x, S y)
 {
 
-	if (is_same<S, Particle>::value == true)					// for particles, fitness variable is private
-	{
-		//cout << "a";
-		//return (x.get_fitness() < y.get_fitness());
-	}
-
 	return (x.fitness < y.fitness);
-
 }
 
 template <class  T, class S>
@@ -203,19 +135,77 @@ void elitism(ga_vector &population,
 	ga_vector &buffer, int esize)
 {
 	for (int i = 0; i < esize; i++) {
-		buffer[i].str = population[i].str;
+		buffer[i].board = population[i].board;
 		buffer[i].fitness = population[i].fitness;
 		buffer[i].age += 1;
 	}
 }
 
+int *swapIndecies(int * arr, int ipos1, int ipos2)
+{
+	int temp = *(arr + ipos1);
+	*(arr + ipos1) = *(arr + ipos2);
+	*(arr + ipos2) = temp;
+
+	return arr;
+}
+
+void exchangeMutation(ga_struct &member)
+{
+	int ipos1 = rand() % N;
+	int ipos2 = rand() % N;
+
+	member.board = swapIndecies(member.board, ipos1, ipos2);
+}
+
+void insertionMutation(ga_struct &member)
+{
+	int ipos1 = rand() % N;
+	int temp = ipos1;
+	int ipos2 = rand() % N;
+
+	ipos1 = min(ipos1, ipos2), ipos2 = max(temp, ipos2);
+
+	int * myArr = new int[N];
+
+	for (int i = 0; i < ipos1 ;i++)
+	{
+		*(myArr + i) = member.board[i];
+	}
+
+	temp = *(myArr + ipos1);
+
+	for (int i = ipos1; i < ipos2; i++)
+	{
+		*(myArr + i) = member.board[i + 1];
+	}
+
+	*(myArr + ipos2) = temp;
+
+	for (int i = ipos2 + 1; i < N; i++)
+	{
+		*(myArr + i) = member.board[i];
+	}
+
+
+}
+
 void mutate(ga_struct &member)
 {
-	int tsize = GA_TARGET.size();
-	int ipos = rand() % tsize;
-	int delta = (rand() % 90) + 32;
+	switch (MUTATION)
+	{
+	case 1:
+		exchangeMutation(member);			// exchange (swap) mutation
+		break;
 
-	member.str[ipos] = ((member.str[ipos] + delta) % 122);
+	case 2:
+		insertionMutation(member);		   // insertion mutation
+		break;
+
+	default:
+		break;
+	}
+	
 }
 
 int* Naïve()
@@ -312,6 +302,7 @@ int* SUS1(ga_vector &population, int y)
 	random_shuffle(&pointers[0], &pointers[parents]);		//to prevent bias
 	return pointers;
 }
+
 void Scaling(ga_vector &population)
 {
 	unsigned int a = population[0].fitness, b = population[0].fitness;					//our constants
@@ -360,6 +351,7 @@ int* Tournament(ga_vector &population)
 	return parents;
 }
 
+/**
 int* Aging(ga_vector &population)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
@@ -396,11 +388,16 @@ int* Aging(ga_vector &population)
 
 }
 
+*/
 
 int* selectParents(ga_vector &population)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
+
+	if (CROSSOVER == 1)										// this method produces 2 children instead of one child
+		numOfParents = (GA_POPSIZE - esize);
+		
 	int *parents = new int[numOfParents];			// the selected parents
 	int *points = new int[numOfParents];			// list of (sorted)random numbers from 0 to the total fitness
 	int totalFitness = 0;
@@ -435,7 +432,7 @@ int* selectParents(ga_vector &population)
 		break;
 
 	case 5:
-		parents = Aging(population);
+		//parents = Aging(population);
 		break;
 
 	}
@@ -443,210 +440,125 @@ int* selectParents(ga_vector &population)
 	return parents;
 }
 
+void PMX(ga_vector &population,ga_struct &member1, ga_struct &member2, int spos, int i1, int i2)
+{
+	int temp1 = member1.board[spos], temp2 = member2.board[spos];	
+
+	for (int i = 0; i < N; i++)	{											// producing the children as is their parents
+		member1.board[i] = population[i1].board[i];
+		member2.board[i] = population[i2].board[i];
+
+	}
+
+	for (int i = 0; i < N; i++)											   // crossover
+	{
+		if (member1.board[i] == temp2)
+			member1.board[i] = temp1;
+
+		if (member2.board[i] == temp1)
+			member2.board[i] = temp2;
+	}
+	member1.board[spos] = temp2;
+	member2.board[spos] = temp1;
+
+}
+
+void OX(ga_vector &population, ga_struct &member1, int i1, int i2)
+{
+
+	int *tempArray = new int[N];									// the first 4 elements of the array
+	for (int i = 0; i < N ; i++)									// will be our random indices to pick
+	{
+		tempArray[i] = i;
+
+	}
+
+	random_shuffle(tempArray, tempArray + N);
+
+	sort(tempArray + N / 2, tempArray + N);
+
+	int pointer = N / 2;												// the index to fill
+
+	for (int i = 0; i < N; i++)									        // producing the child as is the first parents
+	{
+		member1.board[i] = population[i1].board[i];
+	}
+
+	for (int i = 0; i < N; i++)									        // crossover
+	{
+		for (int j = 0; j < N/2; j++)
+		{
+			if (population[i2].board[i] == population[i1].board[tempArray[j]])
+				break;
+
+		}
+
+		member1.board[tempArray[pointer]] = population[i2].board[i];
+		pointer++;
+	}
+
+}
 
 void mate(ga_vector &population, ga_vector &buffer)
 {
 
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
-	int tsize = GA_TARGET.size(), spos, spos2, i1, i2;
+	int tsize = GA_TARGET.size(), spos, i1, i2;
 	int *parents = selectParents(population);
 	elitism(population, buffer, esize);
 
 
-	switch (operatorPoint) {
+	switch (CROSSOVER) {
 
-	case 1:						// Single Point Operator
+	case 1:															// PMX crossover
 
-		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = parents[2 * (i - esize)];
-			i2 = parents[2 * (i - esize) + 1];
+		for (int i = esize; i < GA_POPSIZE; i = i + 2) {
+			i1 = parents[i - esize];
+			i2 = parents[i - esize + 1];
 			spos = rand() % tsize;
 
-			buffer[i].str = population[i1].str.substr(0, spos) +
-				population[i2].str.substr(spos, tsize - spos);
-
+			PMX(population, buffer[i], buffer[i + 1],spos, i1, i2);
+			
 			if (rand() < GA_MUTATION) mutate(buffer[i]);
+			if (rand() < GA_MUTATION) mutate(buffer[i+1]);
+
 			buffer[i].age = 0;
+			buffer[i+1].age = 0;
+
 
 		}
 
 		break;
 
-	case 2:				// Two Point Operator
+	case 2:															// OX crossover
 
 		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = parents[2 * (i - esize)];
-			i2 = parents[2 * (i - esize) + 1];
-			spos = rand() % tsize;
-			spos2 = rand() % tsize;
+			i1 = parents[i - esize];
+			i2 = parents[i - esize + 1];
 
-			buffer[i].str = population[i1].str.substr(0, std::min(spos, spos2)) +
-				population[i2].str.substr(std::min(spos, spos2), std::max(spos, spos2) - std::min(spos, spos2)) +
-				population[i1].str.substr(std::max(spos, spos2), tsize - std::max(spos, spos2));
+			OX(population, buffer[i], i1, i2);
 
 			if (rand() < GA_MUTATION) mutate(buffer[i]);
+
 			buffer[i].age = 0;
 		}
 		break;
 
-	case 3:				//// Uniform Point Operator
-
-		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = parents[2 * (i - esize)];
-			i2 = parents[2 * (i - esize) + 1];
-			string myStr;
-			myStr.erase();
-			for (int j = 0; j < tsize; j++) {
-				spos = rand() % 2;
-
-				if (spos == 0)
-				{
-					myStr += population[i1].str.substr(j, 1);
-				}
-				if (spos == 1)
-				{
-					myStr += population[i2].str.substr(j, 1);
-				}
-
-			}
-			buffer[i].str = myStr;
-			if (rand() < GA_MUTATION) mutate(buffer[i]);
-			buffer[i].age = 0;
-
-		}
-		break;
 	}
 
 }
-
-void init_pso()
-{
-
-	int tsize = GA_TARGET.size();
-
-	for (int i = 0; i < GA_POPSIZE; i++) {
-		Particle particle;
-		particle_vector.push_back(particle);
-
-		if (particle.get_fitness() < particle.calc_fitness_particle(globalBest))
-		{
-			globalBest = particle.get_str();
-		}
-	}
-
-}
-
-void PSO()
-{
-	init_pso();							// for initlizing the global , local and velocity randomly
-
-	int tsize = GA_TARGET.size();
-
-	Particle global_particle;			// for calculating the fitness of the global particle
-
-	for (int i = 0; i < GA_MAXITER; i++)
-	{
-		for (int i = 0; i < GA_POPSIZE; i++) {
-
-			string myVelocity;
-			string myStr;
-
-			myVelocity.erase();
-			myStr.erase();
-
-			for (int j = 0; j < tsize; j++) {						// implementation the algorithm 
-																   // like described in the class
-
-				double r1 = (double)rand() / (RAND_MAX);
-				double r2 = (double)rand() / (RAND_MAX);
-				myVelocity += W * particle_vector[i].get_velocity()[j]
-					+ C1 * r1 * (particle_vector[i].get_localBest()[j] - particle_vector[i].get_str()[j])
-					+ C2 * r2 * (globalBest[j] - particle_vector[i].get_str()[j]);
-
-				myStr += particle_vector[i].get_str()[j] + myVelocity[j];
-
-			}
-
-			particle_vector[i].set_velocity(myVelocity);					// updating the velocity and the fitness
-			particle_vector[i].set_str(myStr);
-			particle_vector[i].set_fitness(particle_vector[i].calc_fitness_particle(myStr));
-
-
-			if (particle_vector[i].get_fitness()							// updating the local and global best
-				< particle_vector[i].calc_fitness_particle(particle_vector[i].get_localBest()))
-			{
-				particle_vector[i].set_localBest(particle_vector[i].get_str());
-
-
-				if (particle_vector[i].calc_fitness_particle(particle_vector[i].get_localBest())
-					< particle_vector[i].calc_fitness_particle(globalBest))
-				{
-					globalBest = particle_vector[i].get_localBest();
-				}
-			}
-		}
-
-		cout << "Best: " << globalBest << " (" << global_particle.calc_fitness_particle(globalBest) << ")" << endl;
-
-		if (global_particle.calc_fitness_particle(globalBest) == 0) break;		//our termination criterion 
-
-	}
-
-}
-
-
 
 inline void print_best(ga_vector &gav)
 {
-	cout << "Best: " << gav[0].str << " (" << gav[0].fitness << ")" << endl;
+	cout << "Best: ";
+	printBoard(gav[0].board);
+	cout << " (" << gav[0].fitness << ")" << endl;
 }
 
 inline void swap(ga_vector *&population,
 	ga_vector *&buffer)
 {
 	ga_vector *temp = population; population = buffer; buffer = temp;
-}
-
-int checkInputOperator()
-{
-	double operatorInput;
-
-	std::cout << "For Single Point Operator -  Press 1\n";
-	std::cout << "For Two Point Operator -  Press 2\n";
-	std::cout << "For Uniform Point Operator -  Press 3\n";
-
-	while (1)
-	{
-		try {									     // checking if the input is valid
-
-			cin >> operatorInput;
-
-			if (!cin)
-			{
-				cin.clear();						// reset failbit
-				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				throw new std::string("Invalid Input !, Please Try Again\n");
-			}
-
-			if (operatorInput == 1 || operatorInput == 2 || operatorInput == 3)
-				break;
-
-			else {
-				throw new std::string("Number Must be from 1 to 3!, Please Try Again\n");
-			}
-
-
-		}
-		catch (std::string *caught) {
-			cout << *caught << endl;
-			continue;									// go again
-		}
-
-	}
-
-	operatorPoint = int(operatorInput);
-
-	return operatorPoint;
 }
 
 int main()
@@ -659,43 +571,34 @@ int main()
 	ga_vector *population, *buffer;
 	srand(unsigned(time(NULL)));
 
-	switch (algorithm)
-	{
-	case 1:
-		int operatorPoint;
-		init_population(pop_alpha, pop_beta);
-		population = &pop_alpha;
-		buffer = &pop_beta;
-		operatorPoint = checkInputOperator();		 		// choose which operator to use
-		for (int i = 0; i < GA_MAXITER; i++) {
+	
+	int operatorPoint;
+	init_population(pop_alpha, pop_beta);
+	population = &pop_alpha;
+	buffer = &pop_beta;
+	for (int i = 0; i < GA_MAXITER; i++) {
 
-			clock_t begin = std::clock();		// for clock ticks
-			calc_fitness(*population);		// calculate fitness using the given heuristic
-			sort_by_fitness<vector<ga_struct>, ga_struct>(*population);	// sort them
-			print_best(*population);		// print the best one
-			if ((*population)[0].fitness == 0) break;
+		clock_t begin = std::clock();		// for clock ticks
+		calc_fitness(*population);		// calculate fitness using the given heuristic
+		sort_by_fitness<vector<ga_struct>, ga_struct>(*population);	// sort them
+		print_best(*population);		// print the best one
+		if ((*population)[0].fitness == 0) break;
 
-			mate(*population, *buffer);		// mate the population together		
-			swap(population, buffer);		// swap buffers
-			clock_t end = std::clock();
-			float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
-			numOfGenerations += 1;
-			std::cout << "Average: " << averages[i] << std::endl;
-			std::cout << "Standard Deviation: " << deviations[i] << std::endl;
+		mate(*population, *buffer);		// mate the population together		
+		swap(population, buffer);		// swap buffers
+		clock_t end = std::clock();
+		float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
+		numOfGenerations += 1;
+		std::cout << "Average: " << averages[i] << std::endl;
+		std::cout << "Standard Deviation: " << deviations[i] << std::endl;
 
-			std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
+		std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
 
-		}
-
-		std::cout << "Number of Generations: " << numOfGenerations << std::endl;
-		break;
-
-	case 2:									 // PSO algorithm
-		init_global_best();					//initialize global best
-		PSO();
-		//sort_by_fitness<vector<Particle>,Particle>(particle_vector);
-		break;
 	}
+
+	std::cout << "Number of Generations: " << numOfGenerations << std::endl;
+		
+
 
 
 	const sec duration = clock::now() - before;

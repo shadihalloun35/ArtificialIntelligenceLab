@@ -1,6 +1,7 @@
+/**
+
 #include "Particle.h"
 #include "Genetic5.h"
-
 
 
 Particle::Particle()
@@ -62,6 +63,7 @@ string Particle::get_velocity()
 	return velocity;
 }
 
+
 int Particle::calc_fitness_particle(string citizenStr)
 {
 	string target = GA_TARGET;
@@ -104,4 +106,4 @@ int Particle::calc_fitness_particle(string citizenStr)
 }
 
 
-
+*/
