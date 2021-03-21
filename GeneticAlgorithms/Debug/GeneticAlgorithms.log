@@ -1,4 +1,4 @@
 ﻿  NQueens.cpp
 c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\nqueens.cpp(272): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\nqueens.cpp(578): warning C4101: 'operatorPoint': unreferenced local variable
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\nqueens.cpp(580): warning C4101: 'operatorPoint': unreferenced local variable
   GeneticAlgorithms.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe

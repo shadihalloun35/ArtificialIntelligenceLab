@@ -24,7 +24,7 @@
 #define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
-#define N	10						// for the size of the board
+#define N	12						// for the size of the board
 #define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
 #define MUTATION	1				// for mutation method (exchange mutation or insertion mutation)
 
@@ -445,13 +445,15 @@ int* selectParents(ga_vector &population)
 
 void PMX(ga_vector &population,ga_struct &member1, ga_struct &member2, int spos, int i1, int i2)
 {
-	int temp1 = member1.board[spos], temp2 = member2.board[spos];	
 
 	for (int i = 0; i < N; i++)	{											// producing the children as is their parents
 		member1.board[i] = population[i1].board[i];
 		member2.board[i] = population[i2].board[i];
-
+		
 	}
+
+	int temp1 = member1.board[spos], temp2 = member2.board[spos];
+
 
 	for (int i = 0; i < N; i++)											   // crossover
 	{
