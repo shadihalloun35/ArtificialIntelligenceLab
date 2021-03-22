@@ -1,4 +1,6 @@
-﻿  NQueens.cpp
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\nqueens.cpp(328): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\nqueens.cpp(617): warning C4018: '<': signed/unsigned mismatch
+﻿  Knapsack.cpp
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\knapsack.cpp(328): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\knapsack.cpp(617): warning C4018: '<': signed/unsigned mismatch
+  NQueens.cpp
+  Generating Code...
   GeneticAlgorithms.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe

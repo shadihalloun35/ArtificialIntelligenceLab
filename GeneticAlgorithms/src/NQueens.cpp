@@ -2,7 +2,7 @@
 //
 
 #pragma warning(disable:4786)		// disable debug warning
-
+/**
 #include <iostream>					// for cout etc.
 #include <vector>					// for vector class
 #include <string>					// for string class
@@ -26,7 +26,7 @@
 #define N	8						// for the size of the board
 #define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
 #define MUTATION	2				// for mutation method (exchange mutation or insertion mutation)
-#define algorithm	2				// The given algorithm or minimal conflict
+#define algorithm	1				// The given algorithm or minimal conflict
 
 
 
@@ -701,3 +701,4 @@ int main()
 
 	return 0;
 }
+*/
