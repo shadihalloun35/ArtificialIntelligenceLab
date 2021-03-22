@@ -1,4 +1,4 @@
-
+/**
 #include "Particle.h"
 #include "Genetic5.h"
 
@@ -103,6 +103,7 @@ int Particle::calc_fitness_particle(string citizenStr)
 	return fitness;
 
 }
+*/
 
 
 

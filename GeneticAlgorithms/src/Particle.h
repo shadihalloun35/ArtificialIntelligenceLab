@@ -1,8 +1,7 @@
-
 #pragma once
 #pragma warning(disable:4786)		// disable debug warning
 #define GA_TARGET		std::string("Hello world!")
-
+/**
 #include <string>					// for string class
 #include <iostream>					// for cout etc.
 using namespace std;				// polluting global namespace, but hey...
@@ -37,3 +36,5 @@ private:
 	string velocity;			     // its velocity
 };
 
+
+*/

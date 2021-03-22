@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Genetic5.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\NQueens.cpp" />
     <ClCompile Include="src\Particle.cpp" />
   </ItemGroup>

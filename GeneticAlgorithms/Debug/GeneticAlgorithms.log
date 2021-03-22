@@ -1,7 +1,4 @@
-﻿  Genetic5.cpp
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\genetic5.cpp(537): warning C4244: 'argument': conversion from 'double' to '_Elem', possible loss of data
-          with
-          [
-              _Elem=char
-          ]
+﻿  NQueens.cpp
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\nqueens.cpp(328): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\nqueens.cpp(617): warning C4018: '<': signed/unsigned mismatch
   GeneticAlgorithms.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe

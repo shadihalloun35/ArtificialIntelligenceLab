@@ -1,7 +1,7 @@
 // Genetic5.cpp : Defines the entry point for the console application.
 //
 
-
+/**
 #pragma warning(disable:4786)		// disable debug warning
 
 #include <iostream>					// for cout etc.
@@ -26,7 +26,7 @@
 #define W	0.5						// for Inertia
 #define algorithm	1				// The given algorithm or PSO
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
-#define SELECTION	3				// for selecting parents method
+#define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
 
@@ -179,7 +179,7 @@ void calc_fitness(ga_vector &population)
 template <class  S>
 bool fitness_sort(S x, S y)
 {
-	
+
 	if (is_same<S, Particle>::value == true)					// for particles, fitness variable is private
 	{
 		//cout << "a";
@@ -190,7 +190,7 @@ bool fitness_sort(S x, S y)
 
 }
 
-template <class  T,class S>
+template <class  T, class S>
 inline void sort_by_fitness(T &population)
 {
 	sort(population.begin(), population.end(), fitness_sort<S>);
@@ -228,13 +228,13 @@ int* Naïve()
 	return parents;
 }
 
-int* RWS(ga_vector &population,int *points, int* newFitness)
+int* RWS(ga_vector &population, int *points, int* newFitness)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 	int *parents = new int[numOfParents];									// the selected parents
-	
-	 
+
+
 	int* sumFitness = new int[GA_POPSIZE];								    // sum of the fitness till index i
 
 	sumFitness[0] = newFitness[0];
@@ -247,10 +247,20 @@ int* RWS(ga_vector &population,int *points, int* newFitness)
 
 		while (1)
 		{
-			if(sumFitness[j] >= *(points + i))
+			if (sumFitness[j] >= *(points + i))
 				break;
 			j++;
+
+			if (j > GA_POPSIZE)
+
+			{
+				j = GA_POPSIZE;
+				break;
+			}
 		}
+
+		if (j > GA_POPSIZE)
+			j = GA_POPSIZE;
 
 		*(parents + i) = j;
 	}
@@ -260,7 +270,7 @@ int* RWS(ga_vector &population,int *points, int* newFitness)
 }
 
 
-int* SUS(ga_vector &population,long totalFitness,int* newFitness)
+int* SUS(ga_vector &population, long totalFitness, int* newFitness)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
@@ -273,7 +283,7 @@ int* SUS(ga_vector &population,long totalFitness,int* newFitness)
 		*(points + i) = start + (i * distance);		        // from 0 to total fitness with constant steps. 
 	}
 
-	return RWS(population, points,newFitness);								   
+	return RWS(population, points, newFitness);
 
 }
 
@@ -352,7 +362,7 @@ int* Aging(ga_vector &population)
 		while (1)
 		{
 			parents[i] = rand() % GA_POPSIZE;
-			
+
 			if (population[parents[i]].age > 0)
 				break;
 		}
@@ -375,7 +385,7 @@ int* selectParents(ga_vector &population)
 		newFitness[i] = ((-1)*(population[i].fitness) + population[GA_POPSIZE - 1].fitness);
 	}
 
-	long totalFitness = 0; 
+	long totalFitness = 0;
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		totalFitness += newFitness[i];
 	}
@@ -419,7 +429,7 @@ void mate(ga_vector &population, ga_vector &buffer)
 {
 
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
-	int tsize = GA_TARGET.size(), spos,spos2, i1, i2;
+	int tsize = GA_TARGET.size(), spos, spos2, i1, i2;
 	int *parents = selectParents(population);
 	elitism(population, buffer, esize);
 
@@ -451,7 +461,7 @@ void mate(ga_vector &population, ga_vector &buffer)
 			spos = rand() % tsize;
 			spos2 = rand() % tsize;
 
-			buffer[i].str = population[i1].str.substr(0, std::min(spos,spos2)) +
+			buffer[i].str = population[i1].str.substr(0, std::min(spos, spos2)) +
 				population[i2].str.substr(std::min(spos, spos2), std::max(spos, spos2) - std::min(spos, spos2)) +
 				population[i1].str.substr(std::max(spos, spos2), tsize - std::max(spos, spos2));
 
@@ -536,7 +546,7 @@ void PSO()
 					+ C1 * r1 * (particle_vector[i].get_localBest()[j] - particle_vector[i].get_str()[j])
 					+ C2 * r2 * (globalBest[j] - particle_vector[i].get_str()[j]);
 
-				myStr += particle_vector[i].get_str()[j] + myVelocity[j]; 
+				myStr += particle_vector[i].get_str()[j] + myVelocity[j];
 
 			}
 
@@ -630,7 +640,7 @@ int main()
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
 	srand(unsigned(time(NULL)));
-	
+
 	switch (algorithm)
 	{
 	case 1:
@@ -643,7 +653,7 @@ int main()
 
 			clock_t begin = std::clock();		// for clock ticks
 			calc_fitness(*population);		// calculate fitness using the given heuristic
-			sort_by_fitness<vector<ga_struct>,ga_struct>(*population);	// sort them
+			sort_by_fitness<vector<ga_struct>, ga_struct>(*population);	// sort them
 			print_best(*population);		// print the best one
 			if ((*population)[0].fitness == 0) break;
 
@@ -669,7 +679,7 @@ int main()
 		break;
 	}
 
-	
+
 	const sec duration = clock::now() - before;
 	std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;
 
@@ -678,3 +688,4 @@ int main()
 
 	return 0;
 }
+*/
