@@ -20,12 +20,12 @@
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
 #define GA_TARGET		std::string("Hello world!")
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
-#define SELECTION	1				// for selecting parents method
+#define SELECTION	2				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
 #define N	10						// number of items
 #define CROSSOVER	1				// cross over method ( one point crossover ,two point crossover or uniform crossover)
-#define MAX_WEIGHT	165				// weight
+#define MAX_WEIGHT	200				// weight
 
 int weights[] = { 23,31,29,44,53,38,63,85,89,82 };  //array that stores the weight of each item
 int profits[] = { 92,57,49,68,60,43,67,84,87,72 };  //array that stores the profit of each item
@@ -545,7 +545,7 @@ inline void print_best(ga_vector &gav)
 	cout << "Best: ";
 	printSack(gav[0].sack);
 	cout << "fitness: (" << gav[0].fitness << ")";
-	cout << ", Weight:  (" << gav[0].weight << ")" << endl;
+	cout << " Weight:  (" << gav[0].weight << ")" << endl;
 
 }
 
@@ -575,7 +575,7 @@ int main()
 		calc_fitness(*population);													// calculate fitness using the given heuristic
 		sort_by_fitness<vector<ga_struct>, ga_struct>(*population);					// sort them
 		print_best(*population);													// print the best one
-		if ((*population)[0].fitness == MAX_WEIGHT) break;
+		if ((*population)[0].weight == MAX_WEIGHT) break;
 
 		mate(*population, *buffer);													// mate the population together		
 		swap(population, buffer);													// swap buffers
