@@ -1,6 +1,6 @@
-// NQueens.cpp : Defines the entry point for the console application.
+// Knapsack.cpp : Defines the entry point for the console application.
 //
-
+/**/
 #pragma warning(disable:4786)		// disable debug warning
 
 #include <iostream>					// for cout etc.
@@ -23,15 +23,12 @@
 #define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
-#define N	8						// for the size of the board
-#define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
-#define MUTATION	2				// for mutation method (exchange mutation or insertion mutation)
-#define algorithm	2				// The given algorithm or minimal conflict
+#define MAX_WEIGHT	165				// weight
+#define N	10						// number of items
+#define CROSSOVER	1				// cross over method ( one point crossover ,two point crossover or uniform crossover)
 
-#define MAX_WEIGHT	165			//weight
-#define N	10			        //number of items
 int weights[] = { 23,31,29,44,53,38,63,85,89,82 };  //array that stores the weight of each item
-int profits[] = { 92,57,49,68,60,43,67,84,87,72 };//array that stores the profit of each item
+int profits[] = { 92,57,49,68,60,43,67,84,87,72 };  //array that stores the profit of each item
 
 
 
@@ -117,9 +114,9 @@ void init_population(ga_vector &population,
 }
 
 
-void printBoard(int* board) {
+void printSack(int* sack) {
 	for (int i = 0; i < N; i++) {
-		cout << board[i] << " ";
+		cout << sack[i] << " ";
 	}
 }
 
@@ -132,12 +129,10 @@ void calc_fitness(ga_vector &population)
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		fitness = 0;
-		for (int j = 0; j < N - 1; j++) {
-			for (int k = j + 1; k < N; k++)
-			{
-				if ((k - j) == abs(population[i].board[j] - population[i].board[k]))
-					fitness += 1;
-			}
+		for (int j = 0; j < N ; j++) {
+			
+			if (population[i].sack[j] == 1)						// higher fitness means better 
+				fitness += profits[j];
 		}
 
 		population[i].fitness = fitness;
@@ -156,29 +151,11 @@ void calc_fitness(ga_vector &population)
 	deviations.push_back(deviation);
 }
 
-void game_calc_fitness(ga_struct &game)
-{
-	unsigned int fitness;
-	fitness = 0;
-	for (int j = 0; j < N - 1; j++) {
-		for (int k = j + 1; k < N; k++)
-		{
-			if (game.board[j] == game.board[k])
-				fitness++;
-
-			if ((k - j) == abs(game.board[j] - game.board[k]))
-				fitness += 1;
-		}
-	}
-	game.fitness = fitness;
-}
-
-
 template <class  S>
 bool fitness_sort(S x, S y)
 {
 
-	return (x.fitness < y.fitness);
+	return (x.fitness > y.fitness);
 }
 
 template <class  T, class S>
@@ -191,75 +168,31 @@ void elitism(ga_vector &population,
 	ga_vector &buffer, int esize)
 {
 	for (int i = 0; i < esize; i++) {
-		buffer[i].board = population[i].board;
+		buffer[i].sack = population[i].sack;
 		buffer[i].fitness = population[i].fitness;
+		buffer[i].weight = population[i].weight;
 		buffer[i].age += 1;
 	}
 }
 
-int *swapIndecies(int * arr, int ipos1, int ipos2)
-{
-	int temp = *(arr + ipos1);
-	*(arr + ipos1) = *(arr + ipos2);
-	*(arr + ipos2) = temp;
-
-	return arr;
-}
-
-void exchangeMutation(ga_struct &member)
-{
-	int ipos1 = rand() % N;
-	int ipos2 = rand() % N;
-
-	member.board = swapIndecies(member.board, ipos1, ipos2);
-}
-
-void insertionMutation(ga_struct &member)
-{
-	int ipos1 = rand() % N;
-	int temp = ipos1;
-	int ipos2 = rand() % N;
-
-	ipos1 = min(ipos1, ipos2), ipos2 = max(temp, ipos2);
-
-	int * myArr = new int[N];
-
-	for (int i = 0; i < ipos1; i++)
-	{
-		*(myArr + i) = member.board[i];
-	}
-
-	temp = *(myArr + ipos1);
-
-	for (int i = ipos1; i < ipos2; i++)
-	{
-		*(myArr + i) = member.board[i + 1];
-	}
-
-	*(myArr + ipos2) = temp;
-
-	for (int i = ipos2 + 1; i < N; i++)
-	{
-		*(myArr + i) = member.board[i];
-	}
-
-
-}
 
 void mutate(ga_struct &member)
 {
-	switch (MUTATION)
+	int ipos = rand() % N;										// choosing randomly an item to remove or add
+
+	if (member.sack[ipos] == 1)
 	{
-	case 1:
-		exchangeMutation(member);			// exchange (swap) mutation
-		break;
+		member.sack[ipos] = 0;
+		member.weight -= weights[ipos];
+	}
 
-	case 2:
-		insertionMutation(member);		   // insertion mutation
-		break;
+	else if (member.sack[ipos] == 0)
+	{
+		member.sack[ipos] = 1;
+		member.weight += weights[ipos];
 
-	default:
-		break;
+		if (member.weight > MAX_WEIGHT)
+			remove_items(member);
 	}
 
 }
@@ -268,10 +201,6 @@ int* Naïve()
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-
-	if (CROSSOVER == 1)										// this method produces 2 children instead of one child
-		numOfParents = (GA_POPSIZE - esize);
-
 	int *parents = new int[numOfParents];
 
 	for (int i = 0; i < numOfParents; i++) {
@@ -285,9 +214,6 @@ int* RWS(ga_vector &population, int *points)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-
-	if (CROSSOVER == 1)								  // this method produces 2 children instead of one child
-		numOfParents = (GA_POPSIZE - esize);
 
 	int *parents = new int[numOfParents];			 // the selected parents
 
@@ -325,9 +251,6 @@ int* SUS(ga_vector &population, int totalFitness)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-
-	if (CROSSOVER == 1)									// this method produces 2 children instead of one child
-		numOfParents = (GA_POPSIZE - esize);
 
 	int *parents = new int[numOfParents];			    // the selected parents
 	int distance = totalFitness / numOfParents;	        // distance between the pointers
@@ -378,9 +301,6 @@ int* Tournament(ga_vector &population)
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 
-	if (CROSSOVER == 1)							    // this method produces 2 children instead of one child
-		numOfParents = (GA_POPSIZE - esize);
-
 	int *parents = new int[numOfParents];			// the selected parents
 	int* players = new int[K];						// K players in the tournament
 
@@ -399,11 +319,8 @@ int* Tournament(ga_vector &population)
 int* Aging(ga_vector &population)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
-	int tsize = GA_TARGET.size();
+	int tsize = N;
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-
-	if (CROSSOVER == 1)								// this method produces 2 children instead of one child
-		numOfParents = (GA_POPSIZE - esize);
 
 	int *parents = new int[numOfParents];			// the selected parents
 
@@ -414,11 +331,17 @@ int* Aging(ga_vector &population)
 			citizen.fitness = 0;
 			citizen.age = 0;										//reset age
 
-			for (int j = 0; j < tsize; j++) {
-				citizen.board[j] = j;
-			}
 
-			random_shuffle(citizen.board, citizen.board + N);
+			citizen.sack[i] = rand() % 2;    
+
+			if (citizen.sack[i] == 1)
+				citizen.weight += weights[i];
+		
+
+			if (citizen.weight > MAX_WEIGHT)
+			{
+				remove_items(citizen);
+			}
 
 			population[i] = citizen;
 		}
@@ -445,9 +368,6 @@ int* selectParents(ga_vector &population)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-
-	if (CROSSOVER == 1)										// this method produces 2 children instead of one child
-		numOfParents = (GA_POPSIZE - esize);
 
 	int *parents = new int[numOfParents];			// the selected parents
 	int *points = new int[numOfParents];			// list of (sorted)random numbers from 0 to the total fitness
@@ -491,115 +411,94 @@ int* selectParents(ga_vector &population)
 	return parents;
 }
 
-void PMX(ga_vector &population, ga_struct &member1, ga_struct &member2, int spos, int i1, int i2)
+void onePointCrossover(ga_vector &population, ga_struct &member1,int spos,  int i1, int i2)
 {
-
-	for (int i = 0; i < N; i++) {											// producing the children as is their parents
-		member1.board[i] = population[i1].board[i];
-		member2.board[i] = population[i2].board[i];
-
-	}
-
-	int temp1 = member1.board[spos], temp2 = member2.board[spos];
-
-
-	for (int i = 0; i < N; i++)											   // crossover
+	for (int i = 0; i < spos; i++)
 	{
-		if (member1.board[i] == temp2)
-			member1.board[i] = temp1;
-
-		if (member2.board[i] == temp1)
-			member2.board[i] = temp2;
+		member1.sack[i] = population[i1].sack[i];
 	}
-	member1.board[spos] = temp2;
-	member2.board[spos] = temp1;
-
+	for (int i = spos; i < N; i++)
+	{
+		member1.sack[i] = population[i2].sack[i];
+	}
 }
 
-void OX(ga_vector &population, ga_struct &member1, int i1, int i2)
+void twoPointCrossover(ga_vector &population, ga_struct &member1, int spos,int spos2, int i1, int i2)
 {
-
-	int *tempArray = new int[N];									// the first 4 elements of the array
-	for (int i = 0; i < N; i++)									// will be our random indices to pick
+	
+	for (int i = 0; i < std::min(spos, spos2); i++)
 	{
-		tempArray[i] = i;
-
+		member1.sack[i] = population[i1].sack[i];
 	}
-
-	random_shuffle(tempArray, tempArray + N);
-
-	sort(tempArray + N / 2, tempArray + N);
-
-	int pointer = N / 2;												// the index to fill
-	bool flag;															// to break loop
-
-	for (int i = 0; i < N; i++)									        // producing the child as is the first parents
+	for (int i = std::min(spos, spos2); i < std::max(spos, spos2); i++)
 	{
-		member1.board[i] = population[i1].board[i];
+		member1.sack[i] = population[i2].sack[i];
 	}
-
-	for (int i = 0; i < N; i++)									        // crossover
+	for (int i = std::max(spos, spos2); i < N; i++)
 	{
-		flag = false;
+		member1.sack[i] = population[i1].sack[i];
+	}
+}
 
-		for (int j = 0; j < N / 2; j++)
+void uniformCrossover(ga_vector &population, ga_struct &member1, int i1, int i2)
+{
+	for (int i = 0; i < N; i++)
+	{
+		if (rand() % 2 == 0)
 		{
-			if (population[i2].board[i] == population[i1].board[tempArray[j]])
-			{
-				flag = true;
-				break;
-			}
-
+			member1.sack[i] = population[i1].sack[i];
 		}
 
-		if (flag == true) continue;
-
-		member1.board[tempArray[pointer]] = population[i2].board[i];
-		pointer++;
+		if (rand() % 2 == 1)
+		{
+			member1.sack[i] = population[i2].sack[i];
+		}
 	}
-
 }
 
 void mate(ga_vector &population, ga_vector &buffer)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
-	int tsize = GA_TARGET.size(), spos, i1, i2;
+	int tsize = N, spos,spos2, i1, i2;
 	int *parents = selectParents(population);
 	elitism(population, buffer, esize);
 
 
 	switch (CROSSOVER) {
 
-	case 1:															// PMX crossover
-
-		for (int i = esize; i < GA_POPSIZE; i = i + 2) {
-			i1 = parents[i - esize];
-			i2 = parents[i - esize + 1];
-			spos = rand() % tsize;
-
-			PMX(population, buffer[i], buffer[i + 1], spos, i1, i2);
-
-			if (rand() < GA_MUTATION) mutate(buffer[i]);
-			if (rand() < GA_MUTATION) mutate(buffer[i + 1]);
-
-			buffer[i].age = 0;
-			buffer[i + 1].age = 0;
-
-
-		}
-
-		break;
-
-	case 2:															// OX crossover
+	case 1:															// one point crossover
 
 		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = parents[i - esize];
-			i2 = parents[i - esize + 1];
-
-			OX(population, buffer[i], i1, i2);
-
+			i1 = parents[2 * (i - esize)];
+			i2 = parents[2 * (i - esize) + 1];
+			spos = rand() % tsize;
+			onePointCrossover(population, buffer[i], spos, i1, i2);
 			if (rand() < GA_MUTATION) mutate(buffer[i]);
+			buffer[i].age = 0;
 
+		}
+		break;
+
+	case 2:															// two point crossover
+
+		for (int i = esize; i < GA_POPSIZE; i++) {
+			i1 = parents[2 * (i - esize)];
+			i2 = parents[2 * (i - esize) + 1];
+			spos = rand() % tsize;
+			spos2 = rand() % tsize;
+			twoPointCrossover(population, buffer[i], spos, spos2, i1, i2);
+			if (rand() < GA_MUTATION) mutate(buffer[i]);
+			buffer[i].age = 0;
+		}
+		break;
+
+	case 3:															// uniform crossover
+
+		for (int i = esize; i < GA_POPSIZE; i++) {
+			i1 = parents[2 * (i - esize)];
+			i2 = parents[2 * (i - esize) + 1];
+			uniformCrossover(population, buffer[i], i1, i2);
+			if (rand() < GA_MUTATION) mutate(buffer[i]);
 			buffer[i].age = 0;
 		}
 		break;
@@ -611,8 +510,10 @@ void mate(ga_vector &population, ga_vector &buffer)
 inline void print_best(ga_vector &gav)
 {
 	cout << "Best: ";
-	printBoard(gav[0].board);
-	cout << " (" << gav[0].fitness << ")" << endl;
+	printSack(gav[0].sack);
+	cout << "fitness: (" << gav[0].fitness << ")" << endl;
+	cout << ", Weight:  (" << gav[0].weight << ")" << endl;
+
 }
 
 inline void swap(ga_vector *&population,
@@ -621,104 +522,41 @@ inline void swap(ga_vector *&population,
 	ga_vector *temp = population; population = buffer; buffer = temp;
 }
 
-void minimalConflict(ga_struct &game)
-{
-	int* randQueens = new int[N];
-	int queen = (rand() % N);
-	int previousFitness = game.fitness;
-	int previousQueen = game.board[queen];
-
-	for (int i = 0; i < N; i++) {
-		randQueens[i] = i;
-	}
-	random_shuffle(randQueens, randQueens + N);				//moving the queens
-
-	game.board[queen] = randQueens[0];
-	game_calc_fitness(game);
-
-	int currentFitness = game.fitness;
-	int chosenQueen = randQueens[0];
-
-	for (int i = 1; i < N; i++)									// making a move
-	{
-		game.board[queen] = randQueens[i];
-		game_calc_fitness(game);
-
-		if (game.fitness < currentFitness)						// good move
-		{
-			currentFitness = game.fitness;
-			chosenQueen = randQueens[i];
-		}
-	}
-
-	if (currentFitness >= previousFitness)						// bad move
-	{
-		game.board[queen] = previousQueen;
-		game_calc_fitness(game);
-	}
-
-	game.board[queen] = chosenQueen;
-	game_calc_fitness(game);									// updating the fitness
-}
 
 int main()
 {
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
-	const auto before = clock::now();				// for elapsed time
+	const auto before = clock::now();												// for elapsed time
 	int numOfGenerations = 0;
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
 	srand(unsigned(time(NULL)));
 
-	switch (algorithm)
-	{
-	case 1:
-		init_population(pop_alpha, pop_beta);
-		population = &pop_alpha;
-		buffer = &pop_beta;
-		for (int i = 0; i < GA_MAXITER; i++) {
+	init_population(pop_alpha, pop_beta);
+	population = &pop_alpha;
+	buffer = &pop_beta;
+	for (int i = 0; i < GA_MAXITER; i++) {
 
-			clock_t begin = std::clock();		// for clock ticks
-			calc_fitness(*population);		// calculate fitness using the given heuristic
-			sort_by_fitness<vector<ga_struct>, ga_struct>(*population);	// sort them
-			print_best(*population);		// print the best one
-			if ((*population)[0].fitness == 0) break;
+		clock_t begin = std::clock();												// for clock ticks
+		calc_fitness(*population);													// calculate fitness using the given heuristic
+		sort_by_fitness<vector<ga_struct>, ga_struct>(*population);					// sort them
+		print_best(*population);													// print the best one
+		if ((*population)[0].fitness == MAX_WEIGHT) break;
 
-			mate(*population, *buffer);		// mate the population together		
-			swap(population, buffer);		// swap buffers
-			clock_t end = std::clock();
-			float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
-			numOfGenerations += 1;
-			std::cout << "Average: " << averages[i] << std::endl;
-			std::cout << "Standard Deviation: " << deviations[i] << std::endl;
+		mate(*population, *buffer);													// mate the population together		
+		swap(population, buffer);													// swap buffers
+		clock_t end = std::clock();
+		float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
+		numOfGenerations += 1;
+		std::cout << "Average: " << averages[i] << std::endl;
+		std::cout << "Standard Deviation: " << deviations[i] << std::endl;
 
-			std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
-
-		}
-
-		std::cout << "Number of Generations: " << numOfGenerations << std::endl;
-		break;
-
-	case 2:
-
-		ga_struct game;
-		init_game(game);
-
-		for (int i = 0; i < GA_MAXITER; i++) {
-			if (game.fitness == 0) {
-				break;
-			}
-			minimalConflict(game);
-			numOfGenerations += 1;
-		}
-		printBoard(game.board);
-
-		std::cout << "Number of Generations: " << numOfGenerations << std::endl;
-		break;
+		std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
 
 	}
 
+	std::cout << "Number of Generations: " << numOfGenerations << std::endl;
 
 
 

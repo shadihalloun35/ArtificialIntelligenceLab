@@ -68,7 +68,7 @@ void init_game(ga_struct &game)				//for minConflict algorithm
 void init_population(ga_vector &population,
 	ga_vector &buffer)
 {
-	int tsize = GA_TARGET.size();
+	int tsize = N;
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 		ga_struct citizen;
@@ -369,7 +369,7 @@ int* Tournament(ga_vector &population)
 int* Aging(ga_vector &population)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
-	int tsize = GA_TARGET.size();
+	int tsize = N;
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 
 	if (CROSSOVER == 1)								// this method produces 2 children instead of one child
@@ -533,7 +533,7 @@ void OX(ga_vector &population, ga_struct &member1, int i1, int i2)
 void mate(ga_vector &population, ga_vector &buffer)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
-	int tsize = GA_TARGET.size(), spos, i1, i2;
+	int tsize = N, spos, i1, i2;
 	int *parents = selectParents(population);
 	elitism(population, buffer, esize);
 
@@ -563,8 +563,8 @@ void mate(ga_vector &population, ga_vector &buffer)
 	case 2:															// OX crossover
 
 		for (int i = esize; i < GA_POPSIZE; i++) {
-			i1 = parents[i - esize];
-			i2 = parents[i - esize + 1];
+			i1 = parents[2 * (i - esize)];
+			i2 = parents[2 * (i - esize) + 1];
 
 			OX(population, buffer[i], i1, i2);
 
