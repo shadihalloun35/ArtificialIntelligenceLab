@@ -14,7 +14,7 @@
 #include "Knapsack.h"
 
 #define GA_POPSIZE		1000		// ga population size
-#define GA_MAXITER		16384		// maximum iterations
+#define GA_MAXITER		50//16384		// maximum iterations
 #define GA_ELITRATE		0.10f		// elitism rate
 #define GA_MUTATIONRATE	0.25f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
@@ -421,6 +421,11 @@ void onePointCrossover(ga_vector &population, ga_struct &member1,int spos,  int 
 	{
 		member1.sack[i] = population[i2].sack[i];
 	}
+
+	if (member1.weight > MAX_WEIGHT)								// make sure the weight is valid
+	{
+		remove_items(member1);
+	}
 }
 
 void twoPointCrossover(ga_vector &population, ga_struct &member1, int spos,int spos2, int i1, int i2)
@@ -438,6 +443,11 @@ void twoPointCrossover(ga_vector &population, ga_struct &member1, int spos,int s
 	{
 		member1.sack[i] = population[i1].sack[i];
 	}
+
+	if (member1.weight > MAX_WEIGHT)								// make sure the weight is valid
+	{
+		remove_items(member1);
+	}
 }
 
 void uniformCrossover(ga_vector &population, ga_struct &member1, int i1, int i2)
@@ -453,6 +463,11 @@ void uniformCrossover(ga_vector &population, ga_struct &member1, int i1, int i2)
 		{
 			member1.sack[i] = population[i2].sack[i];
 		}
+	}
+
+	if (member1.weight > MAX_WEIGHT)								// make sure the weight is valid
+	{
+		remove_items(member1);
 	}
 }
 
@@ -511,7 +526,7 @@ inline void print_best(ga_vector &gav)
 {
 	cout << "Best: ";
 	printSack(gav[0].sack);
-	cout << "fitness: (" << gav[0].fitness << ")" << endl;
+	cout << "fitness: (" << gav[0].fitness << ")";
 	cout << ", Weight:  (" << gav[0].weight << ")" << endl;
 
 }
