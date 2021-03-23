@@ -13,8 +13,8 @@
 #include <ctime>					// for clock ticks
 #include "Knapsack.h"
 
-#define GA_POPSIZE		1000		// ga population size
-#define GA_MAXITER		50//16384		// maximum iterations
+#define GA_POPSIZE		1024		// ga population size
+#define GA_MAXITER		1024		// maximum iterations
 #define GA_ELITRATE		0.10f		// elitism rate
 #define GA_MUTATIONRATE	0.25f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
@@ -23,9 +23,9 @@
 #define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
-#define MAX_WEIGHT	165				// weight
 #define N	10						// number of items
 #define CROSSOVER	1				// cross over method ( one point crossover ,two point crossover or uniform crossover)
+#define MAX_WEIGHT	165				// weight
 
 int weights[] = { 23,31,29,44,53,38,63,85,89,82 };  //array that stores the weight of each item
 int profits[] = { 92,57,49,68,60,43,67,84,87,72 };  //array that stores the profit of each item
@@ -57,7 +57,7 @@ int Knapsack::getHueristic()				// get the current heuristic
 }
 
 void remove_items(ga_struct &citizen) {
-
+	
 	int index = 0;
 	int* randomStuff = new int[N];
 
@@ -68,7 +68,7 @@ void remove_items(ga_struct &citizen) {
 	random_shuffle(randomStuff, randomStuff + N);
 	while (1) {
 
-		if (citizen.weight > MAX_WEIGHT)
+		if (citizen.weight <= MAX_WEIGHT)
 			break;
 
 		while (index < N) {
@@ -175,6 +175,15 @@ void elitism(ga_vector &population,
 	}
 }
 
+void updateWeight(ga_struct &citizen) {
+
+	int weight = 0;
+	for (int i = 0; i < N; i++) {
+		if (citizen.sack[i] == 1)
+			weight += weights[i];
+	}
+	citizen.weight = weight;
+}
 
 void mutate(ga_struct &member)
 {
@@ -191,10 +200,12 @@ void mutate(ga_struct &member)
 		member.sack[ipos] = 1;
 		member.weight += weights[ipos];
 
-		if (member.weight > MAX_WEIGHT)
-			remove_items(member);
 	}
 
+	updateWeight(member);										    // updating the current weight
+
+	if (member.weight > MAX_WEIGHT)
+		remove_items(member);
 }
 
 int* Naïve()
@@ -411,6 +422,7 @@ int* selectParents(ga_vector &population)
 	return parents;
 }
 
+
 void onePointCrossover(ga_vector &population, ga_struct &member1,int spos,  int i1, int i2)
 {
 	for (int i = 0; i < spos; i++)
@@ -421,6 +433,8 @@ void onePointCrossover(ga_vector &population, ga_struct &member1,int spos,  int 
 	{
 		member1.sack[i] = population[i2].sack[i];
 	}
+
+	updateWeight(member1);										    // updating the current weight
 
 	if (member1.weight > MAX_WEIGHT)								// make sure the weight is valid
 	{
@@ -444,6 +458,8 @@ void twoPointCrossover(ga_vector &population, ga_struct &member1, int spos,int s
 		member1.sack[i] = population[i1].sack[i];
 	}
 
+	updateWeight(member1);										    // updating the current weight
+
 	if (member1.weight > MAX_WEIGHT)								// make sure the weight is valid
 	{
 		remove_items(member1);
@@ -464,6 +480,8 @@ void uniformCrossover(ga_vector &population, ga_struct &member1, int i1, int i2)
 			member1.sack[i] = population[i2].sack[i];
 		}
 	}
+
+	updateWeight(member1);										    // updating the current weight
 
 	if (member1.weight > MAX_WEIGHT)								// make sure the weight is valid
 	{
