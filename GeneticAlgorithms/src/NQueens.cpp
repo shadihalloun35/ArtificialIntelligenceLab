@@ -1,8 +1,8 @@
 // NQueens.cpp : Defines the entry point for the console application.
 //
 
+
 #pragma warning(disable:4786)		// disable debug warning
-/**
 #include <iostream>					// for cout etc.
 #include <vector>					// for vector class
 #include <string>					// for string class
@@ -13,20 +13,20 @@
 #include <ctime>					// for clock ticks
 #include "NQueens.h"
 
-#define GA_POPSIZE		1000		// ga population size
+#define GA_POPSIZE		2048		// ga population size
 #define GA_MAXITER		16384		// maximum iterations
 #define GA_ELITRATE		0.10f		// elitism rate
 #define GA_MUTATIONRATE	0.25f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
 #define GA_TARGET		std::string("Hello world!")
 #define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
-#define SELECTION	1				// for selecting parents method
+#define SELECTION	4				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
-#define N	8						// for the size of the board
+#define N	100						// for the size of the board
 #define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
 #define MUTATION	2				// for mutation method (exchange mutation or insertion mutation)
-#define algorithm	1				// The given algorithm or minimal conflict
+#define algorithm	2				// The given algorithm or minimal conflict
 
 
 
@@ -75,10 +75,10 @@ void init_population(ga_vector &population,
 		citizen.fitness = 0;
 		citizen.age = 1;
 
-		for (int j = 0; j < N; j++)
-			citizen.board[j] = j;
+		for (int j = 0; j < N; j++)											// making sure we don't have more than two queens
+			citizen.board[j] = j;											// in the same row or column
 
-		random_shuffle(citizen.board, citizen.board + N);
+		random_shuffle(citizen.board, citizen.board + N);					// random permutation	
 
 		population.push_back(citizen);
 	}
@@ -251,71 +251,66 @@ int* Naïve()
 	return parents;
 }
 
-int* RWS(ga_vector &population, int *points)
+int* RWS(ga_vector &population, int *points, int* newFitness)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-
-	if (CROSSOVER == 1)								  // this method produces 2 children instead of one child
+	if (CROSSOVER == 1)										// this method produces 2 children instead of one child
 		numOfParents = (GA_POPSIZE - esize);
 
-	int *parents = new int[numOfParents];			 // the selected parents
+	int *parents = new int[numOfParents];									// the selected parents
+	int* sumFitness = new int[GA_POPSIZE];								    // sum of the fitness till index i
+	sumFitness[0] = newFitness[0];
+	for (int i = 1; i < GA_POPSIZE; i++) {
+		sumFitness[i] = sumFitness[i - 1] + newFitness[i];
 
-
+	}
 	for (int i = 0; i < numOfParents; i++) {		// Roulette Wheel Selection 
-		int sumFitness = 0;
 		int j = 0;
-
 		while (1)
 		{
-			sumFitness += population[j].fitness;
-			if (sumFitness >= *(points + i))
+			if (sumFitness[j] >= *(points + i))
 				break;
 			j++;
 
-			if (j > GA_POPSIZE)
+			if (j >= GA_POPSIZE)
 
 			{
-				j = GA_POPSIZE;
+				j = GA_POPSIZE-1;
 				break;
 			}
 		}
-
-		if (j > GA_POPSIZE)
-			j = GA_POPSIZE;
-
+		if (j >= GA_POPSIZE)
+			j = GA_POPSIZE-1;
 		*(parents + i) = j;
 	}
-
 	return parents;
-
 }
 
-int* SUS(ga_vector &population, int totalFitness)
+int* SUS(ga_vector &population, long totalFitness, int* newFitness)
 {
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
-
-	if (CROSSOVER == 1)									// this method produces 2 children instead of one child
+	if (CROSSOVER == 1)										// this method produces 2 children instead of one child
 		numOfParents = (GA_POPSIZE - esize);
 
 	int *parents = new int[numOfParents];			    // the selected parents
 	int distance = totalFitness / numOfParents;	        // distance between the pointers
 	int start = rand() % (distance + 1);			    // random number between 0 and distance
-	int *points = new int[numOfParents];		        // list of (sorted)random numbers from 0 to the total fitness
+	int *points = new int[numOfParents];		    // list of (sorted)random numbers from 0 to the total fitness
 
 	for (int i = 0; i < numOfParents; i++) {				// points is a (sorted) list of	random numbers														   
 		*(points + i) = start + (i * distance);		        // from 0 to total fitness with constant steps. 
 	}
 
-	return RWS(population, points);
+	return RWS(population, points, newFitness);
 
 }
 
 
 void Scaling(ga_vector &population)
 {
-	unsigned int a = population[0].fitness, b = population[0].fitness;					//our constants
+	unsigned int a = population[0].fitness, b = population[0].fitness;						  // our constants
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
@@ -325,7 +320,7 @@ void Scaling(ga_vector &population)
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
-		population[i].fitness = 0.2 * population[i].fitness + 10;				// linear transformation
+		population[i].fitness = static_cast<unsigned int>(0.2 * population[i].fitness + 10); // linear transformation
 	}
 
 }
@@ -421,10 +416,15 @@ int* selectParents(ga_vector &population)
 
 	int *parents = new int[numOfParents];			// the selected parents
 	int *points = new int[numOfParents];			// list of (sorted)random numbers from 0 to the total fitness
-	int totalFitness = 0;
 
+	int* newFitness = new int[GA_POPSIZE];									// the original fitness doesn't work good
 	for (int i = 0; i < GA_POPSIZE; i++) {
-		totalFitness += population[i].fitness;
+		newFitness[i] = ((-1)*(population[i].fitness) + population[GA_POPSIZE - 1].fitness);
+	}
+
+	long totalFitness = 0;
+	for (int i = 0; i < GA_POPSIZE; i++) {
+		totalFitness += newFitness[i];
 	}
 
 	switch (SELECTION)
@@ -441,11 +441,11 @@ int* selectParents(ga_vector &population)
 			*(points + i) = rand() % (totalFitness + 1);		   // random numbers from 0 to total fitness. 
 		}
 		sort(points, points + numOfParents);						// sorting the array
-		parents = RWS(population, points);								   // RWS method for selecting parents
+		parents = RWS(population, points, newFitness);						  // RWS method for selecting parents
 		break;
 
 	case 3:								// SUS method for selecting parents
-		parents = SUS(population, totalFitness);
+		parents = SUS(population, totalFitness, newFitness);
 		break;
 
 	case 4:								// Tournament selection
@@ -701,4 +701,3 @@ int main()
 
 	return 0;
 }
-*/

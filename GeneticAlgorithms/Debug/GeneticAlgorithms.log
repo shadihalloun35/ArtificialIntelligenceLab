@@ -1,3 +1,6 @@
 ﻿  Knapsack.cpp
-c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\knapsack.cpp(292): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\knapsack.cpp(106): warning C4005: 'MAX_WEIGHT': macro redefinition
+  c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\knapsack.cpp(28): note: see previous definition of 'MAX_WEIGHT'
+c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\knapsack.cpp(107): warning C4005: 'N': macro redefinition
+  c:\artificialintelligencelab\artificialintelligencelab\geneticalgorithms\src\knapsack.cpp(26): note: see previous definition of 'N'
   GeneticAlgorithms.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\GeneticAlgorithms\Debug\GeneticAlgorithms.exe

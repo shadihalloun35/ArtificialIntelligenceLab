@@ -1,9 +1,8 @@
 // Genetic5.cpp : Defines the entry point for the console application.
 //
 
-/**
-#pragma warning(disable:4786)		// disable debug warning
 
+#pragma warning(disable:4786)		// disable debug warning
 #include <iostream>					// for cout etc.
 #include <vector>					// for vector class
 #include <string>					// for string class
@@ -21,11 +20,11 @@
 #define GA_MUTATIONRATE	0.25f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
 #define GA_TARGET		std::string("Hello world!")
-#define C1	1.5						// for exploration
-#define C2	1.5						// for exploitation
+#define C1	2						// for exploration
+#define C2	2					    // for exploitation
 #define W	0.5						// for Inertia
-#define algorithm	1				// The given algorithm or PSO
-#define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
+#define algorithm	2				// The given algorithm or PSO
+#define heuristic	2				// The Givin Hueristic or Bull's Eye Hueristic
 #define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
@@ -233,10 +232,7 @@ int* RWS(ga_vector &population, int *points, int* newFitness)
 	int esize = static_cast<int>(GA_POPSIZE * GA_ELITRATE);
 	int numOfParents = 2 * (GA_POPSIZE - esize);
 	int *parents = new int[numOfParents];									// the selected parents
-
-
 	int* sumFitness = new int[GA_POPSIZE];								    // sum of the fitness till index i
-
 	sumFitness[0] = newFitness[0];
 	for (int i = 1; i < GA_POPSIZE; i++) {
 		sumFitness[i] = sumFitness[i - 1] + newFitness[i];
@@ -244,29 +240,24 @@ int* RWS(ga_vector &population, int *points, int* newFitness)
 	}
 	for (int i = 0; i < numOfParents; i++) {		// Roulette Wheel Selection 
 		int j = 0;
-
 		while (1)
 		{
 			if (sumFitness[j] >= *(points + i))
 				break;
 			j++;
 
-			if (j > GA_POPSIZE)
+			if (j >= GA_POPSIZE)
 
 			{
-				j = GA_POPSIZE;
+				j = GA_POPSIZE-1;
 				break;
 			}
 		}
-
-		if (j > GA_POPSIZE)
-			j = GA_POPSIZE;
-
+		if (j >= GA_POPSIZE)
+			j = GA_POPSIZE-1;
 		*(parents + i) = j;
 	}
-
 	return parents;
-
 }
 
 
@@ -290,7 +281,7 @@ int* SUS(ga_vector &population, long totalFitness, int* newFitness)
 
 void Scaling(ga_vector &population)
 {
-	unsigned int a = population[0].fitness, b = population[0].fitness;					//our constants
+	unsigned int a = population[0].fitness, b = population[0].fitness;					     // our constants
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
@@ -300,7 +291,7 @@ void Scaling(ga_vector &population)
 
 	for (int i = 0; i < GA_POPSIZE; i++) {
 
-		population[i].fitness = a * population[i].fitness + b;				// linear transformation
+		population[i].fitness = static_cast<unsigned int>(0.2 * population[i].fitness + 10);// linear transformation
 	}
 
 }
@@ -382,6 +373,7 @@ int* selectParents(ga_vector &population)
 
 	int* newFitness = new int[GA_POPSIZE];									// the original fitness doesn't work good
 	for (int i = 0; i < GA_POPSIZE; i++) {
+
 		newFitness[i] = ((-1)*(population[i].fitness) + population[GA_POPSIZE - 1].fitness);
 	}
 
@@ -398,13 +390,13 @@ int* selectParents(ga_vector &population)
 
 	case 2:									//RWS + Scaling
 
-		//Scaling(population);			   // Linear scaling
+		Scaling(population);			   // Linear scaling
 
 		for (int i = 0; i < numOfParents; i++) {				   // points is a (sorted) list of																   
 			*(points + i) = rand() % (totalFitness + 1);		   // random numbers from 0 to total fitness. 
 		}
 		sort(points, points + numOfParents);					  // sorting the array
-		//parents = RWS(population,points);						  // RWS method for selecting parents
+		parents = RWS(population,points, newFitness);						  // RWS method for selecting parents
 		break;
 
 	case 3:								// SUS method for selecting parents
@@ -688,4 +680,3 @@ int main()
 
 	return 0;
 }
-*/
