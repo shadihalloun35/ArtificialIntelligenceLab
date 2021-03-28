@@ -1,24 +1,31 @@
-#include "problem.h"
+#include "Problem.h"
 
 
 // setters implementation
 
-void problem::setCapacity(int capacity)
+
+void Problem::Initialize(std::string fileName)
+{
+	Init::init_problem(fileName);
+
+}
+
+void Problem::setCapacity(int capacity)
 {
 	this->capacity = capacity;
 }
 
-void problem::setDimension(int dimension)
+void Problem::setDimension(int dimension)
 {
 	this->dimension = dimension;
 }
 
-void problem::setCoordinates(std::vector<vec2> coordinates)
+void Problem::setCoordinates(std::vector<vec2> coordinates)
 {
 	this->coordinates = coordinates;
 }
 
-void problem::setDemands(std::vector<vec2> demands)
+void Problem::setDemands(std::vector<vec2> demands)
 {
 	this->demands = demands;
 }
@@ -26,22 +33,22 @@ void problem::setDemands(std::vector<vec2> demands)
 
 // getters implementation
 
-int problem::getCapacity()
+int Problem::getCapacity()
 {
 	return capacity;
 }
 
-int problem::getDimension()
+int Problem::getDimension()
 {
 	return dimension;
 }
 
-std::vector<vec2> problem::getCoordinates()
+std::vector<vec2> Problem::getCoordinates()
 {
 	return coordinates;
 }
 
-std::vector<vec2> problem::getDemands()
+std::vector<vec2> Problem::getDemands()
 {
 	return demands;
 }

@@ -1,9 +1,16 @@
 #pragma once
 #include <vector>
 #include "vec2.h"
+#include "Init.h"
 
-class problem
+class Problem
 {
+
+public:
+
+	void Initialize(std::string fileName);					// initializing the problem
+
+
 	// setters
 
 	void setCapacity(int capacity);
