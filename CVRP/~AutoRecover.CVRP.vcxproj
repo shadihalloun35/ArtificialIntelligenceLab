@@ -115,10 +115,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\problem.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\problem.h" />
     <ClInclude Include="src\vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
