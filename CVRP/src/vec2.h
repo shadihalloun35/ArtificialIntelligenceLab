@@ -2,11 +2,11 @@
 
 class vec2 {
 
-private:
-	int x;
-	int y;
 
 public:
+
+	int x;
+	int y;
 
 	// methods we could use
 

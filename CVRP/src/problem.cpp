@@ -1,4 +1,5 @@
 #include "Problem.h"
+#include "Init.h"
 
 
 // setters implementation
@@ -6,8 +7,7 @@
 
 void Problem::Initialize(std::string fileName)
 {
-	Init::init_problem(fileName);
-
+	Init::LoadProblem(*this,fileName);
 }
 
 void Problem::setCapacity(int capacity)
@@ -20,12 +20,17 @@ void Problem::setDimension(int dimension)
 	this->dimension = dimension;
 }
 
+void Problem::setNumOfTrucks(int numOfTrucks)
+{
+	this->numOfTrucks = numOfTrucks;
+}
+
 void Problem::setCoordinates(std::vector<vec2> coordinates)
 {
 	this->coordinates = coordinates;
 }
 
-void Problem::setDemands(std::vector<vec2> demands)
+void Problem::setDemands(std::vector<int> demands)
 {
 	this->demands = demands;
 }
@@ -43,12 +48,17 @@ int Problem::getDimension()
 	return dimension;
 }
 
-std::vector<vec2> Problem::getCoordinates()
+int Problem::getNumOfTrucks()
+{
+	return numOfTrucks;
+}
+
+std::vector<vec2>& Problem::getCoordinates()
 {
 	return coordinates;
 }
 
-std::vector<vec2> Problem::getDemands()
+std::vector<int>& Problem::getDemands()
 {
 	return demands;
 }

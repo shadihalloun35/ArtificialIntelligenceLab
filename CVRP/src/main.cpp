@@ -18,18 +18,25 @@ void InitProblem()
 
 	case 1:
 		myProblem.Initialize("problem1.txt");
+		break;
 	case 2:
 		myProblem.Initialize("problem2.txt");
+		break;
 	case 3:
 		myProblem.Initialize("problem3.txt");
+		break;
 	case 4:
 		myProblem.Initialize("problem4.txt");
+		break;
 	case 5:
 		myProblem.Initialize("problem5.txt");
+		break;
 	case 6:
 		myProblem.Initialize("problem6.txt");
+		break;
 	case 7:
 		myProblem.Initialize("problem7.txt");
+		break;
 	
 	default:
 		break;
@@ -43,7 +50,7 @@ int main()
 	using sec = std::chrono::duration<double>;
 	const auto before = clock::now();				// for elapsed time
 	srand(unsigned(time(NULL)));
-	clock_t begin = std::clock();		// for clock ticks
+	clock_t begin = std::clock();					// for clock ticks
 	InitProblem();
 	clock_t end = std::clock();
 	float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;

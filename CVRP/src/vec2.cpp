@@ -36,4 +36,3 @@ float vec2::distance(vec2 v) const
 
 	return std::sqrt(diffX * diffX + diffY * diffY);
 }
-
