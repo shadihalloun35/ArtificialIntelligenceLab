@@ -29,6 +29,16 @@ vec2 & vec2::operator-=(vec2 & v)
 	return *this;
 }
 
+void vec2::setDemand(int demand)
+{
+	this->demand = demand;
+}
+
+int vec2::getDemand()
+{
+	return this->demand;
+}
+
 float vec2::distance(vec2 v) const
 {
 	float diffX = v.x - x;

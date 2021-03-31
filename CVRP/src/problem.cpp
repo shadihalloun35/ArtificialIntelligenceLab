@@ -30,12 +30,6 @@ void Problem::setCoordinates(std::vector<vec2> coordinates)
 	this->coordinates = coordinates;
 }
 
-void Problem::setDemands(std::vector<int> demands)
-{
-	this->demands = demands;
-}
-
-
 // getters implementation
 
 int Problem::getCapacity()
@@ -58,10 +52,6 @@ std::vector<vec2>& Problem::getCoordinates()
 	return coordinates;
 }
 
-std::vector<int>& Problem::getDemands()
-{
-	return demands;
-}
 
 
 

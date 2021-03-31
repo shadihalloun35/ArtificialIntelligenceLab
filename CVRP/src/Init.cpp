@@ -1,8 +1,9 @@
 #include "Init.h"
+#define NumOfTrucks		20
 
 void Init::LoadProblem(Problem &myProblem, std::string fileName)
 {
-	int lineNumber = 0, dimension = 0;
+	int lineNumber = 0, dimension = 0, index = 0;
 	std::string line;
 	std::ifstream fin;
 	std::string filePath("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CVRP\\problems\\");
@@ -10,15 +11,12 @@ void Init::LoadProblem(Problem &myProblem, std::string fileName)
 
 	while (fin) {
 
-		// Read a Line from File
-
-		getline(fin, line);
+		getline(fin, line);								// Read a Line from File
 		lineNumber += 1;
 
 		if (lineNumber == 2)
 		{
-			myProblem.setNumOfTrucks(20);
-
+			myProblem.setNumOfTrucks(NumOfTrucks);
 		}
 
 		if (lineNumber == 4)
@@ -31,7 +29,6 @@ void Init::LoadProblem(Problem &myProblem, std::string fileName)
 		{
 			int capacity = FindCapacity(line);
 			myProblem.setCapacity(capacity);
-
 		}
 
 		if (lineNumber >= 8 && lineNumber < 8 + dimension)
@@ -43,24 +40,18 @@ void Init::LoadProblem(Problem &myProblem, std::string fileName)
 		if (lineNumber > 8 + dimension && lineNumber <= 8 + dimension + dimension)
 		{
 			int myDemand = FindDemands(line);
-			myProblem.getDemands().push_back(myDemand);
+			myProblem.getCoordinates()[index].setDemand(myDemand);
+			index += 1;
 		}	
 	}
 
 	fin.close();
 }
 
-
-int Init::FindNumOfTrucks(std::string line)
-{
-	return 0;
-}
-
 int Init::FindDimension(std::string line)
 {
 	
 	std::size_t pos = line.find(":");				// position of ":" in line
-
 	std::string dim = line.substr(pos + 2);			// get from ":" to the end (':' not included)
 
 	return stoi(dim);
@@ -78,12 +69,9 @@ vec2 Init::FindCoordinates(std::string line)
 	
 	std::size_t pos = line.find(" ");					// position of "space" in line
 	std::string coordinate = line.substr(pos + 1);		// get the coordinates
-
 	pos = coordinate.find(" ");							// position of "space" in coordinate
-
 	int x = stoi(coordinate.substr(0, pos));
 	int y = stoi(coordinate.substr(pos + 1));
-
 	vec2 myCoordinate(x,y);
 
 	return myCoordinate;

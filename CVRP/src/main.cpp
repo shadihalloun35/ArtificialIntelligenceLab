@@ -52,6 +52,7 @@ int main()
 	srand(unsigned(time(NULL)));
 	clock_t begin = std::clock();					// for clock ticks
 	InitProblem();
+
 	clock_t end = std::clock();
 	float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
 	std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;

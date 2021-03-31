@@ -15,7 +15,6 @@ public:
 	void setDimension(int dimension);
 	void setNumOfTrucks(int dimension);
 	void setCoordinates(std::vector<vec2> coordinates);
-	void setDemands(std::vector<int> demands);
 
 
 	// getters
@@ -24,7 +23,6 @@ public:
 	int getDimension();
 	int getNumOfTrucks();
 	std::vector<vec2>& getCoordinates();
-	std::vector<int>& getDemands();
 
 private:
 
@@ -32,6 +30,5 @@ private:
 	int dimension;
 	int numOfTrucks;
 	std::vector<vec2> coordinates;
-	std::vector<int> demands;
 
 };

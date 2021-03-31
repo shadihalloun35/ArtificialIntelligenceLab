@@ -7,6 +7,7 @@ public:
 
 	int x;
 	int y;
+	int demand;
 
 	// methods we could use
 
@@ -17,6 +18,12 @@ public:
 	vec2 operator-(vec2& v);
 	vec2& operator+=(vec2& v);
 	vec2& operator-=(vec2& v);
+
+	// setters
+	void setDemand(int demand);
+
+	// getters 
+	int getDemand();
 
 	float distance(vec2 v) const;				  // distance between two points
 	
