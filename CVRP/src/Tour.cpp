@@ -11,7 +11,7 @@ Tour::Tour()
 Tour::Tour(std::vector<vec2> cities)
 {
 	this->cities = cities;
-	this->distance = Utillis::CalcTourDistance(cities);
+	//this->distance = Utillis::CalcTourDistance(cities);
 }
 
 
@@ -29,7 +29,7 @@ void Tour::setDistance(int distance)
 
 // getters implementation
 
-std::vector<vec2> Tour::getCities()
+std::vector<vec2>& Tour::getCities()
 {
 	return this->cities;
 }

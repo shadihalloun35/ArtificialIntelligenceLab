@@ -22,7 +22,7 @@ public:
 
 	// getters
 
-	std::vector<vec2> getCities();
+	std::vector<vec2>& getCities();
 	int getDistance();
 	vec2 getCity(int index);
 	
