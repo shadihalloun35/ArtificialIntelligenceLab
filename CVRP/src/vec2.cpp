@@ -29,14 +29,28 @@ vec2 & vec2::operator-=(vec2 & v)
 	return *this;
 }
 
+// setters implementation
+
 void vec2::setDemand(int demand)
 {
 	this->demand = demand;
 }
 
+void vec2::setIndex(int index)
+{
+	this->index = index;
+}
+
+// getters implementation
+
 int vec2::getDemand()
 {
 	return this->demand;
+}
+
+int vec2::getIndex()
+{
+	return this->index;
 }
 
 float vec2::distance(vec2 v) const

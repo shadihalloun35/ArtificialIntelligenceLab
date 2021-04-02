@@ -1,6 +1,8 @@
 #include "Init.h"
 #define NumOfTrucks		20
 
+int coordinateIndex = 0;
+
 void Init::LoadProblem(Problem &myProblem, std::string fileName)
 {
 	int lineNumber = 0, dimension = 0, index = 0;
@@ -73,7 +75,8 @@ vec2 Init::FindCoordinates(std::string line)
 	int x = stoi(coordinate.substr(0, pos));
 	int y = stoi(coordinate.substr(pos + 1));
 	vec2 myCoordinate(x,y);
-
+	myCoordinate.setIndex(coordinateIndex);
+	coordinateIndex++;
 	return myCoordinate;
 
 }

@@ -8,6 +8,7 @@ public:
 	int x;
 	int y;
 	int demand;
+	int index;
 
 	// methods we could use
 
@@ -21,9 +22,12 @@ public:
 
 	// setters
 	void setDemand(int demand);
+	void setIndex(int index);
+
 
 	// getters 
 	int getDemand();
+	int getIndex();
 
 	float distance(vec2 v) const;				  // distance between two points
 	

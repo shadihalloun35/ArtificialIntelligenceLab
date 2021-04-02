@@ -120,7 +120,7 @@
     <ClCompile Include="src\Problem.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SimulatedAnnealing.cpp" />
-    <ClCompile Include="src\Tour.cpp" />
+    <ClCompile Include="src\Soulution.cpp" />
     <ClCompile Include="src\Utillis.cpp" />
     <ClCompile Include="src\vec2.cpp" />
   </ItemGroup>
@@ -128,7 +128,7 @@
     <ClInclude Include="src\Init.h" />
     <ClInclude Include="src\Problem.h" />
     <ClInclude Include="src\SimulatedAnnealing.h" />
-    <ClInclude Include="src\Tour.h" />
+    <ClInclude Include="src\Soulution.h" />
     <ClInclude Include="src\Utillis.h" />
     <ClInclude Include="src\vec2.h" />
   </ItemGroup>

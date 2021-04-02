@@ -33,10 +33,10 @@
     <ClCompile Include="src\SimulatedAnnealing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Tour.cpp">
+    <ClCompile Include="src\Utillis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utillis.cpp">
+    <ClCompile Include="src\Soulution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,10 +53,10 @@
     <ClInclude Include="src\SimulatedAnnealing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Tour.h">
+    <ClInclude Include="src\Utillis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Utillis.h">
+    <ClInclude Include="src\Soulution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

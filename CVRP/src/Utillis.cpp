@@ -1,6 +1,5 @@
 #include <iostream>					// for cout etc.
 #include "Utillis.h"
-#include "Tour.h"
 #include <algorithm>				// for random_shuffle
 
 
@@ -13,10 +12,10 @@ float Utillis::CalcTourDistance(std::vector<std::vector<vec2>> trucksTour)
 		std::vector<vec2> currentTruckTour = trucksTour[i];
 		int numOfCities = currentTruckTour.size();
 
-		for (int i = 0; i < numOfCities; i++)
+		for (int j = 0; j < numOfCities; j++)
 		{
-			vec2 start = currentTruckTour[i];
-			vec2 end = currentTruckTour[i + 1 < numOfCities ? i + 1 : 0];
+			vec2 start = currentTruckTour[j];
+			vec2 end = currentTruckTour[j + 1 < numOfCities ? j + 1 : 0];
 			totalDistance += start.distance(end);
 		}
 	}
@@ -26,10 +25,7 @@ float Utillis::CalcTourDistance(std::vector<std::vector<vec2>> trucksTour)
 
 std::vector<std::vector<vec2>> Utillis::GenerateInitialSolution(Problem &myProblem)
 {
-	Tour currentTour(myProblem.getCoordinates());
-	std::random_shuffle(currentTour.getCities().begin(), currentTour.getCities().end());			// shuffling the coordinates
 	std::vector<std::vector<vec2>> allTrucksTours = TrucksClassification(myProblem);				// generating random solution
-
 	return allTrucksTours;
 }
 
@@ -65,5 +61,30 @@ std::vector<std::vector<vec2>> Utillis::TrucksClassification(Problem &myProblem)
 
 	myProblem.setCoordinates(savedCoordinates);
 	return allTrucksTour;
+}
+
+void Utillis::UpdateSolution(Soulution & mySoulution, std::vector<std::vector<vec2>> bestSolution, float solutionCost)
+{
+	mySoulution.setTrucksTour(bestSolution);
+	mySoulution.setDistance(solutionCost);
+}
+
+void Utillis::PrintSolution(Soulution & mySoulution)
+{
+	for (int i = 0; i < mySoulution.getTrucksTour().size(); i++)								// printing the path of every truck
+	{
+		for (int k = 0; k < mySoulution.getTrucksTour()[i].size(); k++)
+		{
+			std::cout << mySoulution.getTrucksTour()[i][k].getIndex() << " " ;
+		}
+		std::cout << mySoulution.getTrucksTour()[0][0].getIndex() << std::endl;
+	}
+
+	for (int i = 0; i < mySoulution.getNumOfCarsAllowed() - mySoulution.getTrucksTour().size(); i++) // printing the path of the rest 
+	{																								 // of the rest of the cars
+		std::cout << mySoulution.getTrucksTour()[0][0].getIndex() << " ";
+		std::cout << mySoulution.getTrucksTour()[0][0].getIndex() << std::endl;
+	}
+
 }
 

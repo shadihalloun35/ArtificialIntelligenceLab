@@ -1,6 +1,6 @@
 #pragma once
 #include "Problem.h"
-#include "Tour.h"
+#include "Soulution.h"
 
 class SimulatedAnnealing
 {

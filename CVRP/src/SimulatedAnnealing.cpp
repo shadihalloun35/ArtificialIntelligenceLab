@@ -3,7 +3,7 @@
 #include "Utillis.h"
 #include <algorithm>	// for random_shuffle
 #include <math.h>       /* exp */
-#define MAXSEARCHES		100000
+#define MAXSEARCHES		1000000
 
 void print(std::vector<std::vector<vec2>> solotion)
 {
@@ -23,7 +23,9 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 	
 	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial solution
 	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best solution so far
-
+	Soulution mySoulution(bestSolution);																// creating our solution
+	mySoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());										// creating our solution
+	float solutionCost = 0;
 
 	for (int k = 0; k < MAXSEARCHES; k++)
 	{
@@ -32,7 +34,7 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 		int index1 = 0, index2 = 0;
 
 		do {
-			index1 = (int)((coordinates.size()-1) * ((double)rand() / (RAND_MAX)));					        // choosing random index to swap with
+			index1 = (int)((coordinates.size()-1) * ((double)rand() / (RAND_MAX)));					    // choosing random index to swap with
 			index2 = (int)((coordinates.size()-1) * ((double)rand() / (RAND_MAX)));
 		} while (index1 == 0 || index2 == 0);
 		
@@ -44,33 +46,41 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 		float currentDistance = Utillis::CalcTourDistance(currentSolution);
 		float nextDistance = Utillis::CalcTourDistance(nextSolution);
 
-		if ((double)rand() / (RAND_MAX) < calcProbability(currentDistance, nextDistance, tempreture)) {
+		if ((double)rand() / (RAND_MAX) <= calcProbability(currentDistance, nextDistance, tempreture)) 
+		{
 			currentSolution = nextSolution;
 		}
 		else
+		{
 			myProblem.setCoordinates(savedCoordinates);
-
-		if (Utillis::CalcTourDistance(currentSolution) < Utillis::CalcTourDistance(bestSolution)) {
+		}
+		solutionCost = Utillis::CalcTourDistance(bestSolution);
+		if (Utillis::CalcTourDistance(currentSolution) < solutionCost)
+		{
 			bestSolution = currentSolution;
+			solutionCost = Utillis::CalcTourDistance(bestSolution);
 		}
 
-		tempreture = UpdateTemparature(tempreture);						// updating the tempreture
+		tempreture = UpdateTemparature(tempreture);								// updating the tempreture
 	}
 
-	print(bestSolution);
+	Utillis::UpdateSolution(mySoulution, bestSolution, solutionCost);			// updating the solution
+	//print(mySoulution.getTrucksTour());
+	//std::cout << mySoulution.getDistance() << std::endl;
 
-	std::cout << Utillis::CalcTourDistance(bestSolution) << std::endl;
+	std::cout << mySoulution << std::endl;
+
 }
 
 float SimulatedAnnealing::InitTemparature()
 {
-	return 5000.0f;
+	return 10000.0f;
 }
 
 float SimulatedAnnealing::UpdateTemparature(float tempreture)
 {
-	float coolingFactor = 0.995;
-	//float coolingFactor = (double)rand() / (RAND_MAX);
+	//float coolingFactor = 0.995;
+	float coolingFactor = (double)rand() / (RAND_MAX);
 	return tempreture * coolingFactor;
 }
 
