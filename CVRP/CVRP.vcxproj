@@ -121,6 +121,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SimulatedAnnealing.cpp" />
     <ClCompile Include="src\Soulution.cpp" />
+    <ClCompile Include="src\TabuSearch.cpp" />
     <ClCompile Include="src\Utillis.cpp" />
     <ClCompile Include="src\vec2.cpp" />
   </ItemGroup>
@@ -129,6 +130,7 @@
     <ClInclude Include="src\Problem.h" />
     <ClInclude Include="src\SimulatedAnnealing.h" />
     <ClInclude Include="src\Soulution.h" />
+    <ClInclude Include="src\TabuSearch.h" />
     <ClInclude Include="src\Utillis.h" />
     <ClInclude Include="src\vec2.h" />
   </ItemGroup>

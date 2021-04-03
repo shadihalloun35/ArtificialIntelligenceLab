@@ -63,6 +63,21 @@ std::vector<std::vector<vec2>> Utillis::TrucksClassification(Problem &myProblem)
 	return allTrucksTour;
 }
 
+std::vector<std::vector<vec2>> Utillis::getNeighbors(Problem & myProblem)
+{
+	std::vector<vec2> coordinates = myProblem.getCoordinates();
+	int index1 = 0, index2 = 0;
+
+	do {
+		index1 = (int)((coordinates.size() - 1) * ((double)rand() / (RAND_MAX)));		// choosing a neighbor
+		index2 = (int)((coordinates.size() - 1) * ((double)rand() / (RAND_MAX)));
+	} while (index1 == 0 || index2 == 0);
+
+	std::iter_swap(coordinates.begin() + index1, coordinates.begin() + index2);
+	myProblem.setCoordinates(coordinates);
+	return TrucksClassification(myProblem);
+}
+
 void Utillis::UpdateSolution(Soulution & mySoulution, std::vector<std::vector<vec2>> bestSolution, float solutionCost)
 {
 	mySoulution.setTrucksTour(bestSolution);

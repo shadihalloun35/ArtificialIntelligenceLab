@@ -9,41 +9,18 @@
 void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 {
 	float tempreture = InitTemparature();
-	
 	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial solution
 	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best solution so far
 	Soulution mySoulution(bestSolution);																// creating our solution
-	mySoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());										// creating our solution
+	mySoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());										
 	float solutionCost = 0;
 
 	for (int k = 0; k < MAXSEARCHES; k++)
 	{
-		std::vector<vec2> coordinates = myProblem.getCoordinates();
-		std::vector<vec2> savedCoordinates = coordinates;
-		int index1 = 0, index2 = 0;
-
-		do {
-			index1 = (int)((coordinates.size()-1) * ((double)rand() / (RAND_MAX)));					    // choosing random index to swap with
-			index2 = (int)((coordinates.size()-1) * ((double)rand() / (RAND_MAX)));
-		} while (index1 == 0 || index2 == 0);
-		
-		std::iter_swap(coordinates.begin() + index1, coordinates.begin() + index2);
-		myProblem.setCoordinates(coordinates);
-
-		std::vector<std::vector<vec2>> nextSolution = Utillis::TrucksClassification(myProblem);
-
-		float currentDistance = Utillis::CalcTourDistance(currentSolution);
-		float nextDistance = Utillis::CalcTourDistance(nextSolution);
-
-		if ((double)rand() / (RAND_MAX) <= calcProbability(currentDistance, nextDistance, tempreture)) 
-		{
-			currentSolution = nextSolution;
-		}
-		else
-		{
-			myProblem.setCoordinates(savedCoordinates);
-		}
+		std::vector<vec2> savedCoordinates = myProblem.getCoordinates();		
+		currentSolution = MetropolisStep(myProblem, currentSolution, savedCoordinates, tempreture);
 		solutionCost = Utillis::CalcTourDistance(bestSolution);
+
 		if (Utillis::CalcTourDistance(currentSolution) < solutionCost)
 		{
 			bestSolution = currentSolution;
@@ -55,6 +32,25 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 
 	Utillis::UpdateSolution(mySoulution, bestSolution, solutionCost);			// updating the solution
 	std::cout << mySoulution << std::endl;
+}
+
+std::vector<std::vector<vec2>> SimulatedAnnealing::MetropolisStep(Problem & myProblem, std::vector<std::vector<vec2>> currentSolution, std::vector<vec2> savedCoordinates,float tempreture)
+{
+	std::vector<std::vector<vec2>> nextSolution = Utillis::getNeighbors(myProblem);
+	float currentDistance = Utillis::CalcTourDistance(currentSolution);
+	float nextDistance = Utillis::CalcTourDistance(nextSolution);
+
+	if ((double)rand() / (RAND_MAX) <= calcProbability(currentDistance, nextDistance, tempreture))
+	{
+		currentSolution = nextSolution;
+	}
+
+	else
+	{
+		myProblem.setCoordinates(savedCoordinates);
+	}
+
+	return currentSolution;
 }
 
 float SimulatedAnnealing::InitTemparature()

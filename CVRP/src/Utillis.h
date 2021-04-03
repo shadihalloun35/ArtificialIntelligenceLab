@@ -11,6 +11,7 @@ public:
 	static float CalcTourDistance(std::vector<std::vector<vec2>> trcukTours);
 	static std::vector<std::vector<vec2>> GenerateInitialSolution(Problem& myProblem);
 	static std::vector<std::vector<vec2>> TrucksClassification(Problem & myProblem);
+	static std::vector<std::vector<vec2>> getNeighbors(Problem & myProblem);
 	static void UpdateSolution(Soulution & mySoulution, std::vector<std::vector<vec2>> bestSolution, float solutionCost);
 	static void PrintSolution(Soulution & mySoulution);
 
