@@ -1,8 +1,40 @@
-﻿  SimulatedAnnealing.cpp
-  main.cpp
-  Generating code
-  35 of 485 functions ( 7.2%) were compiled, the rest were copied from previous compilation.
-    7 functions were new in current compilation
-    31 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  CVRP.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\CVRP\Release\CVRP.exe
+﻿  TabuSearch.cpp
+c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\tabusearch.cpp(54): warning C4018: '>': signed/unsigned mismatch
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\unordered_set(105): error C2280: 'std::hash<_Kty>::hash(const std::hash<_Kty> &)': attempting to reference a deleted function
+          with
+          [
+              _Kty=std::vector<std::vector<vec2,std::allocator<vec2>>,std::allocator<std::vector<vec2,std::allocator<vec2>>>>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\type_traits(2435): note: compiler has generated 'std::hash<_Kty>::hash' here
+          with
+          [
+              _Kty=std::vector<std::vector<vec2,std::allocator<vec2>>,std::allocator<std::vector<vec2,std::allocator<vec2>>>>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\type_traits(2435): note: 'std::hash<_Kty>::hash(const std::hash<_Kty> &)': function was implicitly deleted because a base class invokes a deleted or inaccessible function 'std::_Conditionally_enabled_hash<_Kty,false>::_Conditionally_enabled_hash(const std::_Conditionally_enabled_hash<_Kty,false> &)'
+          with
+          [
+              _Kty=std::vector<std::vector<vec2,std::allocator<vec2>>,std::allocator<std::vector<vec2,std::allocator<vec2>>>>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\type_traits(2419): note: 'std::_Conditionally_enabled_hash<_Kty,false>::_Conditionally_enabled_hash(const std::_Conditionally_enabled_hash<_Kty,false> &)': function was explicitly deleted
+          with
+          [
+              _Kty=std::vector<std::vector<vec2,std::allocator<vec2>>,std::allocator<std::vector<vec2,std::allocator<vec2>>>>
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\unordered_set(104): note: while compiling class template member function 'std::unordered_set<std::vector<std::vector<vec2,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>,std::hash<_Kty>,std::equal_to<_Kty>,std::allocator<_Kty>>::unordered_set(void)'
+          with
+          [
+              _Ty=vec2,
+              _Kty=std::vector<std::vector<vec2,std::allocator<vec2>>,std::allocator<std::vector<vec2,std::allocator<vec2>>>>
+          ]
+  c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\tabusearch.cpp(6): note: see reference to function template instantiation 'std::unordered_set<std::vector<std::vector<vec2,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>,std::hash<_Kty>,std::equal_to<_Kty>,std::allocator<_Kty>>::unordered_set(void)' being compiled
+          with
+          [
+              _Ty=vec2,
+              _Kty=std::vector<std::vector<vec2,std::allocator<vec2>>,std::allocator<std::vector<vec2,std::allocator<vec2>>>>
+          ]
+  c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\tabusearch.cpp(6): note: see reference to class template instantiation 'std::unordered_set<std::vector<std::vector<vec2,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>,std::hash<_Kty>,std::equal_to<_Kty>,std::allocator<_Kty>>' being compiled
+          with
+          [
+              _Ty=vec2,
+              _Kty=std::vector<std::vector<vec2,std::allocator<vec2>>,std::allocator<std::vector<vec2,std::allocator<vec2>>>>
+          ]

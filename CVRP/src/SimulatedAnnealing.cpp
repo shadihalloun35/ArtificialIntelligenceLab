@@ -5,10 +5,12 @@
 #include <math.h>       /* exp */
 #define MAXSEARCHES		1000000
 
+// definition for our static variable
+float SimulatedAnnealing::temparature;	
 
 void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 {
-	float tempreture = InitTemparature();
+	InitTemparature();
 	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial solution
 	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best solution so far
 	Soulution mySoulution(bestSolution);																// creating our solution
@@ -18,7 +20,7 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 	for (int k = 0; k < MAXSEARCHES; k++)
 	{
 		std::vector<vec2> savedCoordinates = myProblem.getCoordinates();		
-		currentSolution = MetropolisStep(myProblem, currentSolution, savedCoordinates, tempreture);
+		currentSolution = MetropolisStep(myProblem, currentSolution, savedCoordinates, getTemparature());
 		solutionCost = Utillis::CalcTourDistance(bestSolution);
 
 		if (Utillis::CalcTourDistance(currentSolution) < solutionCost)
@@ -27,7 +29,7 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 			solutionCost = Utillis::CalcTourDistance(bestSolution);
 		}
 
-		tempreture = UpdateTemparature(tempreture);								// updating the tempreture
+		UpdateTemparature();									// updating the tempreture
 	}
 
 	Utillis::UpdateSolution(mySoulution, bestSolution, solutionCost);			// updating the solution
@@ -53,16 +55,21 @@ std::vector<std::vector<vec2>> SimulatedAnnealing::MetropolisStep(Problem & myPr
 	return currentSolution;
 }
 
-float SimulatedAnnealing::InitTemparature()
+void SimulatedAnnealing::InitTemparature()
 {
-	return 10000.0f;
+	temparature = 10000.0f;
 }
 
-float SimulatedAnnealing::UpdateTemparature(float tempreture)
+void SimulatedAnnealing::UpdateTemparature()
 {
 	//float coolingFactor = 0.995;
 	float coolingFactor = (float)rand() / (RAND_MAX);
-	return tempreture * coolingFactor;
+	temparature = getTemparature() * coolingFactor;
+}
+
+float SimulatedAnnealing::getTemparature()
+{
+	return 0;
 }
 
 float SimulatedAnnealing::calcProbability(float currentDistance, float nextDistance, float temperature)
