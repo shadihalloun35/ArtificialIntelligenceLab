@@ -2,13 +2,27 @@
 #include "Init.h"
 
 
-// setters implementation
 
+// methods we could use implementation
 
 void Problem::Initialize(std::string fileName)
 {
 	Init::LoadProblem(*this,fileName);
 }
+
+// operators implementation
+
+Problem & Problem::operator=(const Problem & prob)
+{
+	capacity = prob.capacity;
+	dimension = prob.dimension;
+	numOfTrucks = prob.numOfTrucks;
+	coordinates = prob.coordinates;
+
+	return *this;
+}
+
+// setters implementation
 
 void Problem::setCapacity(int capacity)
 {

@@ -7,7 +7,11 @@ class Problem
 
 public:
 
+	// methods we could use
 	void Initialize(std::string fileName);					// initializing the problem
+
+	// operators
+	Problem& operator=(const Problem& prob);
 
 	// setters
 

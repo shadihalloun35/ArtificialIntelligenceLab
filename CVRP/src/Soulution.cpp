@@ -54,12 +54,22 @@ std::vector<vec2> Soulution::getTruckTour(int index)
 	return trucksTour[index];
 }
 
+// operators implementation
+
+Soulution & Soulution::operator=(const Soulution & sol)
+{
+	trucksTour = sol.trucksTour;
+	distance = sol.distance;
+	numOfCarsAllowed = sol.numOfCarsAllowed;
+
+	return *this;
+}
+
 
 ostream & operator << (ostream &out, Soulution &solution)
 {
 	int zero = 0;
 	out << solution.getDistance() << " " << zero << std::endl;
 	Utillis::PrintSolution(solution);
-
 	return out;
 }

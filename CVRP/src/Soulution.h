@@ -29,7 +29,8 @@ public:
 	std::vector<vec2> getTruckTour(int index);
 
 
-	// operator <<
+	// operators 
+	Soulution& operator=(const Soulution& sol);
 	friend ostream & operator << (ostream &out, Soulution &solution);
 
 	

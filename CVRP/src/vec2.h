@@ -10,15 +10,17 @@ public:
 	int demand;
 	int index;
 
-	// methods we could use
-
-	vec2();											// constructors						
+	// constructors
+	vec2();																	
 	vec2(int x, int y);
 
-	vec2 operator+(vec2& v);						// arithmetic methods
+	// operators
+	vec2 operator+(vec2& v);						
 	vec2 operator-(vec2& v);
 	vec2& operator+=(vec2& v);
 	vec2& operator-=(vec2& v);
+	vec2& operator=(const vec2& v);
+
 
 	// setters
 	void setDemand(int demand);
@@ -29,6 +31,7 @@ public:
 	int getDemand();
 	int getIndex();
 
+	// methods we could use
 	float distance(vec2 v) const;				  // distance between two points
 	
 

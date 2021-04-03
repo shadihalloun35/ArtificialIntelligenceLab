@@ -5,17 +5,6 @@
 #include <math.h>       /* exp */
 #define MAXSEARCHES		1000000
 
-void print(std::vector<std::vector<vec2>> solotion)
-{
-	for (int i = 0; i < solotion.size(); i++)
-	{
-		for (int k = 0; k < solotion[i].size(); k++)
-		{
-			std::cout << "(" << solotion[i][k].x << "," << solotion[i][k].y << ")-";
-		}
-		std::cout << std::endl;
-	}
-}
 
 void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 {
@@ -65,11 +54,7 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 	}
 
 	Utillis::UpdateSolution(mySoulution, bestSolution, solutionCost);			// updating the solution
-	//print(mySoulution.getTrucksTour());
-	//std::cout << mySoulution.getDistance() << std::endl;
-
 	std::cout << mySoulution << std::endl;
-
 }
 
 float SimulatedAnnealing::InitTemparature()
@@ -80,7 +65,7 @@ float SimulatedAnnealing::InitTemparature()
 float SimulatedAnnealing::UpdateTemparature(float tempreture)
 {
 	//float coolingFactor = 0.995;
-	float coolingFactor = (double)rand() / (RAND_MAX);
+	float coolingFactor = (float)rand() / (RAND_MAX);
 	return tempreture * coolingFactor;
 }
 
