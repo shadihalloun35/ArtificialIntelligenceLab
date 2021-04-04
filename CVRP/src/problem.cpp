@@ -10,6 +10,13 @@ void Problem::Initialize(std::string fileName)
 	Init::LoadProblem(*this,fileName);
 }
 
+bool Problem::operator==(const Problem & prob) const
+{
+	if (prob.capacity == capacity && prob.dimension == dimension && prob.numOfTrucks == numOfTrucks && prob.coordinates == coordinates)
+		return true;
+	return false;
+}
+
 // operators implementation
 
 Problem & Problem::operator=(const Problem & prob)

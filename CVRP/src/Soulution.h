@@ -33,7 +33,7 @@ public:
 	Soulution& operator=(const Soulution& sol);
 	friend ostream & operator << (ostream &out, Soulution &solution);
 
-	
+
 
 private:
 

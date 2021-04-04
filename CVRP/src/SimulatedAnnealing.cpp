@@ -6,7 +6,7 @@
 #define MAXSEARCHES		1000000
 
 // definition for our static variable
-float SimulatedAnnealing::temparature;	
+float SimulatedAnnealing::temparature;
 
 void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 {
@@ -14,31 +14,33 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial solution
 	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best solution so far
 	Soulution mySoulution(bestSolution);																// creating our solution
-	mySoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());										
+	mySoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());
 	float solutionCost = 0;
 
 	for (int k = 0; k < MAXSEARCHES; k++)
 	{
-		std::vector<vec2> savedCoordinates = myProblem.getCoordinates();		
-		currentSolution = MetropolisStep(myProblem, currentSolution, savedCoordinates, getTemparature());
-		solutionCost = Utillis::CalcTourDistance(bestSolution);
-
-		if (Utillis::CalcTourDistance(currentSolution) < solutionCost)
+		for (int j = 0; j < getTemparature() + 1; j++)
 		{
-			bestSolution = currentSolution;
+			std::vector<vec2> savedCoordinates = myProblem.getCoordinates();
+			currentSolution = MetropolisStep(myProblem, currentSolution, savedCoordinates, getTemparature());
 			solutionCost = Utillis::CalcTourDistance(bestSolution);
-		}
 
-		UpdateTemparature();									// updating the tempreture
+			if (Utillis::CalcTourDistance(currentSolution) < solutionCost)
+			{
+				bestSolution = currentSolution;
+				solutionCost = Utillis::CalcTourDistance(bestSolution);
+			}
+		}
+		UpdateTemparature();													// updating the tempreture
 	}
 
 	Utillis::UpdateSolution(mySoulution, bestSolution, solutionCost);			// updating the solution
 	std::cout << mySoulution << std::endl;
 }
 
-std::vector<std::vector<vec2>> SimulatedAnnealing::MetropolisStep(Problem & myProblem, std::vector<std::vector<vec2>> currentSolution, std::vector<vec2> savedCoordinates,float tempreture)
+std::vector<std::vector<vec2>> SimulatedAnnealing::MetropolisStep(Problem & myProblem, std::vector<std::vector<vec2>> currentSolution, std::vector<vec2> savedCoordinates, float tempreture)
 {
-	std::vector<std::vector<vec2>> nextSolution = Utillis::getNeighbors(myProblem);
+	std::vector<std::vector<vec2>> nextSolution = Utillis::getNeighbor(myProblem);
 	float currentDistance = Utillis::CalcTourDistance(currentSolution);
 	float nextDistance = Utillis::CalcTourDistance(nextSolution);
 
@@ -57,7 +59,7 @@ std::vector<std::vector<vec2>> SimulatedAnnealing::MetropolisStep(Problem & myPr
 
 void SimulatedAnnealing::InitTemparature()
 {
-	temparature = 10000.0f;
+	temparature = 100.0f;
 }
 
 void SimulatedAnnealing::UpdateTemparature()

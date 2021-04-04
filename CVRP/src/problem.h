@@ -11,7 +11,8 @@ public:
 	void Initialize(std::string fileName);					// initializing the problem
 
 	// operators
-	Problem& operator=(const Problem& prob);
+	Problem& operator =(const Problem& prob);
+	bool operator ==(const Problem &prob) const;
 
 	// setters
 

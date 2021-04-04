@@ -31,6 +31,14 @@ vec2 & vec2::operator-=(vec2 & v)
 	return *this;
 }
 
+bool vec2::operator==(const vec2 & v) const
+{
+	if(v.x == x && v.y == y && v.index == index && v.demand == demand)
+		return true;
+	return false;
+}
+
+
 vec2& vec2::operator=(const vec2& v) {
 	x = v.x;
 	y = v.y;
@@ -39,6 +47,7 @@ vec2& vec2::operator=(const vec2& v) {
 
 	return *this;
 }
+
 
 // setters implementation
 

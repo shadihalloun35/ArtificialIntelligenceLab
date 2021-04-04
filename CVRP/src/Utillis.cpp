@@ -7,19 +7,19 @@ float Utillis::CalcTourDistance(std::vector<std::vector<vec2>> trucksTour)
 {
 	float totalDistance = 0;
 
-	for (size_t  i = 0; i < trucksTour.size(); i++)
+	for (size_t i = 0; i < trucksTour.size(); i++)
 	{
 		std::vector<vec2> currentTruckTour = trucksTour[i];
 		int numOfCities = currentTruckTour.size();
 
-		for (int  j = 0; j < numOfCities; j++)
+		for (int j = 0; j < numOfCities; j++)
 		{
 			vec2 start = currentTruckTour[j];
 			vec2 end = currentTruckTour[j + 1 < numOfCities ? j + 1 : 0];
 			totalDistance += start.distance(end);
 		}
 	}
-	
+
 	return totalDistance;
 }
 
@@ -63,7 +63,7 @@ std::vector<std::vector<vec2>> Utillis::TrucksClassification(Problem &myProblem)
 	return allTrucksTour;
 }
 
-std::vector<std::vector<vec2>> Utillis::getNeighbors(Problem & myProblem)
+std::vector<std::vector<vec2>> Utillis::getNeighbor(Problem & myProblem)
 {
 	std::vector<vec2> coordinates = myProblem.getCoordinates();
 	int index1 = 0, index2 = 0;
@@ -78,6 +78,23 @@ std::vector<std::vector<vec2>> Utillis::getNeighbors(Problem & myProblem)
 	return TrucksClassification(myProblem);
 }
 
+std::pair<std::vector<std::vector<std::vector<vec2>>>, std::vector<std::vector<vec2>>> Utillis::getNeighbors(Problem & myProblem)
+{
+	std::vector<std::vector<std::vector<vec2>>> neighbors;
+	std::vector<std::vector<vec2>> neighborsPermutation;
+	std::vector<vec2> savedCoordinates = myProblem.getCoordinates();
+
+
+	for (int i = 0; i < 30; i++)
+	{
+		neighbors.push_back(getNeighbor(myProblem));
+		neighborsPermutation.push_back(myProblem.getCoordinates());
+		myProblem.setCoordinates(savedCoordinates);
+	}
+
+	return std::make_pair(neighbors, neighborsPermutation);
+}
+
 void Utillis::UpdateSolution(Soulution & mySoulution, std::vector<std::vector<vec2>> bestSolution, float solutionCost)
 {
 	mySoulution.setTrucksTour(bestSolution);
@@ -86,16 +103,16 @@ void Utillis::UpdateSolution(Soulution & mySoulution, std::vector<std::vector<ve
 
 void Utillis::PrintSolution(Soulution & mySoulution)
 {
-	for (size_t  i = 0; i < mySoulution.getTrucksTour().size(); i++)								// printing the path of every truck
+	for (size_t i = 0; i < mySoulution.getTrucksTour().size(); i++)								// printing the path of every truck
 	{
-		for (size_t  k = 0; k < mySoulution.getTrucksTour()[i].size(); k++)
+		for (size_t k = 0; k < mySoulution.getTrucksTour()[i].size(); k++)
 		{
-			std::cout << mySoulution.getTrucksTour()[i][k].getIndex() << " " ;
+			std::cout << mySoulution.getTrucksTour()[i][k].getIndex() << " ";
 		}
 		std::cout << mySoulution.getTrucksTour()[0][0].getIndex() << std::endl;
 	}
 
-	for (size_t  i = 0; i < mySoulution.getNumOfCarsAllowed() - mySoulution.getTrucksTour().size(); i++) // printing the path of the rest 
+	for (size_t i = 0; i < mySoulution.getNumOfCarsAllowed() - mySoulution.getTrucksTour().size(); i++) // printing the path of the rest 
 	{																								 // of the rest of the cars
 		std::cout << mySoulution.getTrucksTour()[0][0].getIndex() << " ";
 		std::cout << mySoulution.getTrucksTour()[0][0].getIndex() << std::endl;

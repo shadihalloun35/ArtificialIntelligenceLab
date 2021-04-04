@@ -20,6 +20,7 @@ public:
 	vec2& operator+=(vec2& v);
 	vec2& operator-=(vec2& v);
 	vec2& operator=(const vec2& v);
+	bool operator ==(const vec2 &v) const;
 
 
 	// setters

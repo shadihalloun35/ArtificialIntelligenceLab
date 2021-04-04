@@ -4,11 +4,11 @@
 #include <ctime>					// for clock ticks
 #include "Problem.h"
 #include "SimulatedAnnealing.h"
+#include "TabuSearch.h"
 
-#define problem		1				// choose one of the seven problems
-
-
-using namespace std;				// polluting global namespace, but hey...
+#define problem						1				// choose one of the seven problems
+#define MetaHeuristicAlgorithm		2				// choose one of the local search algorithms
+using namespace std;								// polluting global namespace, but hey...
 
 Problem myProblem;
 
@@ -44,6 +44,21 @@ void InitProblem()
 	}
 }
 
+void FindBestPath()
+{
+	switch (MetaHeuristicAlgorithm)
+	{
+
+	case 1:
+		SimulatedAnnealing::ActivateSimulatedAnnealing(myProblem);
+		break;
+
+	case 2:
+		TabuSearch::ActivateTabuSearch(myProblem);
+		break;
+	}
+}
+
 int main()
 {
 	
@@ -53,7 +68,7 @@ int main()
 	srand(unsigned(time(NULL)));
 	clock_t begin = std::clock();					// for clock ticks
 	InitProblem();
-	SimulatedAnnealing::ActivateSimulatedAnnealing(myProblem);
+	FindBestPath();
 	clock_t end = std::clock();
 	float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
 	std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
