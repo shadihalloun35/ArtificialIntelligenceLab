@@ -22,13 +22,15 @@ void TabuSearch::ActivateTabuSearch(Problem & myProblem)
 	for (int k = 0; k < MAXSEARCHES; k++)
 	{
 		solutionCost = Utillis::CalcTourDistance(bestSolution);
-		std::vector<std::vector<std::vector<vec2>>> neighbors = Utillis::getNeighbors(myProblem).first;
-		std::vector<std::vector<vec2>> neighborsPermutation = Utillis::getNeighbors(myProblem).second;
+		std::pair<std::vector<std::vector<std::vector<vec2>>>, std::vector<std::vector<vec2>>> myResult = Utillis::getNeighbors(myProblem);
+		std::vector<std::vector<std::vector<vec2>>> neighbors = myResult.first;
+		std::vector<std::vector<vec2>> neighborsPermutation = myResult.second;
 		std::vector<std::vector<vec2>> bestCandidate = neighbors[0];
 		std::vector<vec2> bestCandidateCoordinates = neighborsPermutation[0];
-
+		
 		for (size_t i = 0; i < neighbors.size(); i++)
 		{
+
 			if (Satisfiable(bestCandidate) && (Utillis::CalcTourDistance(bestCandidate) > Utillis::CalcTourDistance(neighbors[i])))
 			{
 				bestCandidate = neighbors[i];
@@ -69,9 +71,9 @@ bool TabuSearch::Satisfiable(std::vector<std::vector<vec2>> soulotion)
 {
 	if (std::find(tabuSet.begin(), tabuSet.end(), soulotion) != tabuSet.end())
 	{
-		return true;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 
