@@ -1,7 +1,6 @@
 #pragma once
 #include "Problem.h"
 #include "Soulution.h"
-#include <set>
 
 class TabuSearch
 {

@@ -22,6 +22,11 @@ void Soulution::setTrucksTour(std::vector<std::vector<vec2>> trucksTour)
 	this->trucksTour = trucksTour;
 }
 
+void Soulution::setPermutation(std::vector<vec2> permutation)
+{
+	this->permutation = permutation;
+}
+
 void Soulution::setDistance(float distance)
 {
 	this->distance = distance;
@@ -37,6 +42,11 @@ void Soulution::setNumOfCarsAllowed(int numOfCarsAllowed)
 std::vector<std::vector<vec2>>& Soulution::getTrucksTour()
 {
 	return this->trucksTour;
+}
+
+std::vector<vec2>& Soulution::getPermutation()
+{
+	return this->permutation;
 }
 
 float Soulution::getDistance()

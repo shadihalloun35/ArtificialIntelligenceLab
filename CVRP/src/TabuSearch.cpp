@@ -1,20 +1,19 @@
 #include "TabuSearch.h"
 #include <iostream>					// for cout etc.
 #include "Utillis.h"
-#define MAXSEARCHES		10000
+#define MAXSEARCHES		20000
 
 // definition for our static variable
-
 std::vector <std::vector<std::vector<vec2>>> TabuSearch::tabuSet;
 unsigned int TabuSearch::tabuSize;
 
 void TabuSearch::ActivateTabuSearch(Problem & myProblem)
 {
 	InitTabuSize();
-	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial solution
-	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best solution so far
+	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial soulution
+	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best soulution so far
 	std::vector<std::vector<vec2>> bestCandidate = bestSolution;										// saving our best candidate
-	Soulution mySoulution(bestSolution);																// creating our solution
+	Soulution mySoulution(bestSolution);																// creating our soulution
 	mySoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());
 	float solutionCost = 0;
 	InsertToTabu(bestSolution);																			// inserting to tabu list

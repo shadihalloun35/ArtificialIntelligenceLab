@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AntColonyOptimization.cpp" />
     <ClCompile Include="src\Init.cpp" />
     <ClCompile Include="src\MetaHeuristic.cpp" />
     <ClCompile Include="src\Problem.cpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="src\vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AntColonyOptimization.h" />
     <ClInclude Include="src\Init.h" />
     <ClInclude Include="src\Problem.h" />
     <ClInclude Include="src\SimulatedAnnealing.h" />

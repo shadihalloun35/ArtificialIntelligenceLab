@@ -11,9 +11,9 @@ float SimulatedAnnealing::temparature;
 void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 {
 	InitTemparature();
-	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial solution
-	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best solution so far
-	Soulution mySoulution(bestSolution);																// creating our solution
+	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial soulution
+	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best soulution so far
+	Soulution mySoulution(bestSolution);																// creating our soulution
 	mySoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());
 	float solutionCost = 0;
 
