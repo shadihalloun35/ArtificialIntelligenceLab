@@ -21,6 +21,8 @@ public:
 	void setPermutation(std::vector<vec2> permutation);
 	void setDistance(float distance);
 	void setNumOfCarsAllowed(int numOfCarsAllowed);
+	void setPheromone(float pheromone);
+	void setVisibility(float visibility);
 
 	// getters
 
@@ -28,11 +30,14 @@ public:
 	std::vector<vec2>& getPermutation();
 	float getDistance();
 	int getNumOfCarsAllowed();
+	float getPheromone();
+	float getVisibility();
 	std::vector<vec2> getTruckTour(int index);
 
 
 	// operators 
 	Soulution& operator=(const Soulution& sol);
+	bool operator ==(const Soulution &sol) const;
 	friend ostream & operator << (ostream &out, Soulution &solution);
 
 
@@ -43,5 +48,7 @@ private:
 	std::vector<vec2> permutation;
 	float distance;
 	int numOfCarsAllowed;
+	float pheromone;
+	float visibility;
 
 };

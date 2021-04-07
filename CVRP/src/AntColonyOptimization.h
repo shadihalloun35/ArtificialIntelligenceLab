@@ -7,28 +7,23 @@ struct Ant
 {
 	Soulution soulution;
 	float pheromone;
-	float visibility;
+	std::vector <Soulution> tabuSet;
 };
 
 class AntColonyOptimization
 {
 
 public:
-	static void ActivateAntColonyOptimization(Problem& myProblem);
+	static void ActivateAntColonyOptimization(Problem & myProblem);
 	static void InitAnts(Problem & myProblem);
-	static void DaemonActions(Problem & myProblem, int i);
-	static float calcProbability();
+	static void GenerateSolutions(Problem & myProblem, int i);
+	static void AddToList(Soulution & nextSolution);
+	static void AddToTabu(Ant & ant , Soulution & nextSolution);
+	static float CalcProbability(Soulution & soulution, int i);
 	static void UpdatePheromone();
-
-
-	//static void InsertToTabu(std::vector<std::vector<vec2>> soulotion);
-	//static bool Satisfiable(std::vector<std::vector<vec2>> soulotion);
-	//static void InitTabuSize();
-	//static void UpdateTabuSize();
-	//static unsigned int getTabuSize();
-
 
 private:
 	static std::vector <Ant> ants;
+	static std::vector <Soulution> soulutions;
 };
 

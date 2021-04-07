@@ -99,6 +99,8 @@ void Utillis::UpdateSolution(Soulution & mySoulution, std::vector<std::vector<ve
 {
 	mySoulution.setTrucksTour(bestSolution);
 	mySoulution.setDistance(solutionCost);
+	mySoulution.setVisibility(1/solutionCost);
+
 }
 
 void Utillis::PrintSolution(Soulution & mySoulution)

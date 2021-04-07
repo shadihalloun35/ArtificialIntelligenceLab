@@ -5,9 +5,10 @@
 #include "Problem.h"
 #include "SimulatedAnnealing.h"
 #include "TabuSearch.h"
+#include "AntColonyOptimization.h"
 
 #define problem						1				// choose one of the seven problems
-#define MetaHeuristicAlgorithm		2				// choose one of the local search algorithms
+#define MetaHeuristicAlgorithm		3				// choose one of the local search algorithms
 using namespace std;								// polluting global namespace, but hey...
 
 Problem myProblem;
@@ -55,6 +56,10 @@ void FindBestPath()
 
 	case 2:
 		TabuSearch::ActivateTabuSearch(myProblem);
+		break;
+
+	case 3:
+		AntColonyOptimization::ActivateAntColonyOptimization(myProblem);
 		break;
 	}
 }

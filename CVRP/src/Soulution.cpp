@@ -37,6 +37,16 @@ void Soulution::setNumOfCarsAllowed(int numOfCarsAllowed)
 	this->numOfCarsAllowed = numOfCarsAllowed;
 }
 
+void Soulution::setPheromone(float pheromone)
+{
+	this->pheromone = pheromone;
+}
+
+void Soulution::setVisibility(float visibility)
+{
+	this->visibility = visibility;
+}
+
 // getters implementation
 
 std::vector<std::vector<vec2>>& Soulution::getTrucksTour()
@@ -59,6 +69,17 @@ int Soulution::getNumOfCarsAllowed()
 	return this->numOfCarsAllowed;
 }
 
+float Soulution::getPheromone()
+{
+	return this->pheromone;
+
+}
+
+float Soulution::getVisibility()
+{
+	return this->visibility;
+}
+
 std::vector<vec2> Soulution::getTruckTour(int index)
 {
 	return trucksTour[index];
@@ -69,10 +90,20 @@ std::vector<vec2> Soulution::getTruckTour(int index)
 Soulution & Soulution::operator=(const Soulution & sol)
 {
 	trucksTour = sol.trucksTour;
+	permutation = sol.permutation;
 	distance = sol.distance;
 	numOfCarsAllowed = sol.numOfCarsAllowed;
+	pheromone = sol.pheromone;
+	visibility = sol.visibility;
 
 	return *this;
+}
+
+bool Soulution::operator==(const Soulution & sol) const
+{
+	if (sol.trucksTour == trucksTour)
+		return true;
+	return false;
 }
 
 
