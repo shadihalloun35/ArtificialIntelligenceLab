@@ -1,5 +1,3 @@
-﻿  SimulatedAnnealing.cpp
-c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\simulatedannealing.cpp(10): warning C4018: '<': signed/unsigned mismatch
-c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\simulatedannealing.cpp(12): warning C4018: '<': signed/unsigned mismatch
-c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\simulatedannealing.cpp(78): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+﻿  GeneticAlgorithm.cpp
+c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\geneticalgorithm.cpp(373): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   CVRP.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\CVRP\Debug\CVRP.exe

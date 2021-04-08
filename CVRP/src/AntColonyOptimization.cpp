@@ -1,7 +1,7 @@
 #include "AntColonyOptimization.h"
 #include "Utillis.h"
 #include <math.h>       /* pow */
-#define MAXSEARCHES		1000
+#define MAXSEARCHES		20
 #define NumberOfAnts	1000
 #define Alpha			1
 #define Beta			5
@@ -27,7 +27,6 @@ void AntColonyOptimization::ActivateAntColonyOptimization(Problem & myProblem)
 			{
 				bestSoulution = ants[i].soulution;
 				BestSolutionCost = bestSoulution.getDistance();
-				std::cout << "h" << std::endl;
 			}
 		}
 
@@ -68,6 +67,7 @@ void AntColonyOptimization::GenerateSolutions(Problem & myProblem, int i)
 
 	if ((double)rand() / (RAND_MAX) <= CalcProbability(soulution, i))
 	{
+		//std::cout << "h";
 		ants[i].soulution = soulution;
 		ants[i].soulution.setPermutation(myProblem.getCoordinates());
 		AddToList(soulution);
@@ -93,7 +93,7 @@ void AntColonyOptimization::AddToTabu(Ant & ant , Soulution & nextSolution)
 
 float AntColonyOptimization::CalcProbability(Soulution & soulution, int i)
 {
-	if (std::find(ants[i].tabuSet.begin(), ants[i].tabuSet.end(), soulution) == ants[i].tabuSet.end())
+	if (std::find(ants[i].tabuSet.begin(), ants[i].tabuSet.end(), soulution) != ants[i].tabuSet.end())
 	{
 		return 0;
 	}

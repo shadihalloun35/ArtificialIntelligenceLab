@@ -213,7 +213,7 @@ void insertionMutation(ga_struct &member)
 		*(myArr + i) = member.board[i];
 	}
 
-
+	member.board = myArr;
 }
 
 void mutate(ga_struct &member)
