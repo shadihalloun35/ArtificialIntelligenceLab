@@ -9,7 +9,7 @@
 #include "GeneticAlgorithm.h"
 
 #define problem						1				// choose one of the seven problems
-#define Algorithm					2				// choose local search algorithm or genetic algorithm
+#define Algorithm					1				// choose local search algorithm or genetic algorithm
 #define MetaHeuristicAlgorithm		3				// choose one of the local search algorithms
 using namespace std;								// polluting global namespace, but hey...
 
@@ -78,12 +78,10 @@ void FindBestPath()
 		GeneticAlgorithm::ActivateGeneticAlgorithm(myProblem);
 		break;
 	}
-
 }
 
 int main()
 {
-	
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
 	const auto before = clock::now();				// for elapsed time

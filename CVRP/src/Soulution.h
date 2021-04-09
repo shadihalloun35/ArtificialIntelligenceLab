@@ -30,7 +30,7 @@ public:
 	std::vector<vec2>& getPermutation();
 	float getDistance();
 	int getNumOfCarsAllowed();
-	float getPheromone();
+	float & getPheromone();
 	float getVisibility();
 	std::vector<vec2> getTruckTour(int index);
 
@@ -48,7 +48,7 @@ private:
 	std::vector<vec2> permutation;
 	float distance;
 	int numOfCarsAllowed;
-	float pheromone;
+	float pheromone = 1;
 	float visibility;
 
 };

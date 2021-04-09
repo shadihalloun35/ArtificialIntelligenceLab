@@ -7,25 +7,21 @@
 #include <vector>					// for vector class
 #include <string>					// for string class
 #include <algorithm>				// for sort algorithm
-#include <time.h>					// for random seed
 #include <math.h>					// for abs()
-#include <chrono>					// for elapsed time
-#include <ctime>					// for clock ticks
 #include "Soulution.h"
 #include "Utillis.h"
 #include "GeneticAlgorithm.h"
 
 #define GA_POPSIZE		2048		// ga population size
 #define GA_MAXITER		100			// maximum iterations
-#define GA_ELITRATE		0.10f		// elitism rate
-#define GA_MUTATIONRATE	0.25f		// mutation rate
+#define GA_ELITRATE		0.1f		// elitism rate
+#define GA_MUTATIONRATE	0.7f		// mutation rate
 #define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
-#define heuristic	1				// The Givin Hueristic or Bull's Eye Hueristic
 #define SELECTION	1				// for selecting parents method
 #define	K	5						// Tournament size 
 #define MAX_AGE	10					// Maximum age of a citizen
-#define CROSSOVER	2				// for cross over method ( Partially Matched crossover or Ordered crossover )
-#define MUTATION	2				// for mutation method (exchange mutation or insertion mutation)
+#define CROSSOVER	1				// for cross over method ( Partially Matched crossover or Ordered crossover )
+#define MUTATION	1				// for mutation method (exchange mutation or insertion mutation)
 
 using namespace std;						  // polluting global namespace, but hey...
 typedef vector<ga_struct> ga_vector;		  // for brevity
@@ -50,7 +46,7 @@ void init_population(ga_vector &population,
 		Utillis::UpdateSolution(soulution, bestSolution, solutionCost);
 		citizen.fitness = 0;
 		citizen.age = 1;
-		citizen.permutation = myProblem1.getCoordinates();										    // in the same row or column
+		citizen.permutation = myProblem1.getCoordinates();										    
 		citizen.soulution = soulution;
 		population.push_back(citizen);
 	}
@@ -521,7 +517,7 @@ void mate(ga_vector &population, ga_vector &buffer)
 
 	case 1:															// PMX crossover
 
-		for (int i = esize; i < GA_POPSIZE; i = i + 2) {
+		for (int i = esize; i < GA_POPSIZE - 1; i = i + 2) {
 			i1 = parents[i - esize];
 			i2 = parents[i - esize + 1];
 			spos = rand() % tsize;

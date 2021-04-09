@@ -17,13 +17,13 @@ public:
 	static void ActivateAntColonyOptimization(Problem & myProblem);
 	static void InitAnts(Problem & myProblem);
 	static void GenerateSolutions(Problem & myProblem, int i);
-	static void AddToList(Soulution & nextSolution);
+	static void AddToList(Soulution * nextSolution);
 	static void AddToTabu(Ant & ant , Soulution & nextSolution);
-	static float CalcProbability(Soulution & soulution, int i);
+	static float CalcProbability(Soulution * soulution, int i);
 	static void UpdatePheromone();
 
 private:
 	static std::vector <Ant> ants;
-	static std::vector <Soulution> soulutions;
+	static std::vector <Soulution*> soulutions;
 };
 

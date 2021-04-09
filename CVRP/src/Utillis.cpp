@@ -29,6 +29,13 @@ std::vector<std::vector<vec2>> Utillis::GenerateInitialSolution(Problem &myProbl
 	return allTrucksTours;
 }
 
+std::vector<std::vector<vec2>> Utillis::GenerateRandomSolution(Problem & myProblem)
+{
+	std::random_shuffle(myProblem.getCoordinates().begin()+1, myProblem.getCoordinates().end());
+	std::vector<std::vector<vec2>> allTrucksTours = TrucksClassification(myProblem);				// generating random solution
+	return allTrucksTours;
+}
+
 std::vector<std::vector<vec2>> Utillis::TrucksClassification(Problem &myProblem)
 {
 	std::vector<std::vector<vec2>> allTrucksTour;

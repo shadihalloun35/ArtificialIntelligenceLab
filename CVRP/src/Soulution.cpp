@@ -69,7 +69,7 @@ int Soulution::getNumOfCarsAllowed()
 	return this->numOfCarsAllowed;
 }
 
-float Soulution::getPheromone()
+float & Soulution::getPheromone()
 {
 	return this->pheromone;
 
