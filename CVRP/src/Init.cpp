@@ -47,6 +47,7 @@ void Init::LoadProblem(Problem &myProblem, std::string fileName)
 		}	
 	}
 
+	GenerateEdges(myProblem);
 	fin.close();
 }
 
@@ -88,4 +89,17 @@ int Init::FindDemands(std::string line)
 
 	return stoi(demand);
 
+}
+
+void Init::GenerateEdges(Problem & myProblem)
+{
+	std::vector<vec2> myCoordinates = myProblem.getCoordinates();
+
+	for (int i = 0; i < myCoordinates.size(); i++)
+	{
+		for (int j = i + 1; j < myCoordinates.size(); j++)
+		{
+			myProblem.getEdges().push_back(Edge(myCoordinates[i], myCoordinates[j]));
+		}
+	}
 }

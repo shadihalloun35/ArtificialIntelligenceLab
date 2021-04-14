@@ -51,6 +51,11 @@ void Problem::setCoordinates(std::vector<vec2> coordinates)
 	this->coordinates = coordinates;
 }
 
+void Problem::setEdges(std::vector<Edge> edges)
+{
+	this->edges = edges;
+}
+
 // getters implementation
 
 int Problem::getCapacity()
@@ -71,6 +76,11 @@ int Problem::getNumOfTrucks()
 std::vector<vec2>& Problem::getCoordinates()
 {
 	return coordinates;
+}
+
+std::vector<Edge>& Problem::getEdges()
+{
+	return this->edges;
 }
 
 

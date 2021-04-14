@@ -1,8 +1,10 @@
 ﻿  AntColonyOptimization.cpp
-  Utillis.cpp
+  Edge.cpp
+  main.cpp
+  TabuSearch.cpp
   Generating code
-  7 of 1173 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+  162 of 904 functions (17.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    33 functions had inline decision re-evaluated but remain unchanged
+    171 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   CVRP.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\CVRP\Release\CVRP.exe

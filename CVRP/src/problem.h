@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "vec2.h"
+#include "Edge.h"
 
 class Problem
 {
@@ -20,6 +21,8 @@ public:
 	void setDimension(int dimension);
 	void setNumOfTrucks(int dimension);
 	void setCoordinates(std::vector<vec2> coordinates);
+	void setEdges(std::vector<Edge> edges);
+
 
 
 	// getters
@@ -28,6 +31,8 @@ public:
 	int getDimension();
 	int getNumOfTrucks();
 	std::vector<vec2>& getCoordinates();
+	std::vector<Edge>& getEdges();
+
 
 private:
 
@@ -35,5 +40,5 @@ private:
 	int dimension;
 	int numOfTrucks;
 	std::vector<vec2> coordinates;
-
+	std::vector<Edge> edges;
 };
