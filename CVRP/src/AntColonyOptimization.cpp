@@ -1,7 +1,7 @@
 #include "AntColonyOptimization.h"
 #include "Utillis.h"
 #include <math.h>       /* pow */
-#define MAXSEARCHES		1000
+#define MAXSEARCHES		10
 
 /*
 These are the parameters we have to use in this algorithm
@@ -39,7 +39,6 @@ void AntColonyOptimization::ActivateAntColonyOptimization(Problem & myProblem)
 
 		UpdatePheromone();											 // updating the pheromone
 	}
-
 	std::cout << bestSoulution << std::endl;
 }
 
@@ -63,6 +62,7 @@ void AntColonyOptimization::GenerateSolutions(Problem & myProblem, int i)
 	Utillis::UpdateSolution(soulution, antSoulution, solutionCost);
 	soulution.setPermutation(myProblem.getCoordinates());
 	ants[i].soulution = soulution;
+	ants[i].tabuSet.clear();
 	myProblem.setCoordinates(savedCoordinates);
 }
 
@@ -72,25 +72,56 @@ std::vector<vec2> AntColonyOptimization::FindPermutation(Problem & myProblem, in
 	std::vector<vec2> coordinates = myProblem.getCoordinates();
 	myPermutation.push_back(coordinates[0]);					// storing the depot
 	AddToTabu(ants[i], coordinates[0]);							// adding the depot to tabu
+	int counter = 0;
 
-	for (int k = 0; k < coordinates.size() - 1; k++)
+	for (size_t k = 0; k < coordinates.size() - 1; k++)
 	{
 		std::vector<float> probabilties = CalcProbability(myProblem, myPermutation[k], i);
 		float denominator = probabilties.back();					// for probability 
+		/**
+		std::cout << probabilties[0] << std::endl;
+		std::cout << probabilties[1] << std::endl;
+		std::cout << probabilties[2] << std::endl;
+		std::cout << probabilties[3] << std::endl;
+		std::cout << probabilties[4] << std::endl;
+		std::cout << probabilties[5] << std::endl;
+		std::cout << probabilties[6] << std::endl;
+		std::cout << probabilties[7] << std::endl;
+		std::cout << probabilties[8] << std::endl;
+		std::cout << probabilties[9] << std::endl;
+		std::cout << probabilties[10] << std::endl;
+		std::cout << probabilties[11] << std::endl;
+		std::cout << probabilties[12] << std::endl;
+		std::cout << probabilties[13] << std::endl;
+		std::cout << probabilties[14] << std::endl;
+		std::cout << probabilties[15] << std::endl;
+		std::cout << probabilties[16] << std::endl;
+		std::cout << probabilties[17] << std::endl;
+		std::cout << probabilties[18] << std::endl;
+		std::cout << probabilties[19] << std::endl;
+		std::cout << probabilties[20] << std::endl;
+		std::cout << probabilties[21] << std::endl;
+		std::cout << probabilties[22] << std::endl;
+		*/
+		
 		float probabilty = (rand() / static_cast<float>(RAND_MAX));
 		int index = 0;
-		while (probabilty -= (probabilties[i]/denominator) > 0)					// choosing the next city to visit
-			++index;
-
+		while (1)				// choosing the next city to visit
+		{
+			probabilty -= probabilties[index] / denominator;
+			if (probabilty < 0)	break;
+			index++;		
+		}
 		myPermutation.push_back(coordinates[index]);
 		AddToTabu(ants[i], coordinates[index]);							// adding the city to tabu
 		AddToList(coordinates[k], coordinates[index], i);				// adding this edge to a list
 	}
+	return myPermutation;
 }
 
 void AntColonyOptimization::AddToList(vec2 city1, vec2 city2, int i)
 {
-	for (int j = 0; j < edges.size(); j++)
+	for (size_t j = 0; j < edges.size(); j++)
 	{
 		if (city1 == edges[j].getStart() || city1 == edges[j].getEnd())
 		{
@@ -102,39 +133,45 @@ void AntColonyOptimization::AddToList(vec2 city1, vec2 city2, int i)
 			}
 		}
 	}
-
 }
 
 void AntColonyOptimization::AddToTabu(Ant & ant , vec2 city)
 {
-	if (std::find(ant.tabuSet.begin(), ant.tabuSet.end(), city) == ant.tabuSet.end())
-	{
-		ant.tabuSet.push_back(city);
-	}
+	ant.tabuSet.push_back(city);	
 }
 
 std::vector<float> AntColonyOptimization::CalcProbability(Problem & myProblem, vec2 currentCity, int i)
 {
 	std::vector<float> probabilties;
 	float denominator = 0;				// for probability 
-	for (int i = 0; i < myProblem.getCoordinates().size(); i++)
+	int f = 0;
+	for (size_t l = 0; l < myProblem.getCoordinates().size(); l++)
 	{
-		if (std::find(ants[i].tabuSet.begin(), ants[i].tabuSet.end(), currentCity) != ants[i].tabuSet.end())
+		if (std::find(ants[i].tabuSet.begin(), ants[i].tabuSet.end(), myProblem.getCoordinates()[l]) != ants[i].tabuSet.end())
 		{
 			probabilties.push_back(0.0f);
 		}
 
-		for (int j = 0; j < edges.size(); j++)
+		else
 		{
-			if (myProblem.getCoordinates()[i] == edges[j].getStart() || myProblem.getCoordinates()[i] == edges[j].getEnd())	// we found the edge
+			for (size_t j = 0; j < edges.size(); j++)
 			{
-				float numerator = pow(edges[j].getPheromone(), Alpha) * pow(edges[j].getVisibility(), Beta);
-				denominator += numerator;
-				probabilties.push_back(numerator);
+				if (myProblem.getCoordinates()[l] == edges[j].getStart() || myProblem.getCoordinates()[l] == edges[j].getEnd())	// we found the edge
+				{
+					if (currentCity == edges[j].getStart() || currentCity == edges[j].getEnd())
+					{
+						float numerator = pow(edges[j].getPheromone(), Alpha) * pow(edges[j].getVisibility(), Beta);
+						denominator += numerator;
+						probabilties.push_back(numerator);
+						break;
+					}
+				}
 			}
 		}
 	}
+
 	probabilties.push_back(denominator);
+	return probabilties;
 }
 
 void AntColonyOptimization::UpdatePheromone()
@@ -149,7 +186,6 @@ void AntColonyOptimization::UpdatePheromone()
 
 		}
 		pheromone = pheromone + edges[i].getPheromone() * (1 - evaporation);
-		//std::cout << soulutions[i].getPheromone() << std::endl;
 		edges[i].setPheromone(pheromone);
 	}
 }
