@@ -1,7 +1,8 @@
 #include "AntColonyOptimization.h"
 #include "Utillis.h"
 #include <math.h>       /* pow */
-#define MAXSEARCHES		10
+#include <fstream>
+#define MAXSEARCHES		100
 
 /*
 These are the parameters we have to use in this algorithm
@@ -19,9 +20,12 @@ std::vector <Edge> AntColonyOptimization::edges;
 
 void AntColonyOptimization::ActivateAntColonyOptimization(Problem & myProblem)
 {
+	ofstream myfile;
+	myfile.open("ACO-problem3.txt");
 	InitAnts(myProblem);
 	edges = myProblem.getEdges();
 	Soulution bestSoulution;
+	bestSoulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());
 	float BestSolutionCost = RAND_MAX;
 
 	for (int k = 0; k < MAXSEARCHES; k++)
@@ -38,7 +42,9 @@ void AntColonyOptimization::ActivateAntColonyOptimization(Problem & myProblem)
 		}
 
 		UpdatePheromone();											 // updating the pheromone
+		myfile << "iteration " << k << ": Heuristic Value = " << BestSolutionCost << std::endl;
 	}
+	myfile.close();
 	std::cout << bestSoulution << std::endl;
 }
 
@@ -54,11 +60,11 @@ void AntColonyOptimization::InitAnts(Problem & myProblem)
 void AntColonyOptimization::GenerateSolutions(Problem & myProblem, int i)
 {
 	Soulution soulution;
+	soulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());
 	std::vector<vec2> savedCoordinates = myProblem.getCoordinates();
 	myProblem.setCoordinates(FindPermutation(myProblem,i));
 	std::vector<std::vector<vec2>> antSoulution = Utillis::TrucksClassification(myProblem);	
 	float solutionCost = Utillis::CalcTourDistance(antSoulution);	
-	soulution.setNumOfCarsAllowed(myProblem.getNumOfTrucks());			// saving the soulution
 	Utillis::UpdateSolution(soulution, antSoulution, solutionCost);
 	soulution.setPermutation(myProblem.getCoordinates());
 	ants[i].soulution = soulution;
@@ -73,40 +79,13 @@ std::vector<vec2> AntColonyOptimization::FindPermutation(Problem & myProblem, in
 	myPermutation.push_back(coordinates[0]);					// storing the depot
 	AddToTabu(ants[i], coordinates[0]);							// adding the depot to tabu
 	int counter = 0;
-
 	for (size_t k = 0; k < coordinates.size() - 1; k++)
 	{
 		std::vector<float> probabilties = CalcProbability(myProblem, myPermutation[k], i);
 		float denominator = probabilties.back();					// for probability 
-		/**
-		std::cout << probabilties[0] << std::endl;
-		std::cout << probabilties[1] << std::endl;
-		std::cout << probabilties[2] << std::endl;
-		std::cout << probabilties[3] << std::endl;
-		std::cout << probabilties[4] << std::endl;
-		std::cout << probabilties[5] << std::endl;
-		std::cout << probabilties[6] << std::endl;
-		std::cout << probabilties[7] << std::endl;
-		std::cout << probabilties[8] << std::endl;
-		std::cout << probabilties[9] << std::endl;
-		std::cout << probabilties[10] << std::endl;
-		std::cout << probabilties[11] << std::endl;
-		std::cout << probabilties[12] << std::endl;
-		std::cout << probabilties[13] << std::endl;
-		std::cout << probabilties[14] << std::endl;
-		std::cout << probabilties[15] << std::endl;
-		std::cout << probabilties[16] << std::endl;
-		std::cout << probabilties[17] << std::endl;
-		std::cout << probabilties[18] << std::endl;
-		std::cout << probabilties[19] << std::endl;
-		std::cout << probabilties[20] << std::endl;
-		std::cout << probabilties[21] << std::endl;
-		std::cout << probabilties[22] << std::endl;
-		*/
-		
 		float probabilty = (rand() / static_cast<float>(RAND_MAX));
 		int index = 0;
-		while (1)				// choosing the next city to visit
+		while (denominator != 0)				// choosing the next city to visit
 		{
 			probabilty -= probabilties[index] / denominator;
 			if (probabilty < 0)	break;
@@ -160,7 +139,7 @@ std::vector<float> AntColonyOptimization::CalcProbability(Problem & myProblem, v
 				{
 					if (currentCity == edges[j].getStart() || currentCity == edges[j].getEnd())
 					{
-						float numerator = pow(edges[j].getPheromone(), Alpha) * pow(edges[j].getVisibility(), Beta);
+						float numerator = (pow(edges[j].getPheromone(), Alpha) * pow(edges[j].getVisibility(), Beta));// +0.0001;
 						denominator += numerator;
 						probabilties.push_back(numerator);
 						break;

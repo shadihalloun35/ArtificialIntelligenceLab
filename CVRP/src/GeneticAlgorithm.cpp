@@ -11,8 +11,9 @@
 #include "Soulution.h"
 #include "Utillis.h"
 #include "GeneticAlgorithm.h"
+#include <fstream>
 
-#define GA_POPSIZE		2048		// ga population size
+#define GA_POPSIZE		4097		// ga population size
 #define GA_MAXITER		100			// maximum iterations
 #define GA_ELITRATE		0.1f		// elitism rate
 #define GA_MUTATIONRATE	0.7f		// mutation rate
@@ -375,7 +376,7 @@ int* selectParents(ga_vector &population)
 
 	int* newFitness = new int[GA_POPSIZE];									// the original fitness doesn't work good
 	for (int i = 0; i < GA_POPSIZE; i++) {
-		newFitness[i] = ((-1)*(population[i].fitness) + population[GA_POPSIZE - 1].fitness);
+		newFitness[i] = (int)((-1)*(population[i].fitness) + population[GA_POPSIZE - 1].fitness);
 	}
 
 	long totalFitness = 0;
@@ -560,6 +561,8 @@ inline void swap(ga_vector *&population,
 
 void GeneticAlgorithm::ActivateGeneticAlgorithm(Problem & _myProblem1)
 {
+	ofstream myfile;
+	myfile.open("GA-problem0.txt");
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
 	myProblem1 = _myProblem1;
@@ -572,13 +575,11 @@ void GeneticAlgorithm::ActivateGeneticAlgorithm(Problem & _myProblem1)
 
 		calc_fitness(*population);		// calculate fitness using the given heuristic
 		sort_by_fitness(*population);	// sort them
-		//print_best(*population);		// print the best one
 		mate(*population, *buffer);		// mate the population together		
 		swap(population, buffer);		// swap buffers
 		numOfGenerations += 1;
-		//std::cout << "Average: " << averages[i] << std::endl;
-		//std::cout << "Standard Deviation: " << deviations[i] << std::endl;
+		myfile << "iteration " << i << ": Heuristic Value = " << (*population)[0].fitness << std::endl;
 	}
-	//std::cout << "Number of Generations: " << numOfGenerations << std::endl;
+	myfile.close();
 	print_best(*population);
 }

@@ -16,6 +16,5 @@ class GeneticAlgorithm
 
 public:
 	static void ActivateGeneticAlgorithm(Problem & myProblem);
-
 };
 

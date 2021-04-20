@@ -10,9 +10,9 @@ float Utillis::CalcTourDistance(std::vector<std::vector<vec2>> trucksTour)
 	for (size_t i = 0; i < trucksTour.size(); i++)
 	{
 		std::vector<vec2> currentTruckTour = trucksTour[i];
-		int numOfCities = currentTruckTour.size();
+		size_t numOfCities = currentTruckTour.size();
 
-		for (int j = 0; j < numOfCities; j++)
+		for (size_t j = 0; j < numOfCities; j++)
 		{
 			vec2 start = currentTruckTour[j];
 			vec2 end = currentTruckTour[j + 1 < numOfCities ? j + 1 : 0];

@@ -1,6 +1,7 @@
 #include "TabuSearch.h"
 #include <iostream>					// for cout etc.
 #include "Utillis.h"
+#include <fstream>
 #define MAXSEARCHES		20000
 
 // definition for our static variable
@@ -9,6 +10,8 @@ unsigned int TabuSearch::tabuSize;
 
 void TabuSearch::ActivateTabuSearch(Problem & myProblem)
 {
+	ofstream myfile;
+	myfile.open("TS-problem0.txt");
 	InitTabuSize();
 	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial soulution
 	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best soulution so far
@@ -41,13 +44,16 @@ void TabuSearch::ActivateTabuSearch(Problem & myProblem)
 		{
 			bestSolution = bestCandidate;
 			solutionCost = Utillis::CalcTourDistance(bestSolution);
+			//UpdateTabuSize();
 		}
 
 		myProblem.setCoordinates(bestCandidateCoordinates);
 		InsertToTabu(bestCandidate);													// inserting to tabu list
 		//UpdateTabuSize();
+		myfile << "iteration " << k << ": Heuristic Value = " << solutionCost << std::endl;
 	}
 
+	myfile.close();
 	Utillis::UpdateSolution(mySoulution, bestSolution, solutionCost);					// updating the solution
 	std::cout << mySoulution << std::endl;
 }
@@ -83,7 +89,7 @@ void TabuSearch::InitTabuSize()
 
 void TabuSearch::UpdateTabuSize()
 {
-	float factor = 1.5;
+	float factor = 1.1f;
 	tabuSize = static_cast<int>(getTabuSize() * factor);
 }
 

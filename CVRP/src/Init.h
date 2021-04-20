@@ -15,5 +15,4 @@ public:
 	static vec2 FindCoordinates(std::string line);
 	static int FindDemands(std::string line);
 	static void GenerateEdges(Problem & myProblem);
-
 };

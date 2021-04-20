@@ -1,7 +1,19 @@
-﻿  AntColonyOptimization.cpp
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Release\) contains files shared from another project (CVRP.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  AntColonyOptimization.cpp
+  Edge.cpp
+  GeneticAlgorithm.cpp
+c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\geneticalgorithm.cpp(378): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Init.cpp
+c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\init.cpp(98): warning C4018: '<': signed/unsigned mismatch
+c:\artificialintelligencelab\artificialintelligencelab\cvrp\src\init.cpp(100): warning C4018: '<': signed/unsigned mismatch
+  Problem.cpp
+  main.cpp
+  SimulatedAnnealing.cpp
+  Soulution.cpp
+  TabuSearch.cpp
+  Utillis.cpp
+  vec2.cpp
   Generating code
-  1 of 1209 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  All 1209 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
-  CVRP.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\CVRP\Release\CVRP.exe
+  CVRP.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\CVRP\Release\MetaHeuristics.exe

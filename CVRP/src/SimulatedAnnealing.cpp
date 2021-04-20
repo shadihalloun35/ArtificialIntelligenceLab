@@ -3,6 +3,7 @@
 #include "Utillis.h"
 #include <algorithm>	// for random_shuffle
 #include <math.h>       /* exp */
+#include <fstream>
 #define MAXSEARCHES		1000000
 
 // definition for our static variable
@@ -10,6 +11,8 @@ float SimulatedAnnealing::temparature;
 
 void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 {
+	ofstream myfile;
+	myfile.open("SA-problem0.txt");
 	InitTemparature();
 	std::vector<std::vector<vec2>> currentSolution = Utillis::GenerateInitialSolution(myProblem);		// generating initial soulution
 	std::vector<std::vector<vec2>> bestSolution = currentSolution;										// saving best soulution so far
@@ -31,9 +34,11 @@ void SimulatedAnnealing::ActivateSimulatedAnnealing(Problem& myProblem)
 				solutionCost = Utillis::CalcTourDistance(bestSolution);
 			}
 		}
-		UpdateTemparature();													// updating the tempreture
-	}
 
+		UpdateTemparature();													// updating the tempreture
+		myfile << "iteration " << k << ": Heuristic Value = " << solutionCost << std::endl;
+	}
+	myfile.close();
 	Utillis::UpdateSolution(mySoulution, bestSolution, solutionCost);			// updating the solution
 	std::cout << mySoulution << std::endl;
 }
@@ -64,8 +69,8 @@ void SimulatedAnnealing::InitTemparature()
 
 void SimulatedAnnealing::UpdateTemparature()
 {
-	//float coolingFactor = 0.995;
-	float coolingFactor = (float)rand() / (RAND_MAX);
+	float coolingFactor = 0.995f;
+	//float coolingFactor = (float)rand() / (RAND_MAX);
 	temparature = getTemparature() * coolingFactor;
 }
 
