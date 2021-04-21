@@ -11,7 +11,6 @@
 #include "Soulution.h"
 #include "Utillis.h"
 #include "GeneticAlgorithm.h"
-#include <fstream>
 
 #define GA_POPSIZE		4097		// ga population size
 #define GA_MAXITER		100			// maximum iterations
@@ -561,8 +560,6 @@ inline void swap(ga_vector *&population,
 
 void GeneticAlgorithm::ActivateGeneticAlgorithm(Problem & _myProblem1)
 {
-	ofstream myfile;
-	myfile.open("GA-problem0.txt");
 	ga_vector pop_alpha, pop_beta;
 	ga_vector *population, *buffer;
 	myProblem1 = _myProblem1;
@@ -578,8 +575,6 @@ void GeneticAlgorithm::ActivateGeneticAlgorithm(Problem & _myProblem1)
 		mate(*population, *buffer);		// mate the population together		
 		swap(population, buffer);		// swap buffers
 		numOfGenerations += 1;
-		myfile << "iteration " << i << ": Heuristic Value = " << (*population)[0].fitness << std::endl;
 	}
-	myfile.close();
 	print_best(*population);
 }

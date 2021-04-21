@@ -1,7 +1,6 @@
 #include "AntColonyOptimization.h"
 #include "Utillis.h"
 #include <math.h>       /* pow */
-#include <fstream>
 #define MAXSEARCHES		100
 
 /*
@@ -20,8 +19,6 @@ std::vector <Edge> AntColonyOptimization::edges;
 
 void AntColonyOptimization::ActivateAntColonyOptimization(Problem & myProblem)
 {
-	ofstream myfile;
-	myfile.open("ACO-problem3.txt");
 	InitAnts(myProblem);
 	edges = myProblem.getEdges();
 	Soulution bestSoulution;
@@ -42,9 +39,7 @@ void AntColonyOptimization::ActivateAntColonyOptimization(Problem & myProblem)
 		}
 
 		UpdatePheromone();											 // updating the pheromone
-		myfile << "iteration " << k << ": Heuristic Value = " << BestSolutionCost << std::endl;
 	}
-	myfile.close();
 	std::cout << bestSoulution << std::endl;
 }
 

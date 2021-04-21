@@ -122,7 +122,7 @@ int main()
 	const auto before = clock::now();				// for elapsed time
 	srand(unsigned(time(NULL)));
 	clock_t begin = std::clock();					// for clock ticks
-	//InputMaintaing();								// choosing the problem and the algorithm
+	InputMaintaing();								// choosing the problem and the algorithm
 	InitProblem();
 	FindBestPath();
 	clock_t end = std::clock();
