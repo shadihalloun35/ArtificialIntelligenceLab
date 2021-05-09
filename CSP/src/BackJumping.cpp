@@ -4,7 +4,8 @@
 #include <string>
 #include <sstream>
 #include <algorithm> // for sort algorithm
-#include <sys/timeb.h>
+#include <time.h>					// for random seed
+#include <chrono>					// for elapsed time
 #include "BackJumping.h"
 
 
@@ -156,15 +157,14 @@ void BackJumping::createBackJumpingNodes(BackJumpingNode* nodes, int size) {
 
 void BackJumping::ActivateBackJumping()
 {
+	using clock = std::chrono::system_clock;
+	using sec = std::chrono::duration<double>;
+	const auto before = clock::now();				// for elapsed time
+
 	Matrix mtx;
 	int* nodes = NULL;
 	BackJumpingNode* sorted = NULL;
-
-	struct timeb start, end2;
-	int diff;
-	ftime(&start);
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\myciel3.col");
-	//ifstream input("C:\\Users\\get-a\\Desktop\\noor-git\\ArtificialIntelligenceLab\\GraphColoring\\queen10_10.col");
+	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\queen5_5.col");
 	if (!input.is_open())
 	{
 		cout << "Error Opening a file.\n";
@@ -218,10 +218,8 @@ void BackJumping::ActivateBackJumping()
 
 			backtracking(mtx, sorted, nodes, 0);
 		}
-		ftime(&end2);
-		diff = (int)(1000.0 * (end2.time - start.time)
-			+ (end2.millitm - start.millitm));
-		cout << "Elapsed Time: " << diff << endl;
+		const sec duration = clock::now() - before;
+		std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;
 		cout << "NUM OF STATES: " << counter << endl;
 
 		//printMatrix(mtx);

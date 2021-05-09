@@ -1,11 +1,14 @@
 #include "BackJumping.h"
 #include "ForwardChecking.h"
-#define Backward_Forward	1
+#include "Feasibility.h"
+
+#define Approach	3
+
 
 int main() 
 {
 
-	switch (Backward_Forward)
+	switch (Approach)
 	{
 		case 1:
 			BackJumping::ActivateBackJumping();
@@ -13,6 +16,10 @@ int main()
 
 		case 2:
 			ForwardChecking::ActivateForwardChecking();
+			break;
+
+		case 3:
+			Feasibility::ActivateFeasibility();
 			break;
 
 		default:

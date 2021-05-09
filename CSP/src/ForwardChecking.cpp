@@ -5,7 +5,8 @@
 #include <sstream>
 #include <algorithm> // for sort algorithm
 #include <stack>
-#include <sys/timeb.h>
+#include <time.h>					// for random seed
+#include <chrono>					// for elapsed time
 #include "ForwardChecking.h"
 
 //FW AND AC FINAL
@@ -259,6 +260,9 @@ void ForwardChecking::createForwardCheckingNodes(ForwardCheckingNode* nodes, int
 
 void ForwardChecking::ActivateForwardChecking()
 {
+	using clock = std::chrono::system_clock;
+	using sec = std::chrono::duration<double>;
+	const auto before = clock::now();				// for elapsed time
 	Matrix mtx;
 	int* nodes = NULL;
 	ForwardCheckingNode* sorted = NULL;
@@ -266,10 +270,7 @@ void ForwardChecking::ActivateForwardChecking()
 	//cout << "You must add an Input";
 
 
-	struct timeb start, end2;
-	int diff;
-	ftime(&start);
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\queen10_10.col");
+	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\myciel3.col");
 	if (!input.is_open())
 	{
 		cout << "Error Opening a file.\n";
@@ -320,10 +321,8 @@ void ForwardChecking::ActivateForwardChecking()
 			FCandAC(mtx, sorted, 0);
 
 
-		ftime(&end2);
-		diff = (int)(1000.0 * (end2.time - start.time)
-			+ (end2.millitm - start.millitm));
-		cout << "Elapsed Time: " << diff << endl;
+		const sec duration = clock::now() - before;
+		std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;
 		cout << "NUM OF STATES: " << counter1 << endl;
 		getchar();
 		getchar();
