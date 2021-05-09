@@ -112,7 +112,7 @@ void Feasibility::MinimalConflict(Matrix & mtx, Node* nodes, std::chrono::durati
 		}
 		duration = clock::now() - before;
 	}
-	mtx.colors = mtx.colors--;
+	//mtx.colors = mtx.colors--;
 	cout << "SUCCESSFUL" << endl;
 	cout << "Number of Colors: " << mtx.colors << endl;
 }
@@ -136,7 +136,7 @@ void Feasibility::ActivateFeasibility()
 
 	srand(unsigned(time(NULL)));
 	counter2 = 0;
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\queen5_5.col");
+	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\myciel3.col");
 	if (!input.is_open())
 		cout << "Error Opening a file.\n";
 	else {

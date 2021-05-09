@@ -164,7 +164,7 @@ void BackJumping::ActivateBackJumping()
 	Matrix mtx;
 	int* nodes = NULL;
 	BackJumpingNode* sorted = NULL;
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\queen5_5.col");
+	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\myciel3.col");
 	if (!input.is_open())
 	{
 		cout << "Error Opening a file.\n";

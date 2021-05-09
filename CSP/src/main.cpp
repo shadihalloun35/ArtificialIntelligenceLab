@@ -1,6 +1,7 @@
 #include "BackJumping.h"
 #include "ForwardChecking.h"
 #include "Feasibility.h"
+#include "Objective.h"
 
 #define Approach	3
 
@@ -20,6 +21,10 @@ int main()
 
 		case 3:
 			Feasibility::ActivateFeasibility();
+			break;
+
+		case 4:
+			Objective::ActivateObjective();
 			break;
 
 		default:

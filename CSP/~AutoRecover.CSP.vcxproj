@@ -120,6 +120,7 @@
     <ClCompile Include="src\Feasibility.cpp" />
     <ClCompile Include="src\ForwardChecking.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Objective.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BackJumping.h" />
@@ -127,6 +128,7 @@
     <ClInclude Include="src\Feasibility.h" />
     <ClInclude Include="src\ForwardChecking.h" />
     <ClInclude Include="src\Node.h" />
+    <ClInclude Include="src\Objective.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
