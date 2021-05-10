@@ -119,6 +119,7 @@
     <ClCompile Include="src\Base.cpp" />
     <ClCompile Include="src\Feasibility.cpp" />
     <ClCompile Include="src\ForwardChecking.cpp" />
+    <ClCompile Include="src\Hybrid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Objective.cpp" />
   </ItemGroup>
@@ -127,6 +128,7 @@
     <ClInclude Include="src\Base.h" />
     <ClInclude Include="src\Feasibility.h" />
     <ClInclude Include="src\ForwardChecking.h" />
+    <ClInclude Include="src\Hybrid.h" />
     <ClInclude Include="src\Node.h" />
     <ClInclude Include="src\Objective.h" />
   </ItemGroup>
