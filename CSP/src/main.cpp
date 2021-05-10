@@ -2,8 +2,10 @@
 #include "ForwardChecking.h"
 #include "Feasibility.h"
 #include "Objective.h"
+#include "Hybrid.h"
 
-#define Approach	3
+
+#define Approach	5
 
 
 int main() 
@@ -26,6 +28,11 @@ int main()
 		case 4:
 			Objective::ActivateObjective();
 			break;
+
+		case 5:
+			Hybrid::ActivateHybrid();
+			break;
+
 
 		default:
 			break;
