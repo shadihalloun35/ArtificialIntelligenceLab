@@ -275,6 +275,8 @@ void Hybrid::GeneticAlgorithm(Matrix* mtx, std::chrono::duration <double> timeAl
 		swap(population, buffer);		// swap buffers
 	}
 
+	cout << "Number of Colors: " << mtx->colors << endl;
+
 	cout << "NUM OF GENERATIONS: " << counter << endl;
 
 }
@@ -314,7 +316,7 @@ void Hybrid::CreateHybridNodes(Node* nodes, int size) {
 	}
 }
 
-void Hybrid::ActivateHybrid()
+void Hybrid::ActivateHybrid(string filePath, int timeAllowed)
 {
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
@@ -324,7 +326,7 @@ void Hybrid::ActivateHybrid()
 	Node* sorted = NULL;
 
 	srand(unsigned(time(NULL)));
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\queen5_5.col");
+	ifstream input(filePath);
 	if (!input.is_open())
 		cout << "Error Opening a file.\n";
 	else {
@@ -338,7 +340,14 @@ void Hybrid::ActivateHybrid()
 					while (x[i] != ' ') {
 						i++;
 					}
+					string line = x;
 					x = x.substr(7, i);
+					cout << "Input Features:" << std::endl;
+					cout << "Number of Nodes: " << stoi(x) << std::endl;
+					cout << "Number of Edges: " << line.substr(i, line.size() - 1) << std::endl;
+					int nodesNum = stoi(x);
+					int edgesNum = stoi(line.substr(i, line.size() - 1));
+					cout << "Density of the Graph: " << (float)2 * edgesNum / (nodesNum*(nodesNum - 1)) << std::endl;
 					createMatrix(&mtx, stoi(x));
 					nodes = new int[mtx.dimension];
 					sorted = new Node[mtx.dimension];
@@ -366,7 +375,7 @@ void Hybrid::ActivateHybrid()
 			cout << "Solution: 0 colors";
 		}
 		GreedyAlgorithm(&mtx, sorted);
-		GeneticAlgorithm(&mtx, (std::chrono::duration < double>)15);
+		GeneticAlgorithm(&mtx, (std::chrono::duration < double>)timeAllowed);
 		//printMatrix(mtx);
 		PrintHybridNodes(mtx, sorted);
 		const sec duration = clock::now() - before;

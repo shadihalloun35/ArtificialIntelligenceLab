@@ -4,8 +4,8 @@ c:\artificialintelligencelab\artificialintelligencelab\csp\src\hybrid.cpp(139): 
 c:\artificialintelligencelab\artificialintelligencelab\csp\src\hybrid.cpp(155): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 c:\artificialintelligencelab\artificialintelligencelab\csp\src\hybrid.cpp(211): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   Generating code
-  8 of 725 functions ( 1.1%) were compiled, the rest were copied from previous compilation.
+  2 of 739 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    15 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   CSP.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\CSP\Release\CSP.exe

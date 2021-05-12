@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Node.h"
+#include <string>
 #include <vector> 
 using namespace std;
 
@@ -21,6 +22,6 @@ public:
 	static void SimulatedAnnealing(Matrix mtx, Node* nodes, std::chrono::duration < double> timeAllowed);
 	static void PrintObjectiveNodes(Matrix & mtx, Node* nodes);
 	static void CreateObjectiveNodes(Node* nodes, int size);
-	static void ActivateObjective();
+	static void ActivateObjective(string filePath, int timeAllowed);
 };
 

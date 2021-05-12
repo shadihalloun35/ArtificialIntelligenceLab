@@ -2,6 +2,8 @@
 #include "Base.h"
 #include "Node.h"
 #include <vector> 
+#include <string>
+
 using namespace std;
 
 struct ForwardCheckingNode : Node
@@ -19,7 +21,7 @@ struct Deleted
 class ForwardChecking : public Base
 {
 public:
-	static void ActivateForwardChecking();
+	static void ActivateForwardChecking(string filePath);
 	static bool tryColor(Matrix mtx, ForwardCheckingNode* nodes, int index, vector<Deleted>* deleted);
 	static void fixConsistency(ForwardCheckingNode* nodes, int index1, int index2, int color, vector<Deleted>* deleted);
 	static void printDeletedForwardCheckingNodes(vector<Deleted> x);

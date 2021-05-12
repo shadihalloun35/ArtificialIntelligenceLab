@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Node.h"
+#include <string>
 #include <vector> 
 #include <time.h>					// for random seed
 #include <chrono>					// for elapsed time
@@ -31,5 +32,5 @@ public:
 	static void GreedyAlgorithm(Matrix* mtx, Node* nodes);
 	static void PrintHybridNodes(Matrix & mtx, Node* nodes);
 	static void CreateHybridNodes(Node* nodes, int size);
-	static void ActivateHybrid();
+	static void ActivateHybrid(string filePath, int timeAllowed);
 };

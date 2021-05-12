@@ -187,7 +187,7 @@ void Objective::CreateObjectiveNodes(Node* nodes, int size) {
 	}
 }
 
-void Objective::ActivateObjective()
+void Objective::ActivateObjective(string filePath,int timeAllowed)
 {
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
@@ -198,7 +198,7 @@ void Objective::ActivateObjective()
 
 	srand(unsigned(time(NULL)));
 	counter3 = 0;
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\myciel3.col");
+	ifstream input(filePath);
 	if (!input.is_open())
 		cout << "Error Opening a file.\n";
 	else {
@@ -212,7 +212,14 @@ void Objective::ActivateObjective()
 					while (x[i] != ' ') {
 						i++;
 					}
+					string line = x;
 					x = x.substr(7, i);
+					cout << "Input Features:" << std::endl;
+					cout << "Number of Nodes: " << stoi(x) << std::endl;
+					cout << "Number of Edges: " << line.substr(i, line.size() - 1) << std::endl;
+					int nodesNum = stoi(x);
+					int edgesNum = stoi(line.substr(i, line.size() - 1));
+					cout << "Density of the Graph: " << (float)2*edgesNum /(nodesNum*(nodesNum - 1)) << std::endl;
 					createMatrix(&mtx, stoi(x));
 					nodes = new int[mtx.dimension];
 					sorted = new Node[mtx.dimension];
@@ -239,7 +246,7 @@ void Objective::ActivateObjective()
 		if (mtx.dimension == 0) {
 			cout << "Solution: 0 colors";
 		}
-		SimulatedAnnealing(mtx, sorted, (std::chrono::duration < double>)15);
+		SimulatedAnnealing(mtx, sorted, (std::chrono::duration < double>)timeAllowed);
 		//printMatrix(mtx);
 		PrintObjectiveNodes(mtx, sorted);
 		const sec duration = clock::now() - before;

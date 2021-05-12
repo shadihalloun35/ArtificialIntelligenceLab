@@ -5,6 +5,8 @@
 #include <vector> 
 #include <time.h>					// for random seed
 #include <chrono>					// for elapsed time
+#include <string>
+
 using namespace std;
 
 
@@ -20,5 +22,5 @@ public:
 	static void greedyAlgorithm(Matrix* mtx, Node* nodes);
 	static void CreateFeasibilityNodes(Node* nodes, int size);
 	static void MinimalConflict(Matrix & mtx, Node* nodes, std::chrono::duration<double> timeAllowed);
-	static void ActivateFeasibility();
+	static void ActivateFeasibility(string filePath, int timeAllowed);
 };

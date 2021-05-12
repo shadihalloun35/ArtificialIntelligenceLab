@@ -258,7 +258,7 @@ void ForwardChecking::createForwardCheckingNodes(ForwardCheckingNode* nodes, int
 	}
 }
 
-void ForwardChecking::ActivateForwardChecking()
+void ForwardChecking::ActivateForwardChecking(string filePath)
 {
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
@@ -270,7 +270,7 @@ void ForwardChecking::ActivateForwardChecking()
 	//cout << "You must add an Input";
 
 
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\myciel3.col");
+	ifstream input(filePath);
 	if (!input.is_open())
 	{
 		cout << "Error Opening a file.\n";
@@ -288,7 +288,14 @@ void ForwardChecking::ActivateForwardChecking()
 					while (x[i] != ' ') {
 						i++;
 					}
+					string line = x;
 					x = x.substr(7, i);
+					cout << "Input Features:" << std::endl;
+					cout << "Number of Nodes: " << stoi(x) << std::endl;
+					cout << "Number of Edges: " << line.substr(i, line.size() - 1) << std::endl;
+					int nodesNum = stoi(x);
+					int edgesNum = stoi(line.substr(i, line.size() - 1));
+					cout << "Density of the Graph: " << (float)2 * edgesNum / (nodesNum*(nodesNum - 1)) << std::endl;
 					createMatrix(&mtx, stoi(x));
 					nodes = new int[mtx.dimension];
 					sorted = new ForwardCheckingNode[mtx.dimension];

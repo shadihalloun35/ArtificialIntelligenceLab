@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Node.h"
+#include <string>
 #include <vector> 
 using namespace std;
 
@@ -13,7 +14,7 @@ class BackJumping : public Base
 {
 
 public:
-	static void ActivateBackJumping();
+	static void ActivateBackJumping(string filePath);
 	static bool tryColor(Matrix mtx, BackJumpingNode* nodes, int* org, int index);
 	static void fixNeighbors(Matrix mtx, BackJumpingNode* nodes, int* org, int index);
 	static void resetBackJumpingNodes(Matrix mtx, BackJumpingNode* nodes, int size);

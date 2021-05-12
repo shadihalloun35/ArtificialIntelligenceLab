@@ -7,6 +7,7 @@
 #include <time.h>					// for random seed
 #include <chrono>					// for elapsed time
 #include "BackJumping.h"
+using namespace std;
 
 
 int counter = 0;
@@ -155,7 +156,7 @@ void BackJumping::createBackJumpingNodes(BackJumpingNode* nodes, int size) {
 	}
 }
 
-void BackJumping::ActivateBackJumping()
+void BackJumping::ActivateBackJumping(string filePath)
 {
 	using clock = std::chrono::system_clock;
 	using sec = std::chrono::duration<double>;
@@ -164,7 +165,7 @@ void BackJumping::ActivateBackJumping()
 	Matrix mtx;
 	int* nodes = NULL;
 	BackJumpingNode* sorted = NULL;
-	ifstream input("C:\\ArtificialIntelligenceLab\\ArtificialIntelligenceLab\\CSP\\instances\\myciel3.col");
+	ifstream input(filePath);
 	if (!input.is_open())
 	{
 		cout << "Error Opening a file.\n";
@@ -183,7 +184,15 @@ void BackJumping::ActivateBackJumping()
 					while (x[i] != ' ') {
 						i++;
 					}
+					string line = x;
 					x = x.substr(7, i);
+					cout << "Input Features:" << std::endl;
+					cout << "Number of Nodes: " << stoi(x) << std::endl;
+					cout << "Number of Edges: " << line.substr(i, line.size()-1) << std::endl;
+					int nodesNum = stoi(x);
+					int edgesNum = stoi(line.substr(i, line.size() - 1));
+					cout << "Density of the Graph: " << (float)2 * edgesNum / (nodesNum*(nodesNum - 1)) << std::endl;
+
 					createMatrix(&mtx, stoi(x));
 					nodes = new int[mtx.dimension];
 					sorted = new BackJumpingNode[mtx.dimension];
