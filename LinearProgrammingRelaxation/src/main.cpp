@@ -8,7 +8,7 @@
 
 
 using namespace std;	// polluting global namespace, but hey...
-int sack = 1;	// choose one of the six problems
+int mdkp = 1;	// choose one of the six problems
 int cvrp = 1;	// choose one of the seven problems
 int type = 1;
 float timeAllowed;
@@ -16,7 +16,22 @@ CVRP cvrpProblem;
 MDKP mdkpProblem;
 
 
-void InitProblem()
+void InitProblemMDKP()
+{
+	switch (mdkp)
+
+	{
+	case 1:
+		mdkpProblem.Initialize("problem1.txt");
+		timeAllowed = 40.0f;
+		break;
+
+	default:
+		break;
+	}
+}
+
+void InitProblemCVRP()
 {
 	switch (cvrp)
 	{
@@ -67,14 +82,16 @@ void InputMaintaing()
 
 	if (type == 1)
 	{
-		std::cout << " Please enter the number of the Problem ( 0 - 6 )" << std::endl;
-		cin >> sack;
+		std::cout << " Please enter the number of the Problem ( 1 )" << std::endl;
+		cin >> mdkp;
+		InitProblemMDKP();
 	}
 
 	else if (type == 2)
 	{
 		std::cout << " Please enter the number of the Problem ( 0 - 7 )" << std::endl;
 		cin >> cvrp;
+		InitProblemCVRP();
 	}
 
 }
@@ -88,7 +105,6 @@ int main()
 	srand(unsigned(time(NULL)));
 	clock_t begin = std::clock();					// for clock ticks
 	InputMaintaing();								// choosing the problem and the algorithm
-	InitProblem();
 	clock_t end = std::clock();
 	float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
 	if (timeAllowed < time_spent)

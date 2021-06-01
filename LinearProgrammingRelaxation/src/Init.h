@@ -16,5 +16,10 @@ public:
 	static int FindCapacity(std::string line);
 	static vec2 FindCoordinates(std::string line);
 	static int FindDemands(std::string line);
+	static int FindNumOfKnapsacks(std::string line);
+	static int FindNumOfObjects(std::string line);
+	static std::vector<int> FindValuesOfKnapsacks(std::string line);
+	static std::vector<int> FindCapacityOfKnapsacks(std::string line);
+	static std::vector<int> FindWeightsOfKnapsacks(std::string line);
 	static void GenerateEdges(CVRP & myCVRP);
 };

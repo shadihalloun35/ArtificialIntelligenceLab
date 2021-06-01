@@ -3,9 +3,9 @@
 
 struct knapsack
 {
-	std::vector<vec2> weights;
-	std::vector<vec2> values;
-
+	std::vector<int> values;
+	std::vector<int> weights;
+	int capacity;
 };
 
 class MDKP
