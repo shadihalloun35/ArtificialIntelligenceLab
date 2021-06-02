@@ -22,13 +22,20 @@ void InitProblemMDKP()
 
 	{
 	case 1:
-		mdkpProblem.Initialize("problem1.txt");
+		mdkpProblem.InitializeMDKP("problem1.txt");
 		timeAllowed = 40.0f;
 		break;
 
 	default:
 		break;
 	}
+
+	
+	std::cout << mdkpProblem.getNumOfKnapsacks() << std::endl;
+	std::cout << mdkpProblem.getNumOfObjects() << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[0].weights[0] << std::endl;
+
+
 }
 
 void InitProblemCVRP()

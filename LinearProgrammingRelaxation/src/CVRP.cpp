@@ -10,12 +10,7 @@ void CVRP::Initialize(std::string fileName)
 	Init::LoadCVRP(*this, fileName);
 }
 
-bool CVRP::operator==(const CVRP & prob) const
-{
-	if (prob.capacity == capacity && prob.dimension == dimension && prob.numOfTrucks == numOfTrucks && prob.coordinates == coordinates)
-		return true;
-	return false;
-}
+
 
 // operators implementation
 
@@ -27,6 +22,13 @@ CVRP & CVRP::operator=(const CVRP & prob)
 	coordinates = prob.coordinates;
 
 	return *this;
+}
+
+bool CVRP::operator==(const CVRP & prob) const
+{
+	if (prob.capacity == capacity && prob.dimension == dimension && prob.numOfTrucks == numOfTrucks && prob.coordinates == coordinates)
+		return true;
+	return false;
 }
 
 // setters implementation

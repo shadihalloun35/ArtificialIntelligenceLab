@@ -78,17 +78,19 @@ void Init::LoadMDKP(MDKP & myMDKP, std::string fileName)
 			myMDKP.setNumOfObjects(numOfObjects);
 
 		}
-
+		
 
 		if (lineNumber >= 75 && flag == 1)
 		{
 			std::vector<int> returnedValues = FindValuesOfKnapsacks(line);
-			std::vector<int> v(values.size() + returnedValues.size());
-			values = v;
+			values.insert(values.end(), returnedValues.begin(), returnedValues.end());
+
+
 			char arr[] = "//";
 
 			if (line.find(arr, 0) != std::string::npos) {
 				flag = 2;
+				continue;
 			}
 		}
 
@@ -96,22 +98,22 @@ void Init::LoadMDKP(MDKP & myMDKP, std::string fileName)
 		{
 			capacities = FindCapacityOfKnapsacks(line);
 			flag = 3;
+			continue;
+
 		}
 
 		if (flag == 3)
 		{
-			std::size_t found;
 			std::vector<int> returnedWeights = FindWeightsOfKnapsacks(line);
-			std::vector<int> w(tempWeights.size() + returnedWeights.size());
-			tempWeights = w;
 
-			found = line.find('//');
+			tempWeights.insert(tempWeights.end(), returnedWeights.begin(), returnedWeights.end());
 
-			if (found != std::string::npos)
-			{
+
+			if (line.find("//") != std::string::npos) {
 				weights.push_back(tempWeights);
 			}
 
+		
 			if (weights.size() == numOfKnapsacks)
 			{
 				break;
@@ -197,7 +199,7 @@ int Init::FindNumOfObjects(std::string line)
 std::vector<int> Init::FindValuesOfKnapsacks(std::string line)
 {
 	std::vector<int> values;
-	std::size_t pos1;								// position of ":" in line
+	std::size_t pos1 = 0;								// position of ":" in line
 
 	while (1) {
 
@@ -231,7 +233,7 @@ std::vector<int> Init::FindValuesOfKnapsacks(std::string line)
 std::vector<int> Init::FindCapacityOfKnapsacks(std::string line)
 {
 	std::vector<int> capacities;
-	std::size_t pos1;								// position of ":" in line
+	std::size_t pos1 = 0;								// position of ":" in line
 	while (1) {
 
 		if (line[pos1] == ' ')
@@ -256,7 +258,7 @@ std::vector<int> Init::FindCapacityOfKnapsacks(std::string line)
 std::vector<int> Init::FindWeightsOfKnapsacks(std::string line)
 {
 	std::vector<int> weights;
-	std::size_t pos1;								// position of ":" in line
+	std::size_t pos1 = 0;								// position of ":" in line
 	while (1) {
 
 		if (line[pos1] == ' ')
@@ -268,15 +270,15 @@ std::vector<int> Init::FindWeightsOfKnapsacks(std::string line)
 			if (line[pos1] == '/')
 				break;
 
-			char arr[] = " ";
-			if (line.find(arr, pos1 + 1) == std::string::npos) {
+			char arr1[] = " ";
+			if (line.find(arr1, pos1 + 1) == std::string::npos) {
 				std::string weight = line.substr(pos1);
 				weights.push_back(stoi(weight));
 				break;
 			}
 
-			char arr[] = " ";
-			std::size_t pos2 = line.find(arr, pos1 + 1);
+			char arr2[] = " ";
+			std::size_t pos2 = line.find(arr2, pos1 + 1);
 			std::string weight = line.substr(pos1, pos2 - pos1);			// get from ":" to the end (':' not included)
 			pos1 = pos2;
 			weights.push_back(stoi(weight));
@@ -289,9 +291,9 @@ void Init::GenerateEdges(CVRP & myCVRP)
 {
 	std::vector<vec2> myCoordinates = myCVRP.getCoordinates();
 
-	for (int i = 0; i < myCoordinates.size(); i++)
+	for (size_t i = 0; i < myCoordinates.size(); i++)
 	{
-		for (int j = i + 1; j < myCoordinates.size(); j++)
+		for (size_t j = i + 1; j < myCoordinates.size(); j++)
 		{
 			myCVRP.getEdges().push_back(Edge(myCoordinates[i], myCoordinates[j]));
 		}

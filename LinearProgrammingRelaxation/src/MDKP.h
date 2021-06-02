@@ -14,11 +14,11 @@ class MDKP
 public:
 
 	// methods we could use
-	void Initialize(std::string fileName);					// initializing the problem
+	void InitializeMDKP(std::string fileName);					// initializing the problem
 
 	// operators
 	MDKP& operator =(const MDKP & prob);
-	bool operator ==(const MDKP & prob) const;
+	//bool operator ==(const MDKP & prob) const;
 
 	// setters
 

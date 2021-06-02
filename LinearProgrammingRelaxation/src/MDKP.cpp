@@ -5,19 +5,15 @@
 
 // methods we could use implementation
 
-void MDKP::Initialize(std::string fileName)
+void MDKP::InitializeMDKP(std::string fileName)
 {
 	Init::LoadMDKP(*this, fileName);
 }
 
-bool MDKP::operator==(const MDKP & prob) const
-{
-	if (prob.numOfKnapsacks == numOfKnapsacks && prob.numOfObjects == numOfObjects && prob.knapsacks == knapsacks)
-		return true;
-	return false;
-}
+
 
 // operators implementation
+
 
 MDKP & MDKP::operator=(const MDKP & prob)
 {
@@ -27,6 +23,15 @@ MDKP & MDKP::operator=(const MDKP & prob)
 
 	return *this;
 }
+
+/**
+bool MDKP::operator==(const MDKP & prob) const
+{
+	if (prob.numOfKnapsacks == numOfKnapsacks && prob.numOfObjects == numOfObjects && prob.knapsacks == knapsacks)
+		return true;
+	return false;
+}
+*/
 
 // setters implementation
 
