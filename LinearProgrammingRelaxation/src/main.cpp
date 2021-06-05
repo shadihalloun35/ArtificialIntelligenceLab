@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "CVRP.h"
 #include "MDKP.h"
+#include "BranchAndBound.h"
+
 
 
 using namespace std;	// polluting global namespace, but hey...
@@ -92,6 +94,8 @@ void InputMaintaing()
 		std::cout << " Please enter the number of the Problem ( 1 )" << std::endl;
 		cin >> mdkp;
 		InitProblemMDKP();
+		BranchAndBound::LDS(mdkpProblem);
+
 	}
 
 	else if (type == 2)
