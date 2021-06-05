@@ -4,17 +4,22 @@
 
 void BranchAndBound::LDS(MDKP & mdkpProblem)
 {
-	std::vector<Node> myQueue;			// queue for traversing the node
+	// queue for traversing the node
+	std::vector<Node> myQueue;	
+
 	Node u, v;
 	int n = mdkpProblem.getNumOfObjects();
+	int m = mdkpProblem.getNumOfKnapsacks();
 
 
-	u.level = -1;						// dummy node at starting
-	u.profit = u.weight = 0;
+	u.level = -1;						
+	u.profit = 0;
+	u.weight.resize(m, 0);
 	myQueue.push_back(u);
 
 
-	int maxProfit = 0;				   // the maximum profit till this state
+	// the maximum profit till this state
+	int maxProfit = 0;				   
 
 	while (myQueue.size() != 0)
 	{
@@ -32,9 +37,21 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 
 		v.level = u.level + 1;
 
-		v.weight = u.weight + Utillis::CalcWeight(mdkpProblem, v.level);
+		v.weight = Utillis::CalcWeight(mdkpProblem, u.weight , v.level);
 		v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
+		 
+		if (Utillis::CheckValidWeight(mdkpProblem,v.weight) && v.profit > maxProfit)
+		{
+			maxProfit = v.profit;
+		}
+
+		// Finding the upper bound to decide wether to stop or continue searching
+		v.upperBound = Utillis::FindUpperBound(mdkpProblem,v);
+
+		if (v.upperBound > maxProfit)
+			myQueue.push_back(v);
 	}
+
 
 
 }

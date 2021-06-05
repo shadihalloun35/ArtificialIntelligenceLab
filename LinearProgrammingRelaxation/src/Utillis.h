@@ -6,7 +6,7 @@ struct Node
 	int level;
 	int profit;
 	int upperBound;
-	float weight;
+	std::vector<float> weight;
 };
 
 class Utillis
@@ -14,8 +14,11 @@ class Utillis
 
 public:
 
-	static float CalcWeight(MDKP & mdkpProblem,int level);
+	static std::vector<float> CalcWeight(MDKP & mdkpProblem, std::vector<float> weight, int level);
 	static float CalcValue(MDKP & mdkpProblem, int level);
+	static bool CheckValidWeight(MDKP & mdkpProblem, std::vector<float> weights);
+	static int FindUpperBound(MDKP & mdkpProblem, Node u);
+
 
 	
 };

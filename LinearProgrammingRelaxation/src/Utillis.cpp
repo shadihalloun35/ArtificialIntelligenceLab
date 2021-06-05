@@ -1,17 +1,17 @@
 #include "Utillis.h"
 
-float Utillis::CalcWeight(MDKP & mdkpProblem, int level)
+std::vector<float> Utillis::CalcWeight(MDKP & mdkpProblem, std::vector<float> previousWeights, int level)
 {
-	float weight = 0;
 	int numOfKnapsacks = mdkpProblem.getNumOfKnapsacks();
 	std::vector<knapsack> knapsacks = mdkpProblem.getKnapsacks();
+	std::vector<float> weights(numOfKnapsacks, 0);
 
 	for (int i = 0; i < numOfKnapsacks; i++)
 	{
-		weight += knapsacks[i].weights[level];
+		weights[i] = previousWeights[i] + knapsacks[i].weights[level];
 	}
 
-	return weight;
+	return weights;
 }
 
 float Utillis::CalcValue(MDKP & mdkpProblem, int level)
@@ -27,4 +27,48 @@ float Utillis::CalcValue(MDKP & mdkpProblem, int level)
 
 	return value;
 
+}
+
+bool Utillis::CheckValidWeight(MDKP & mdkpProblem, std::vector<float> weights)
+{
+	std::vector<knapsack> knapsacks = mdkpProblem.getKnapsacks();
+	int m = mdkpProblem.getNumOfKnapsacks();
+	
+	for (int i = 0; i < m; i++)
+	{
+		if (weights[i] > knapsacks[i].capacity)
+			return false;
+	}
+
+	return true;
+}
+
+int Utillis::FindUpperBound(MDKP & mdkpProblem, Node u)
+{
+	std::vector<knapsack> knapsacks = mdkpProblem.getKnapsacks();
+	int m = mdkpProblem.getNumOfKnapsacks();
+	int n = mdkpProblem.getNumOfObjects();
+
+
+	for (int i = 0; i < m; i++)
+	{
+		if (u.weight[i] >= knapsacks[i].capacity)
+			return 0;
+	}
+
+	int upperBound = u.profit;
+
+	// start including items 
+	int j = u.level + 1;
+
+	while (j < n)
+	{
+		for (int i = 0; i < m; i++)
+		{
+			upperBound += knapsacks[i].values[j];
+		}
+		j++;
+	}
+
+	return upperBound;
 }
