@@ -32,12 +32,6 @@ void InitProblemMDKP()
 		break;
 	}
 
-	
-	std::cout << mdkpProblem.getNumOfKnapsacks() << std::endl;
-	std::cout << mdkpProblem.getNumOfObjects() << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[0].weights[0] << std::endl;
-
-
 }
 
 void InitProblemCVRP()

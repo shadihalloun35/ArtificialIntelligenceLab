@@ -1,3 +1,4 @@
+#include <iostream>					// for cout etc.
 #include "BranchAndBound.h"
 #include "Utillis.h"
 
@@ -26,32 +27,83 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 		// extract the next node 
 		u = myQueue[0];
 		myQueue.erase(myQueue.begin());
+		u.right = true;
+
+
+		/**
 
 		// assign level 0
 		if (u.level == -1)
+		{
 			v.level = 0;
+		}
 
 		// If there is nothing on next level
 		if (u.level == n - 1)
 			continue;
+			*/
 
-		v.level = u.level + 1;
+		// Not taking the item in knapsack 
 
-		v.weight = Utillis::CalcWeight(mdkpProblem, u.weight , v.level);
-		v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
-		 
-		if (Utillis::CheckValidWeight(mdkpProblem,v.weight) && v.profit > maxProfit)
+		while (1)
 		{
-			maxProfit = v.profit;
+			/**
+			u.upperBound = Utillis::FindUpperBound(mdkpProblem, u);
+			if (u.upperBound > maxProfit)
+			{
+				if (!u.right)
+					myQueue.push_back(u);
+			}
+			*/
+
+			// assign level 0
+			if (u.level == -1)
+			{
+				v.level = 0;
+			}
+
+			// If there is nothing on next level
+			if (u.level == n - 1)
+				break;
+
+			v.level = u.level + 1;
+			v.weight = Utillis::CalcWeight(mdkpProblem, u.weight, v.level);
+			v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
+
+			
+			// Don't take the item in knapsack
+			if (u.right)
+			{
+				v.weight = u.weight;
+				v.profit = u.profit;
+			}
+
+			if (!Utillis::CheckValidWeight(mdkpProblem, v.weight)) {
+
+				break;
+			}
+
+			if (v.profit > maxProfit)
+			{
+				maxProfit = v.profit;
+			}
+
+			// Finding the upper bound to decide wether to stop or continue searching
+			v.upperBound = Utillis::FindUpperBound(mdkpProblem, v);
+
+			if (v.upperBound > maxProfit)
+			{
+				myQueue.push_back(v);
+			}
+
+			else {
+				break;
+			}
+
+			u = v;
 		}
-
-		// Finding the upper bound to decide wether to stop or continue searching
-		v.upperBound = Utillis::FindUpperBound(mdkpProblem,v);
-
-		if (v.upperBound > maxProfit)
-			myQueue.push_back(v);
 	}
 
 
-
+	//std::cout << maxProfit;
 }

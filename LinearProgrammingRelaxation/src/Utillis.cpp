@@ -1,4 +1,6 @@
 #include "Utillis.h"
+#include <algorithm>
+
 
 std::vector<float> Utillis::CalcWeight(MDKP & mdkpProblem, std::vector<float> previousWeights, int level)
 {
@@ -8,7 +10,7 @@ std::vector<float> Utillis::CalcWeight(MDKP & mdkpProblem, std::vector<float> pr
 
 	for (int i = 0; i < numOfKnapsacks; i++)
 	{
-		weights[i] = previousWeights[i] + knapsacks[i].weights[level];
+		weights[i] = previousWeights[i] + knapsacks[i].weights[level-1];
 	}
 
 	return weights;
@@ -22,7 +24,7 @@ float Utillis::CalcValue(MDKP & mdkpProblem, int level)
 
 	for (int i = 0; i < numOfKnapsacks; i++)
 	{
-		value += knapsacks[i].values[level];
+		value += knapsacks[i].values[level-1];
 	}
 
 	return value;
@@ -61,11 +63,11 @@ int Utillis::FindUpperBound(MDKP & mdkpProblem, Node u)
 	// start including items 
 	int j = u.level + 1;
 
-	while (j < n)
+	while (j <= n)
 	{
 		for (int i = 0; i < m; i++)
 		{
-			upperBound += knapsacks[i].values[j];
+			upperBound += knapsacks[i].values[j-1];
 		}
 		j++;
 	}
