@@ -28,6 +28,11 @@ void InitProblemMDKP()
 		timeAllowed = 40.0f;
 		break;
 
+	case 2:
+		mdkpProblem.InitializeMDKP("problem2.txt");
+		timeAllowed = 40.0f;
+		break;
+
 	default:
 		break;
 	}
@@ -85,7 +90,7 @@ void InputMaintaing()
 
 	if (type == 1)
 	{
-		std::cout << " Please enter the number of the Problem ( 1 )" << std::endl;
+		std::cout << " Please enter the number of the Problem ( 1 - 2 )" << std::endl;
 		cin >> mdkp;
 		InitProblemMDKP();
 		BranchAndBound::LDS(mdkpProblem);
@@ -112,11 +117,15 @@ int main()
 	InputMaintaing();								// choosing the problem and the algorithm
 	clock_t end = std::clock();
 	float time_spent = (float)(end - begin) / CLOCKS_PER_SEC;
+
+	/**
 	if (timeAllowed < time_spent)
 	{
 		system("CLS");
 		std::cout << "Could not find a soloution" << std::endl;
 	}
+	*/
+
 	std::cout << "Clock Ticks: " << time_spent << "s" << std::endl;
 	const sec duration = clock::now() - before;
 	std::cout << "Time Elapsed: " << duration.count() << "s" << std::endl;

@@ -57,19 +57,17 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 			*/
 
 			// assign level 0
-			if (u.level == -1)
-			{
+			if (u.level == -1)		
 				v.level = 0;
-			}
 
 			// If there is nothing on next level
-			if (u.level == n - 1)
+			if (u.level == n)
 				break;
 
 			v.level = u.level + 1;
 			v.weight = Utillis::CalcWeight(mdkpProblem, u.weight, v.level);
 			v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
-
+			v.right = false;
 			
 			// Don't take the item in knapsack
 			if (u.right)
@@ -78,32 +76,25 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 				v.profit = u.profit;
 			}
 
-			if (!Utillis::CheckValidWeight(mdkpProblem, v.weight)) {
-
+			if (!Utillis::CheckValidWeight(mdkpProblem, v.weight))
 				break;
-			}
 
 			if (v.profit > maxProfit)
-			{
 				maxProfit = v.profit;
-			}
 
 			// Finding the upper bound to decide wether to stop or continue searching
 			v.upperBound = Utillis::FindUpperBound(mdkpProblem, v);
 
-			if (v.upperBound > maxProfit)
-			{
+			if (v.upperBound > maxProfit)	
 				myQueue.push_back(v);
-			}
 
-			else {
+			else 
 				break;
-			}
 
 			u = v;
 		}
 	}
 
 
-	//std::cout << maxProfit;
+	std::cout << "Optimal Value: " << maxProfit << std::endl;
 }

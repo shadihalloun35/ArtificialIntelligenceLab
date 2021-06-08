@@ -16,16 +16,18 @@ std::vector<float> Utillis::CalcWeight(MDKP & mdkpProblem, std::vector<float> pr
 	return weights;
 }
 
-float Utillis::CalcValue(MDKP & mdkpProblem, int level)
+int Utillis::CalcValue(MDKP & mdkpProblem, int level)
 {
-	float value = 0;
 	int numOfKnapsacks = mdkpProblem.getNumOfKnapsacks();
 	std::vector<knapsack> knapsacks = mdkpProblem.getKnapsacks();
+	int value = knapsacks[0].values[level - 1];
 
+	/**
 	for (int i = 0; i < numOfKnapsacks; i++)
 	{
 		value += knapsacks[i].values[level-1];
 	}
+	*/
 
 	return value;
 
@@ -61,14 +63,17 @@ int Utillis::FindUpperBound(MDKP & mdkpProblem, Node u)
 	int upperBound = u.profit;
 
 	// start including items 
-	int j = u.level + 1;
+	int j = u.level;
 
-	while (j <= n)
+	while (j < n)
 	{
+		upperBound += knapsacks[0].values[j];
+		/**
 		for (int i = 0; i < m; i++)
 		{
 			upperBound += knapsacks[i].values[j-1];
 		}
+		*/
 		j++;
 	}
 

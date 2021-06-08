@@ -1,6 +1,5 @@
 ﻿  BranchAndBound.cpp
-c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(42): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-  main.cpp
   Utillis.cpp
+  main.cpp
   Generating Code...
   LinearProgrammingRelaxation.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\LinearProgrammingRelaxation\Debug\LinearProgrammingRelaxation.exe
