@@ -111,6 +111,7 @@ void Init::LoadMDKP(MDKP & myMDKP, std::string fileName)
 
 			if (line.find("//") != std::string::npos) {
 				weights.push_back(tempWeights);
+				tempWeights.clear();
 			}
 
 		
@@ -130,6 +131,7 @@ void Init::LoadMDKP(MDKP & myMDKP, std::string fileName)
 		sack.capacity = capacities[i];
 		knapsacks.push_back(sack);
 	}
+
 
 	myMDKP.setKnapsacks(knapsacks);
 

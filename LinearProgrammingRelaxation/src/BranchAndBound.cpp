@@ -1,7 +1,8 @@
 #include <iostream>					// for cout etc.
 #include "BranchAndBound.h"
 #include "Utillis.h"
-
+#define heuristic	1
+ 
 
 void BranchAndBound::LDS(MDKP & mdkpProblem)
 {
@@ -12,12 +13,31 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 	int n = mdkpProblem.getNumOfObjects();
 	int m = mdkpProblem.getNumOfKnapsacks();
 
+	/**
+	std::cout << n << std::endl;
+	std::cout << m << std::endl;
 
-	u.level = -1;						
-	u.profit = 0;
-	u.weight.resize(m, 0);
+	std::cout << mdkpProblem.getKnapsacks()[0].values[0] << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[0].values[mdkpProblem.getKnapsacks()[0].values.size()-1] << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[0].capacity << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[0].weights[0] << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[0].weights[mdkpProblem.getKnapsacks()[0].weights.size() - 1] << std::endl;
+
+
+	std::cout << mdkpProblem.getKnapsacks()[1].values[0] << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[1].values[mdkpProblem.getKnapsacks()[0].values.size() - 1] << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[1].capacity << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[1].weights[0] << std::endl;
+	std::cout << mdkpProblem.getKnapsacks()[1].weights[mdkpProblem.getKnapsacks()[0].weights.size() - 1] << std::endl;
+	*/
+	
+
+	int wave = 0;
+
+	Utillis::InitRoot(mdkpProblem, u, heuristic);
+	
 	myQueue.push_back(u);
-
+	//Node savedNode;
 
 	// the maximum profit till this state
 	int maxProfit = 0;				   
@@ -26,64 +46,46 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 	{
 		// extract the next node 
 		u = myQueue[0];
-		myQueue.erase(myQueue.begin());
+
+		if(wave != 0)
+			myQueue.erase(myQueue.begin());
+
 		u.right = true;
-
-
-		/**
-
-		// assign level 0
-		if (u.level == -1)
-		{
-			v.level = 0;
-		}
-
-		// If there is nothing on next level
-		if (u.level == n - 1)
-			continue;
-			*/
-
-		// Not taking the item in knapsack 
 
 		while (1)
 		{
-			/**
-			u.upperBound = Utillis::FindUpperBound(mdkpProblem, u);
-			if (u.upperBound > maxProfit)
-			{
-				if (!u.right)
-					myQueue.push_back(u);
-			}
-			*/
-
-			// assign level 0
-			if (u.level == -1)		
-				v.level = 0;
-
+		
 			// If there is nothing on next level
 			if (u.level == n)
 				break;
 
 			v.level = u.level + 1;
-			v.weight = Utillis::CalcWeight(mdkpProblem, u.weight, v.level);
-			v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
 			v.right = false;
-			
+
 			// Don't take the item in knapsack
-			if (u.right)
+			if (u.right && wave != 0)
 			{
 				v.weight = u.weight;
 				v.profit = u.profit;
 			}
 
+			// Take the item in knapsack
+			else {
+				v.weight = Utillis::CalcWeight(mdkpProblem, u.weight, v.level);
+				v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
+			}
+			
 			if (!Utillis::CheckValidWeight(mdkpProblem, v.weight))
 				break;
 
 			if (v.profit > maxProfit)
+			{
 				maxProfit = v.profit;
+				//savedNode = v;
+			}
 
 			// Finding the upper bound to decide wether to stop or continue searching
-			v.upperBound = Utillis::FindUpperBound(mdkpProblem, v);
+			v.upperBound = Utillis::FindUpperBound(mdkpProblem, v, heuristic);
 
 			if (v.upperBound > maxProfit)	
 				myQueue.push_back(v);
@@ -93,8 +95,16 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 
 			u = v;
 		}
+
+		wave = 1;
 	}
 
-
+	/**
+	std::cout << "Level: " << savedNode.level << std::endl;
+	std::cout << "Value: " << savedNode.profit << std::endl;
+	std::cout << "Upper bound: " << savedNode.upperBound << std::endl;
+	std::cout << "Weight1: " << savedNode.weight[0] << std::endl;
+	std::cout << "Weight2: " << savedNode.weight[1] << std::endl;
+	*/
 	std::cout << "Optimal Value: " << maxProfit << std::endl;
 }
