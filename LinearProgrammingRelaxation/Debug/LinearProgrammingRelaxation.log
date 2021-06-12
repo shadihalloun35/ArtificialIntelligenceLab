@@ -1,5 +1,14 @@
-﻿  BranchAndBound.cpp
-  Utillis.cpp
-  main.cpp
-  Generating Code...
+﻿  Utillis.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\utility(239): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+          and
+          [
+              _Ty1=int
+          ]
+  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(184): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
+  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(184): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
+c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(56): warning C4715: 'Utillis::FindUpperBound': not all control paths return a value
   LinearProgrammingRelaxation.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\LinearProgrammingRelaxation\Debug\LinearProgrammingRelaxation.exe

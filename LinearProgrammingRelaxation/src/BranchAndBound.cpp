@@ -8,6 +8,7 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 {
 	// queue for traversing the node
 	std::vector<Node> myQueue;	
+	Utillis::KnapsackSorting(mdkpProblem);
 
 	Node u, v;
 	int n = mdkpProblem.getNumOfObjects();
@@ -35,20 +36,23 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 	int wave = 0;
 
 	Utillis::InitRoot(mdkpProblem, u, heuristic);
-	
 	myQueue.push_back(u);
 	//Node savedNode;
 
 	// the maximum profit till this state
 	int maxProfit = 0;				   
 
+
 	while (myQueue.size() != 0)
 	{
+		//std::cout << myQueue.size() << std::endl;
 		// extract the next node 
 		u = myQueue[0];
 
-		if(wave != 0)
+		if (wave != 0)
+		{
 			myQueue.erase(myQueue.begin());
+		}
 
 		u.right = true;
 
