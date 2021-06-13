@@ -50,7 +50,7 @@ int Utillis::FindUpperBound(MDKP & mdkpProblem, Node v, int heuristic)
 		break;
 
 	case 2:
-		//return Utillis::FractionalVariables(mdkpProblem, v);
+		return Utillis::FractionalVariables(mdkpProblem, v);
 		break;
 	}
 }
@@ -82,12 +82,13 @@ int Utillis::UnlimitedSack(MDKP & mdkpProblem, Node v)
 	return upperBound;
 }
 
-/**
+
 int Utillis::FractionalVariables(MDKP & mdkpProblem, Node v)
 {
 	std::vector<knapsack> knapsacks = mdkpProblem.getKnapsacks();
 	int m = mdkpProblem.getNumOfKnapsacks();
 	int n = mdkpProblem.getNumOfObjects();
+	std::vector<int> weights(m, 0);
 
 
 	for (int i = 0; i < m; i++)
@@ -96,34 +97,40 @@ int Utillis::FractionalVariables(MDKP & mdkpProblem, Node v)
 			return 0;
 	}
 
-	// initialize bound on profit by current profit
 	int upperBound = v.profit;
 
-	std::vector <int> values = knapsacks[0].values;
-	std::vector <int> weights = 
-	// start including items from index 1 more to current
-	// item index
-	int j = u.level + 1;
-	int totweight = u.weight;
+	// start including items 
+	int j = v.level;
+	weights = Utillis::CalcWeight(mdkpProblem, weights, j+1);
 
-	// checking index condition and knapsack capacity
-	// condition
-	while ((j < n) && (totweight + arr[j].weight <= W))
+	while (j < n && Utillis::CheckValidWeight(mdkpProblem, weights))
 	{
-		totweight += arr[j].weight;
-		profit_bound += arr[j].value;
+		weights = Utillis::CalcWeight(mdkpProblem, weights, j+2);
+		upperBound += knapsacks[0].values[j];
 		j++;
 	}
 
-	// If k is not n, include last item partially for
-	// upper bound on profit
 	if (j < n)
-		profit_bound += (W - totweight) * arr[j].value /
-		arr[j].weight;
+	{
+		int chosenWeight = weights[0] - knapsacks[0].capacity;
+		int index = 0;
+		for (int i = 0; i < m; i++)
+		{
+			int currentWeight = weights[i] - knapsacks[i].capacity;
+			if (chosenWeight <= currentWeight)
+			{
+				chosenWeight = currentWeight;
+				index = i;
+			}
 
-	return profit_bound;
+		}
+
+ 		upperBound += (knapsacks[index].capacity - weights[index]) * knapsacks[index].values[j] / knapsacks[index].weights[j+1];
+	}
+
+	return upperBound;
 }
-*/
+
 
 void Utillis::InitRoot(MDKP & mdkpProblem, Node & u, int heuristic)
 {
@@ -210,14 +217,3 @@ void Utillis::KnapsackSorting(MDKP & mdkpProblem)
 
 
 }
-
-
-
-/**
-bool cmp(Item a, Item b)
-{
-	double r1 = (double)a.value / a.weight;
-	double r2 = (double)b.value / b.weight;
-	return r1 > r2;
-}
-*/

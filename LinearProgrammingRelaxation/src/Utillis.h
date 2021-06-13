@@ -20,7 +20,7 @@ public:
 	static bool CheckValidWeight(MDKP & mdkpProblem, std::vector<int> weights);
 	static int FindUpperBound(MDKP & mdkpProblem, Node v, int heuristic);	
 	static int UnlimitedSack(MDKP & mdkpProblem, Node v);
-	//static int FractionalVariables(MDKP & mdkpProblem, Node v);
+	static int FractionalVariables(MDKP & mdkpProblem, Node v);
 	static void InitRoot(MDKP & mdkpProblem, Node & u, int heuristic);
 	static void KnapsackSorting(MDKP & mdkpProblem);
 	static std::vector<int> ExtractWeights(MDKP & mdkpProblem);

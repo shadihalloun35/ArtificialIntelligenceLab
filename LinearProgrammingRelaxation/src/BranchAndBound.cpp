@@ -1,7 +1,7 @@
 #include <iostream>					// for cout etc.
 #include "BranchAndBound.h"
 #include "Utillis.h"
-#define heuristic	1
+#define heuristic	2
  
 
 void BranchAndBound::LDS(MDKP & mdkpProblem)
@@ -13,26 +13,7 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 	Node u, v;
 	int n = mdkpProblem.getNumOfObjects();
 	int m = mdkpProblem.getNumOfKnapsacks();
-
-	/**
-	std::cout << n << std::endl;
-	std::cout << m << std::endl;
-
-	std::cout << mdkpProblem.getKnapsacks()[0].values[0] << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[0].values[mdkpProblem.getKnapsacks()[0].values.size()-1] << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[0].capacity << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[0].weights[0] << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[0].weights[mdkpProblem.getKnapsacks()[0].weights.size() - 1] << std::endl;
-
-
-	std::cout << mdkpProblem.getKnapsacks()[1].values[0] << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[1].values[mdkpProblem.getKnapsacks()[0].values.size() - 1] << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[1].capacity << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[1].weights[0] << std::endl;
-	std::cout << mdkpProblem.getKnapsacks()[1].weights[mdkpProblem.getKnapsacks()[0].weights.size() - 1] << std::endl;
-	*/
 	
-
 	int wave = 0;
 
 	Utillis::InitRoot(mdkpProblem, u, heuristic);
@@ -45,7 +26,6 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 
 	while (myQueue.size() != 0)
 	{
-		//std::cout << myQueue.size() << std::endl;
 		// extract the next node 
 		u = myQueue[0];
 
@@ -85,7 +65,6 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 			if (v.profit > maxProfit)
 			{
 				maxProfit = v.profit;
-				//savedNode = v;
 			}
 
 			// Finding the upper bound to decide wether to stop or continue searching
@@ -103,12 +82,5 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 		wave = 1;
 	}
 
-	/**
-	std::cout << "Level: " << savedNode.level << std::endl;
-	std::cout << "Value: " << savedNode.profit << std::endl;
-	std::cout << "Upper bound: " << savedNode.upperBound << std::endl;
-	std::cout << "Weight1: " << savedNode.weight[0] << std::endl;
-	std::cout << "Weight2: " << savedNode.weight[1] << std::endl;
-	*/
 	std::cout << "Optimal Value: " << maxProfit << std::endl;
 }
