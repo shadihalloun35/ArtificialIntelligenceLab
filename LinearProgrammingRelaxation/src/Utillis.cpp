@@ -101,11 +101,14 @@ int Utillis::FractionalVariables(MDKP & mdkpProblem, Node v)
 
 	// start including items 
 	int j = v.level;
-	weights = Utillis::CalcWeight(mdkpProblem, weights, j+1);
+
+	if (j + 1 < n)
+		weights = Utillis::CalcWeight(mdkpProblem, weights, j+1);
 
 	while (j < n && Utillis::CheckValidWeight(mdkpProblem, weights))
 	{
-		weights = Utillis::CalcWeight(mdkpProblem, weights, j+2);
+		if ( j + 2 < n)
+			weights = Utillis::CalcWeight(mdkpProblem, weights, j+2);
 		upperBound += knapsacks[0].values[j];
 		j++;
 	}
@@ -125,7 +128,7 @@ int Utillis::FractionalVariables(MDKP & mdkpProblem, Node v)
 
 		}
 
- 		upperBound += (knapsacks[index].capacity - weights[index]) * knapsacks[index].values[j] / knapsacks[index].weights[j+1];
+ 		upperBound += (knapsacks[index].capacity - weights[index]) * knapsacks[index].values[j] / knapsacks[index].weights[j];
 	}
 
 	return upperBound;

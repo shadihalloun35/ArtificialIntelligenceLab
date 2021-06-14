@@ -13,7 +13,6 @@ void BranchAndBound::LDS(MDKP & mdkpProblem)
 	Node u, v;
 	int n = mdkpProblem.getNumOfObjects();
 	int m = mdkpProblem.getNumOfKnapsacks();
-	
 	int wave = 0;
 
 	Utillis::InitRoot(mdkpProblem, u, heuristic);

@@ -18,8 +18,8 @@ public:
 	static int FindDemands(std::string line);
 	static int FindNumOfKnapsacks(std::string line);
 	static int FindNumOfObjects(std::string line);
-	static std::vector<int> FindValuesOfKnapsacks(std::string line);
-	static std::vector<int> FindCapacityOfKnapsacks(std::string line);
-	static std::vector<int> FindWeightsOfKnapsacks(std::string line);
+	static std::vector<int> FindValuesOfKnapsacks(std::string line,int numOfObjects);
+	static std::vector<int> FindCapacityOfKnapsacks(std::string line,int numOfKnapsacks);
+	static std::vector<int> FindWeightsOfKnapsacks(std::string line, int numOfObjects);
 	static void GenerateEdges(CVRP & myCVRP);
 };

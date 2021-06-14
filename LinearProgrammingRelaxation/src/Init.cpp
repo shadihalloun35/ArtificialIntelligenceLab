@@ -1,4 +1,7 @@
 #include "Init.h"
+#include <string> 
+#include <algorithm>    // For std::remove()
+
 #define NumOfTrucks		20
 
 int coordinateIndex = 0;
@@ -70,25 +73,20 @@ void Init::LoadMDKP(MDKP & myMDKP, std::string fileName)
 		getline(fin, line);								// Read a Line from File
 		lineNumber += 1;
 
-		if (lineNumber == 74)
+		if (lineNumber == 1)
 		{
 			numOfKnapsacks = FindNumOfKnapsacks(line);
 			myMDKP.setNumOfKnapsacks(numOfKnapsacks);
 			numOfObjects = FindNumOfObjects(line);
 			myMDKP.setNumOfObjects(numOfObjects);
-
 		}
-		
 
-		if (lineNumber >= 75 && flag == 1)
+		if (lineNumber > 1 && flag == 1)
 		{
-			std::vector<int> returnedValues = FindValuesOfKnapsacks(line);
+			std::vector<int> returnedValues = FindValuesOfKnapsacks(line,numOfObjects);
 			values.insert(values.end(), returnedValues.begin(), returnedValues.end());
-
-
-			char arr[] = "//";
-
-			if (line.find(arr, 0) != std::string::npos) {
+		
+			if (values.size() == numOfObjects) {
 				flag = 2;
 				continue;
 			}
@@ -96,20 +94,23 @@ void Init::LoadMDKP(MDKP & myMDKP, std::string fileName)
 
 		if (flag == 2)
 		{
-			capacities = FindCapacityOfKnapsacks(line);
-			flag = 3;
-			continue;
+			std::vector<int> returnedCapacity = FindCapacityOfKnapsacks(line,numOfKnapsacks);
+			capacities.insert(capacities.end(), returnedCapacity.begin(), returnedCapacity.end());
 
+			if (capacities.size() == numOfKnapsacks) {
+				flag = 3;
+				continue;
+			}		
 		}
 
 		if (flag == 3)
 		{
-			std::vector<int> returnedWeights = FindWeightsOfKnapsacks(line);
+			std::vector<int> returnedWeights = FindWeightsOfKnapsacks(line,numOfObjects);
 
 			tempWeights.insert(tempWeights.end(), returnedWeights.begin(), returnedWeights.end());
 
 
-			if (line.find("//") != std::string::npos) {
+			if (tempWeights.size() == numOfObjects) {
 				weights.push_back(tempWeights);
 				tempWeights.clear();
 			}
@@ -180,76 +181,74 @@ int Init::FindDemands(std::string line)
 
 int Init::FindNumOfKnapsacks(std::string line)
 {
-	std::size_t pos1 = line.find("  ");									// position of ":" in line
-	char arr[] = "  ";
-	std::size_t pos2 = line.find(arr, pos1 + 1);
-	std::string numOfKnapsacks = line.substr(pos1,pos2-pos1);			// get from ":" to the end (':' not included)
-
-	return stoi(numOfKnapsacks);
+	return stoi(line);
 }
 
 int Init::FindNumOfObjects(std::string line)
 {
-	std::size_t pos1 = line.find("  ");						// position of ":" in line
-	char arr[] = "  ";
+	std::size_t pos1 = line.find(std::to_string(stoi(line)));						// position of ":" in line
+	char arr[] = " ";
 	std::size_t pos2 = line.find(arr, pos1 + 1);
 	std::string numOfObjects = line.substr(pos2);			// get from ":" to the end (':' not included)
 
 	return stoi(numOfObjects);
 }
 
-std::vector<int> Init::FindValuesOfKnapsacks(std::string line)
+std::vector<int> Init::FindValuesOfKnapsacks(std::string line, int numOfObjects)
 {
+	std::replace(line.begin(), line.end(), '\t', ' ');
 	std::vector<int> values;
 	std::size_t pos1 = 0;								// position of ":" in line
 
 	while (1) {
 
+		if (pos1>= line.length())
+		{
+			break;
+		}
+
 		if (line[pos1] == ' ')
 		{
 			pos1++;
 		}
+
 		else
 		{
-			
-			if (line[pos1] == '/')
-				break;
-
 			char arr[] = " ";
-			if (line.find(arr, pos1 + 1) == std::string::npos) {
-				std::string value = line.substr(pos1);
-				values.push_back(stoi(value));
-				break;
-			}
-
 			std::size_t pos2 = line.find(arr, pos1 + 1);
 			std::string value = line.substr(pos1, pos2 - pos1);			// get from ":" to the end (':' not included)
 			pos1 = pos2;
 			values.push_back(stoi(value));
+
 		}
 	}
 
 	return values;
 }
 
-std::vector<int> Init::FindCapacityOfKnapsacks(std::string line)
+std::vector<int> Init::FindCapacityOfKnapsacks(std::string line, int numOfKnapsacks)
 {
+	std::replace(line.begin(), line.end(), '\t', ' ');
 	std::vector<int> capacities;
 	std::size_t pos1 = 0;								// position of ":" in line
 	while (1) {
+
+		if (pos1 >= line.length())
+		{
+			break;
+		}
 
 		if (line[pos1] == ' ')
 		{
 			pos1++;
 		}
 
-		else {
-			if (line[pos1] == '/')
-				break;
-
+		else
+		{
 			char arr[] = " ";
 			std::size_t pos2 = line.find(arr, pos1 + 1);
 			std::string capacity = line.substr(pos1, pos2 - pos1);			// get from ":" to the end (':' not included)
+
 			pos1 = pos2;
 			capacities.push_back(stoi(capacity));
 		}
@@ -257,30 +256,27 @@ std::vector<int> Init::FindCapacityOfKnapsacks(std::string line)
 	return capacities;
 }
 
-std::vector<int> Init::FindWeightsOfKnapsacks(std::string line)
+std::vector<int> Init::FindWeightsOfKnapsacks(std::string line, int numOfObjects)
 {
+	std::replace(line.begin(), line.end(), '\t', ' ');
 	std::vector<int> weights;
 	std::size_t pos1 = 0;								// position of ":" in line
 	while (1) {
+
+		if (pos1 >= line.length())
+		{
+			break;
+		}
 
 		if (line[pos1] == ' ')
 		{
 			pos1++;
 		}
 
-		else {
-			if (line[pos1] == '/')
-				break;
-
-			char arr1[] = " ";
-			if (line.find(arr1, pos1 + 1) == std::string::npos) {
-				std::string weight = line.substr(pos1);
-				weights.push_back(stoi(weight));
-				break;
-			}
-
-			char arr2[] = " ";
-			std::size_t pos2 = line.find(arr2, pos1 + 1);
+		else
+		{
+			char arr[] = " ";
+			std::size_t pos2 = line.find(arr, pos1 + 1);
 			std::string weight = line.substr(pos1, pos2 - pos1);			// get from ":" to the end (':' not included)
 			pos1 = pos2;
 			weights.push_back(stoi(weight));

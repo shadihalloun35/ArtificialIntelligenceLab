@@ -24,11 +24,16 @@ void InitProblemMDKP()
 
 	{
 	case 1:
-		mdkpProblem.InitializeMDKP("problem1knapsack.txt");
+		mdkpProblem.InitializeMDKP("PET2.DAT");
 		timeAllowed = 40.0f;
 		break;
 
 	case 2:
+		mdkpProblem.InitializeMDKP("problem1knapsack.txt");
+		timeAllowed = 40.0f;
+		break;
+
+	case 3:
 		mdkpProblem.InitializeMDKP("problem2knapsack.txt");
 		timeAllowed = 40.0f;
 		break;
