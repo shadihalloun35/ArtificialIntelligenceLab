@@ -53,6 +53,7 @@ int Utillis::FindUpperBound(MDKP & mdkpProblem, Node v, int heuristic)
 		return Utillis::FractionalVariables(mdkpProblem, v);
 		break;
 	}
+	return 0;
 }
 
 int Utillis::UnlimitedSack(MDKP & mdkpProblem, Node v)
@@ -128,7 +129,7 @@ int Utillis::FractionalVariables(MDKP & mdkpProblem, Node v)
 
 		}
 
- 		upperBound += (knapsacks[index].capacity - weights[index]) * knapsacks[index].values[j] / knapsacks[index].weights[j];
+		upperBound += (knapsacks[index].capacity - weights[index]) * knapsacks[index].values[j] / knapsacks[index].weights[j];
 	}
 
 	return upperBound;
@@ -176,6 +177,64 @@ std::vector<float> Utillis::ExtractDensity(std::vector<int> myValues, std::vecto
 	}
 
 	return density;
+}
+
+void Utillis::FillKnapsackDetails(CVRP & cvrpProblem, MDKP & myMDKPProblem)
+{
+	knapsack currentKnapsack;
+	std::vector<knapsack> myKnapsacks;
+	int diminsion = cvrpProblem.getDimension();
+	int carCapacity = cvrpProblem.getCapacity();
+	std::vector<vec2> cities = cvrpProblem.getCoordinates();
+	std::vector<int> myWeights;
+	std::vector<int> myValues;
+
+	for (int i = 0; i < diminsion; i++)
+	{
+		myValues.push_back(1);
+		myWeights.push_back(cities[i].demand);
+	}
+
+	currentKnapsack.values = myValues;
+	currentKnapsack.weights = myWeights;
+	currentKnapsack.capacity = carCapacity;
+	myKnapsacks.push_back(currentKnapsack);
+	myMDKPProblem.setKnapsacks(myKnapsacks);
+	myMDKPProblem.setNumOfKnapsacks(1);
+	myMDKPProblem.setNumOfObjects(diminsion);
+
+}
+
+void Utillis::UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour)
+{
+	knapsack currentKnapsack;
+	std::vector<knapsack> myKnapsacks = myMDKPProblem.getKnapsacks();
+	knapsack myKnapsack = myKnapsacks[0];
+	int diminsion = tour.size();
+	std::vector<int> myValues(diminsion, 0);
+
+	for (int i = 0; i < diminsion; i++)
+	{
+		if(!tour[i])
+			myValues[i] = 1;
+	}
+	myKnapsack.values = myValues;
+	myKnapsacks[0] = myKnapsack;
+
+	myMDKPProblem.setKnapsacks(myKnapsacks);
+}
+
+std::vector<bool> Utillis::UniteTours(std::vector<bool> unitedTours, std::vector<bool> tour)
+{
+	int diminsion = tour.size();
+	std::vector<bool> newTour(diminsion, false);
+	for (int i = 0; i < diminsion; i++)
+	{
+		if (unitedTours[i]||tour[i])
+			newTour[i] = true;
+	}
+
+	return newTour;
 }
 
 void Utillis::KnapsackSorting(MDKP & mdkpProblem)

@@ -1,7 +1,4 @@
 ﻿  BranchAndBound.cpp
-  CVRP.cpp
-  Init.cpp
-  MDKP.cpp
   Utillis.cpp
 c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\utility(239): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
           with
@@ -12,13 +9,12 @@ c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.1
           [
               _Ty1=int
           ]
-  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(194): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
-  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(194): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
+  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(253): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
+  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(253): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
   main.cpp
   Generating code
-c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(56): warning C4715: 'Utillis::FindUpperBound': not all control paths return a value
-  12 of 998 functions ( 1.2%) were compiled, the rest were copied from previous compilation.
-    3 functions were new in current compilation
-    19 functions had inline decision re-evaluated but remain unchanged
+  121 of 1270 functions ( 9.5%) were compiled, the rest were copied from previous compilation.
+    79 functions were new in current compilation
+    160 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   LinearProgrammingRelaxation.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\LinearProgrammingRelaxation\Release\LinearProgrammingRelaxation.exe

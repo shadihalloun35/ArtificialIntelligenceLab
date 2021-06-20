@@ -1,9 +1,12 @@
 #pragma once
 #include "MDKP.h"
+#include "CVRP.h"
 
 class BranchAndBound
 {
 
 public:
-	static void LDS(MDKP & mdkpProblem);
+	static std::vector<bool> LDSMDKP(MDKP & mdkpProblem);
+	static void LDSCVRP(CVRP & cvrpProblem);
+
 };

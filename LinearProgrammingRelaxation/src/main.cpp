@@ -95,10 +95,10 @@ void InputMaintaing()
 
 	if (type == 1)
 	{
-		std::cout << " Please enter the number of the Problem ( 1 - 2 )" << std::endl;
+		std::cout << " Please enter the number of the Problem ( 1 - 3 )" << std::endl;
 		cin >> mdkp;
 		InitProblemMDKP();
-		BranchAndBound::LDS(mdkpProblem);
+		BranchAndBound::LDSMDKP(mdkpProblem);
 
 	}
 
@@ -107,6 +107,8 @@ void InputMaintaing()
 		std::cout << " Please enter the number of the Problem ( 0 - 7 )" << std::endl;
 		cin >> cvrp;
 		InitProblemCVRP();
+		BranchAndBound::LDSCVRP(cvrpProblem);
+
 	}
 
 }

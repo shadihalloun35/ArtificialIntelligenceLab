@@ -1,5 +1,6 @@
 #pragma once
 #include "MDKP.h"
+#include "CVRP.h"
 
 struct Node
 {
@@ -8,6 +9,8 @@ struct Node
 	int upperBound;
 	bool right;
 	std::vector<int> weight;
+	std::vector<bool> currentObjects;
+
 };
 
 class Utillis
@@ -25,6 +28,9 @@ public:
 	static void KnapsackSorting(MDKP & mdkpProblem);
 	static std::vector<int> ExtractWeights(MDKP & mdkpProblem);
 	static std::vector<float> ExtractDensity(std::vector<int> myValues, std::vector<int> myWeights);
+	static void FillKnapsackDetails(CVRP & cvrpProblem, MDKP & myMDKPProblem);
+	static void UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour);
+	static std::vector<bool> UniteTours(std::vector<bool> unitedTours, std::vector<bool> tour);
 
 
 };
