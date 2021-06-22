@@ -1,23 +1,11 @@
 ﻿  BranchAndBound.cpp
-c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(126): warning C4018: '<': signed/unsigned mismatch
-c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(131): warning C4018: '<': signed/unsigned mismatch
-c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(144): warning C4018: '<': signed/unsigned mismatch
-  Utillis.cpp
-c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\utility(239): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
-          with
-          [
-              _Ty=float
-          ]
-          and
-          [
-              _Ty1=int
-          ]
-  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(260): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
-  c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\utillis.cpp(260): note: see reference to function template instantiation 'std::pair<int,int>::pair<float,int,0>(std::pair<float,int> &&) noexcept' being compiled
-  main.cpp
+c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(125): warning C4018: '<': signed/unsigned mismatch
+c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(137): warning C4018: '<': signed/unsigned mismatch
+c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(143): warning C4018: '<': signed/unsigned mismatch
+c:\artificialintelligencelab\artificialintelligencelab\linearprogrammingrelaxation\src\branchandbound.cpp(154): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  132 of 1280 functions (10.3%) were compiled, the rest were copied from previous compilation.
-    17 functions were new in current compilation
-    36 functions had inline decision re-evaluated but remain unchanged
+  3 of 1281 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    11 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   LinearProgrammingRelaxation.vcxproj -> C:\ArtificialIntelligenceLab\ArtificialIntelligenceLab\LinearProgrammingRelaxation\Release\LinearProgrammingRelaxation.exe

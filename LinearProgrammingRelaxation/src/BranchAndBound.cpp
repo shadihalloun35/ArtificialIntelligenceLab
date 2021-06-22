@@ -2,16 +2,18 @@
 #include "BranchAndBound.h"
 #include <algorithm>
 #include "Utillis.h"
-#define heuristic	2
+#define heuristic	1
  
 
 std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 {
 	// queue for traversing the node
+	std::vector<knapsack> myKnapsacks = mdkpProblem.getKnapsacks();
+	knapsack myKnapsack = myKnapsacks[0];
+
 	std::vector<std::pair<int, int>> vp;
 	std::vector<Node> myQueue;	
 	vp = Utillis::KnapsackSorting(mdkpProblem);
-	std::vector<knapsack> knapsacks = mdkpProblem.getKnapsacks();
 	std::vector<bool> currentObjects;
 
 
@@ -59,6 +61,7 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 				v.weight = u.weight;
 				v.profit = u.profit;
 				v.currentObjects[vp[v.level - 1].second] = false;
+				//v.currentObjects[v.level - 1] = false;
 			}
 
 			// Take the item in knapsack
@@ -66,6 +69,7 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 				v.weight = Utillis::CalcWeight(mdkpProblem, u.weight, v.level);
 				v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
 				v.currentObjects[vp[v.level - 1].second] = true;
+				//v.currentObjects[v.level - 1] = true;
 			}
 			
 			if (!Utillis::CheckValidWeight(mdkpProblem, v.weight))
@@ -96,10 +100,12 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 	for (int i = 0 ; i < n; i++)
 	{
 		//std::cout << knapsacks[0].values[i] << std::endl;
-		std::cout << savedNode.currentObjects[i] << std::endl;
+		//std::cout << savedNode.currentObjects[i] << std::endl;
 
 	}
-	
+
+	myKnapsacks[0] = myKnapsack;
+	mdkpProblem.setKnapsacks(myKnapsacks);
 
 	std::cout << "Optimal Value: " << maxProfit << std::endl;
 	return savedNode.currentObjects;
@@ -113,38 +119,41 @@ void BranchAndBound::LDSCVRP(CVRP & cvrpProblem)
 	Utillis::FillKnapsackDetails(cvrpProblem, myMDKPProblem);
 	std::vector <std::vector<bool>> tours;
 	std::vector<bool> unitedTours(diminsion, false);
+
 	while (flag)
 	{
-		
-
+		for (int i = 0; i < unitedTours.size(); i++)
+		{
+			std::cout << "values: " << myMDKPProblem.getKnapsacks()[0].values[i] << std::endl;
+		}
 		std::vector<bool> tour = LDSMDKP(myMDKPProblem);
-
+		tour = Utillis::FixTours(unitedTours, tour);
 		
 		tours.push_back(tour);
 		unitedTours = Utillis::UniteTours(unitedTours, tour);
 
+		
+
 		for (int i = 0; i < unitedTours.size(); i++)
 		{
-			std::cout << "values: " << myMDKPProblem.getKnapsacks()[0].values[i] << std::endl;
+			std::cout << "tour: " << tour[i] << std::endl;
+
 		}
 
 		for (int i = 0; i < unitedTours.size(); i++)
 		{
 			std::cout << "united tour: " << unitedTours[i] << std::endl;
+
 		}
-
-
 		Utillis::UpdateKnapsackDetails(myMDKPProblem, unitedTours);
 
 		
 
 		//std::cout << unitedTours.size() << std::endl;
-		//std::cout << "hhh" << std::endl;
 
 		for (int i = 0; i < unitedTours.size(); i++)
 		{
 
-			std::cout << "tour: " << tour[i] << std::endl;
 
 
 			//std::cout << "united tour: " << unitedTours[i] << std::endl;
@@ -154,12 +163,10 @@ void BranchAndBound::LDSCVRP(CVRP & cvrpProblem)
 
 			if (i == unitedTours.size() - 1)
 				flag = false;
-		}
-
-		
-
-				
+		}				
 	}
+
+	std::cout << "hhhhhhhh" << std::endl;
 
 
 }

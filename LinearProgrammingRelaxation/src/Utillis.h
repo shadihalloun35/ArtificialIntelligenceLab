@@ -32,6 +32,8 @@ public:
 	static void FillKnapsackDetails(CVRP & cvrpProblem, MDKP & myMDKPProblem);
 	static void UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour);
 	static std::vector<bool> UniteTours(std::vector<bool> unitedTours, std::vector<bool> tour);
+	static std::vector<bool> FixTours(std::vector<bool> unitedTours, std::vector<bool> tour);
+
 
 
 };

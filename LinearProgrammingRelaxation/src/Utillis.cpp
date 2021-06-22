@@ -212,6 +212,8 @@ void Utillis::UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour
 	knapsack myKnapsack = myKnapsacks[0];
 	int diminsion = tour.size();
 	std::vector<int> myValues(diminsion, 0);
+	//std::vector<int> myWeights(diminsion, myKnapsack.capacity + 1);
+
 
 	
 
@@ -220,7 +222,11 @@ void Utillis::UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour
 		if (!tour[i])
 		{
 			myValues[i] = 1;
+			//myWeights[i] = myKnapsack.weights[i];
 		}
+		//else
+		//	myValues[i] = 0;
+
 	}
 
 	
@@ -238,6 +244,19 @@ std::vector<bool> Utillis::UniteTours(std::vector<bool> unitedTours, std::vector
 	for (int i = 0; i < diminsion; i++)
 	{
 		if (unitedTours[i]||tour[i])
+			newTour[i] = true;
+	}
+
+	return newTour;
+}
+
+std::vector<bool> Utillis::FixTours(std::vector<bool> unitedTours, std::vector<bool> tour)
+{
+	int diminsion = tour.size();
+	std::vector<bool> newTour(diminsion, false);
+	for (int i = 0; i < diminsion; i++)
+	{
+		if (!unitedTours[i] && tour[i])
 			newTour[i] = true;
 	}
 
