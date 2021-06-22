@@ -99,7 +99,6 @@ void InputMaintaing()
 		cin >> mdkp;
 		InitProblemMDKP();
 		BranchAndBound::LDSMDKP(mdkpProblem);
-
 	}
 
 	else if (type == 2)

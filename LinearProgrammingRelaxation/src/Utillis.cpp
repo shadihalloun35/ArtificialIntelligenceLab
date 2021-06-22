@@ -189,7 +189,7 @@ void Utillis::FillKnapsackDetails(CVRP & cvrpProblem, MDKP & myMDKPProblem)
 	std::vector<int> myWeights;
 	std::vector<int> myValues;
 
-	for (int i = 0; i < diminsion; i++)
+	for (int i = 1; i < diminsion; i++)
 	{
 		myValues.push_back(1);
 		myWeights.push_back(cities[i].demand);
@@ -201,7 +201,7 @@ void Utillis::FillKnapsackDetails(CVRP & cvrpProblem, MDKP & myMDKPProblem)
 	myKnapsacks.push_back(currentKnapsack);
 	myMDKPProblem.setKnapsacks(myKnapsacks);
 	myMDKPProblem.setNumOfKnapsacks(1);
-	myMDKPProblem.setNumOfObjects(diminsion);
+	myMDKPProblem.setNumOfObjects(diminsion-1);
 
 }
 
@@ -213,15 +213,22 @@ void Utillis::UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour
 	int diminsion = tour.size();
 	std::vector<int> myValues(diminsion, 0);
 
+	
+
 	for (int i = 0; i < diminsion; i++)
 	{
-		if(!tour[i])
+		if (!tour[i])
+		{
 			myValues[i] = 1;
+		}
 	}
+
+	
+
 	myKnapsack.values = myValues;
 	myKnapsacks[0] = myKnapsack;
-
 	myMDKPProblem.setKnapsacks(myKnapsacks);
+
 }
 
 std::vector<bool> Utillis::UniteTours(std::vector<bool> unitedTours, std::vector<bool> tour)
@@ -237,9 +244,9 @@ std::vector<bool> Utillis::UniteTours(std::vector<bool> unitedTours, std::vector
 	return newTour;
 }
 
-void Utillis::KnapsackSorting(MDKP & mdkpProblem)
+std::vector<std::pair<int, int>> Utillis::KnapsackSorting(MDKP & mdkpProblem)
 {
-	std::vector<std::pair<int, int> > vp;
+	std::vector<std::pair<int, int>> vp;
 	std::vector<int> myValues = mdkpProblem.getKnapsacks()[0].values;
 	std::vector<int> newValues;
 	std::vector<knapsack> newKnapsacks;
@@ -277,5 +284,5 @@ void Utillis::KnapsackSorting(MDKP & mdkpProblem)
 
 	mdkpProblem.setKnapsacks(newKnapsacks);
 
-
+	return vp;
 }

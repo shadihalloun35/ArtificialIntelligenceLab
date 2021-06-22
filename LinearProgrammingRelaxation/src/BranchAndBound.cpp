@@ -8,8 +8,9 @@
 std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 {
 	// queue for traversing the node
+	std::vector<std::pair<int, int>> vp;
 	std::vector<Node> myQueue;	
-	Utillis::KnapsackSorting(mdkpProblem);
+	vp = Utillis::KnapsackSorting(mdkpProblem);
 	std::vector<knapsack> knapsacks = mdkpProblem.getKnapsacks();
 	std::vector<bool> currentObjects;
 
@@ -57,14 +58,14 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 			{
 				v.weight = u.weight;
 				v.profit = u.profit;
-				v.currentObjects[v.level - 1] = false;
+				v.currentObjects[vp[v.level - 1].second] = false;
 			}
 
 			// Take the item in knapsack
 			else {
 				v.weight = Utillis::CalcWeight(mdkpProblem, u.weight, v.level);
 				v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
-				v.currentObjects[v.level - 1] = true;
+				v.currentObjects[vp[v.level - 1].second] = true;
 			}
 			
 			if (!Utillis::CheckValidWeight(mdkpProblem, v.weight))
@@ -91,14 +92,14 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 		wave = 1;
 	}
 
-	/**
+	
 	for (int i = 0 ; i < n; i++)
 	{
-		std::cout << knapsacks[0].values[i] << std::endl;
+		//std::cout << knapsacks[0].values[i] << std::endl;
 		std::cout << savedNode.currentObjects[i] << std::endl;
 
 	}
-	*/
+	
 
 	std::cout << "Optimal Value: " << maxProfit << std::endl;
 	return savedNode.currentObjects;
@@ -106,31 +107,59 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 
 void BranchAndBound::LDSCVRP(CVRP & cvrpProblem)
 {
+	bool flag = true;
 	MDKP myMDKPProblem;
-	int diminsion = cvrpProblem.getDimension();
+	int diminsion = cvrpProblem.getDimension()-1;
 	Utillis::FillKnapsackDetails(cvrpProblem, myMDKPProblem);
 	std::vector <std::vector<bool>> tours;
 	std::vector<bool> unitedTours(diminsion, false);
-	while (1)
+	while (flag)
 	{
+		
+
 		std::vector<bool> tour = LDSMDKP(myMDKPProblem);
+
+		
 		tours.push_back(tour);
 		unitedTours = Utillis::UniteTours(unitedTours, tour);
+
+		for (int i = 0; i < unitedTours.size(); i++)
+		{
+			std::cout << "values: " << myMDKPProblem.getKnapsacks()[0].values[i] << std::endl;
+		}
+
+		for (int i = 0; i < unitedTours.size(); i++)
+		{
+			std::cout << "united tour: " << unitedTours[i] << std::endl;
+		}
+
+
 		Utillis::UpdateKnapsackDetails(myMDKPProblem, unitedTours);
 
-		if (std::all_of(
-			std::begin(unitedTours),
-			std::end(unitedTours),
-			[](bool i)
-		{
-			return i; 
-		}
-		)) {
-			break;
-		}
-	}
+		
 
-	
+		//std::cout << unitedTours.size() << std::endl;
+		//std::cout << "hhh" << std::endl;
+
+		for (int i = 0; i < unitedTours.size(); i++)
+		{
+
+			std::cout << "tour: " << tour[i] << std::endl;
+
+
+			//std::cout << "united tour: " << unitedTours[i] << std::endl;
+
+			if (!unitedTours[i])
+				break;
+
+			if (i == unitedTours.size() - 1)
+				flag = false;
+		}
+
+		
+
+				
+	}
 
 
 }
