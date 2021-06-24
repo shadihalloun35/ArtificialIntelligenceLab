@@ -212,7 +212,6 @@ void Utillis::UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour
 	knapsack myKnapsack = myKnapsacks[0];
 	int diminsion = tour.size();
 	std::vector<int> myValues(diminsion, 0);
-	//std::vector<int> myWeights(diminsion, myKnapsack.capacity + 1);
 
 
 	
@@ -222,10 +221,8 @@ void Utillis::UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour
 		if (!tour[i])
 		{
 			myValues[i] = 1;
-			//myWeights[i] = myKnapsack.weights[i];
 		}
-		//else
-		//	myValues[i] = 0;
+		
 
 	}
 
@@ -261,6 +258,67 @@ std::vector<bool> Utillis::FixTours(std::vector<bool> unitedTours, std::vector<b
 	}
 
 	return newTour;
+}
+
+void Utillis::TravllingSalesmanProblem(CVRP & cvrpProblem, std::vector<std::vector<bool>> tours)
+{
+	// store all vertex apart from source vertex
+	int sumTSP = 0;
+	int tourIndex = 0;
+	std::vector<vec2> coordinates = cvrpProblem.getCoordinates();
+	while (tourIndex != tours.size())
+	{
+		std::vector<vec2> currentCoordinate = Utillis::GetCurrentCoordinates(coordinates,tours[tourIndex]);
+		std::vector<int> vertex;
+		int V = currentCoordinate.size();
+		for (int i = 0; i < V; i++)
+			if (i != 0)
+				vertex.push_back(i);
+
+		// store minimum weight Hamiltonian Cycle.
+		int min_path = INT_MAX;
+
+		do {
+
+			// store current Path weight(cost)
+			int current_pathweight = 0;
+
+			// compute current path weight
+			int k = 0;
+			for (int i = 0; i < vertex.size(); i++) {
+				current_pathweight += currentCoordinate[k].distance(currentCoordinate[vertex[i]]);
+				k = vertex[i];
+			}
+			current_pathweight += currentCoordinate[k].distance(currentCoordinate[0]);
+
+			// update minimum
+			min_path = std::min(min_path, current_pathweight);
+
+		} while (
+			next_permutation(vertex.begin(), vertex.end()));
+
+		sumTSP+= min_path;
+		tourIndex++;
+	}
+
+	
+	
+	std::cout << "CVRP Value: " << sumTSP << std::endl;
+
+}
+
+
+std::vector<vec2> Utillis::GetCurrentCoordinates(std::vector<vec2> coordinates,std::vector<bool> tour)
+{
+	std::vector<vec2> currentCoordinates;
+
+	for (int i = 0; i < tour.size(); i++)
+	{
+		if (tour[i])
+			currentCoordinates.push_back(coordinates[i]);
+	}
+
+	return currentCoordinates;
 }
 
 std::vector<std::pair<int, int>> Utillis::KnapsackSorting(MDKP & mdkpProblem)
@@ -305,3 +363,4 @@ std::vector<std::pair<int, int>> Utillis::KnapsackSorting(MDKP & mdkpProblem)
 
 	return vp;
 }
+

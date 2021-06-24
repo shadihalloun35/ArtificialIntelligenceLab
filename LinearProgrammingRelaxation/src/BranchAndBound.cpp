@@ -61,7 +61,6 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 				v.weight = u.weight;
 				v.profit = u.profit;
 				v.currentObjects[vp[v.level - 1].second] = false;
-				//v.currentObjects[v.level - 1] = false;
 			}
 
 			// Take the item in knapsack
@@ -69,7 +68,6 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 				v.weight = Utillis::CalcWeight(mdkpProblem, u.weight, v.level);
 				v.profit = u.profit + Utillis::CalcValue(mdkpProblem, v.level);
 				v.currentObjects[vp[v.level - 1].second] = true;
-				//v.currentObjects[v.level - 1] = true;
 			}
 			
 			if (!Utillis::CheckValidWeight(mdkpProblem, v.weight))
@@ -96,13 +94,6 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 		wave = 1;
 	}
 
-	
-	for (int i = 0 ; i < n; i++)
-	{
-		//std::cout << knapsacks[0].values[i] << std::endl;
-		//std::cout << savedNode.currentObjects[i] << std::endl;
-
-	}
 
 	myKnapsacks[0] = myKnapsack;
 	mdkpProblem.setKnapsacks(myKnapsacks);
@@ -122,41 +113,16 @@ void BranchAndBound::LDSCVRP(CVRP & cvrpProblem)
 
 	while (flag)
 	{
-		for (int i = 0; i < unitedTours.size(); i++)
-		{
-			std::cout << "values: " << myMDKPProblem.getKnapsacks()[0].values[i] << std::endl;
-		}
 		std::vector<bool> tour = LDSMDKP(myMDKPProblem);
 		tour = Utillis::FixTours(unitedTours, tour);
 		
 		tours.push_back(tour);
 		unitedTours = Utillis::UniteTours(unitedTours, tour);
-
-		
-
-		for (int i = 0; i < unitedTours.size(); i++)
-		{
-			std::cout << "tour: " << tour[i] << std::endl;
-
-		}
-
-		for (int i = 0; i < unitedTours.size(); i++)
-		{
-			std::cout << "united tour: " << unitedTours[i] << std::endl;
-
-		}
 		Utillis::UpdateKnapsackDetails(myMDKPProblem, unitedTours);
 
 		
-
-		//std::cout << unitedTours.size() << std::endl;
-
-		for (int i = 0; i < unitedTours.size(); i++)
+		for (size_t i = 0; i < unitedTours.size(); i++)
 		{
-
-
-
-			//std::cout << "united tour: " << unitedTours[i] << std::endl;
 
 			if (!unitedTours[i])
 				break;
@@ -165,8 +131,5 @@ void BranchAndBound::LDSCVRP(CVRP & cvrpProblem)
 				flag = false;
 		}				
 	}
-
-	std::cout << "hhhhhhhh" << std::endl;
-
 
 }

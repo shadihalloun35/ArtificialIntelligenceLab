@@ -33,7 +33,8 @@ public:
 	static void UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour);
 	static std::vector<bool> UniteTours(std::vector<bool> unitedTours, std::vector<bool> tour);
 	static std::vector<bool> FixTours(std::vector<bool> unitedTours, std::vector<bool> tour);
-
+	static void TravllingSalesmanProblem(CVRP & cvrpProblem, std::vector <std::vector<bool>> tours);
+	static std::vector<vec2> GetCurrentCoordinates(std::vector<vec2> coordinates,std::vector<bool> tour);
 
 
 };
