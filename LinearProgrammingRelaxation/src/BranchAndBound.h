@@ -6,7 +6,7 @@ class BranchAndBound
 {
 
 public:
-	static std::vector<bool> LDSMDKP(MDKP & mdkpProblem);
-	static void LDSCVRP(CVRP & cvrpProblem);
+	static int LDSMDKP(MDKP mdkpProblem);
+	static int LDSCVRP(CVRP cvrpProblem);
 
 };

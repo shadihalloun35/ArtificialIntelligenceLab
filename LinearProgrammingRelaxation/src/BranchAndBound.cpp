@@ -2,10 +2,13 @@
 #include "BranchAndBound.h"
 #include <algorithm>
 #include "Utillis.h"
-#define heuristic	1
- 
 
-std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
+#define heuristic	1
+
+std::vector<bool> boolCoordinates;
+
+
+int BranchAndBound::LDSMDKP(MDKP mdkpProblem)
 {
 	// queue for traversing the node
 	std::vector<knapsack> myKnapsacks = mdkpProblem.getKnapsacks();
@@ -21,6 +24,9 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 	int n = mdkpProblem.getNumOfObjects();
 	int m = mdkpProblem.getNumOfKnapsacks();
 	int wave = 0;
+
+	std::vector<vec2> currentCoordinates;
+
 	u.currentObjects.resize(n, false);
 	v.currentObjects.resize(n, false);
 
@@ -34,6 +40,7 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 
 	while (myQueue.size() != 0)
 	{
+
 		// extract the next node 
 		u = myQueue[0];
 
@@ -46,7 +53,7 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 
 		while (1)
 		{
-		
+
 			// If there is nothing on next level
 			if (u.level == n)
 				break;
@@ -89,35 +96,62 @@ std::vector<bool> BranchAndBound::LDSMDKP(MDKP & mdkpProblem)
 				break;
 
 			u = v;
+			
 		}
 
 		wave = 1;
 	}
 
-
-	myKnapsacks[0] = myKnapsack;
-	mdkpProblem.setKnapsacks(myKnapsacks);
-
-	std::cout << "Optimal Value: " << maxProfit << std::endl;
-	return savedNode.currentObjects;
+	boolCoordinates = savedNode.currentObjects;
+	for (int i = 0; i < boolCoordinates.size(); i++)
+	{
+		std::cout << "values: " << boolCoordinates[i] << std::endl;
+	}
+	
+	return maxProfit;
+	//return savedNode.currentObjects;
 }
 
-void BranchAndBound::LDSCVRP(CVRP & cvrpProblem)
+
+int BranchAndBound::LDSCVRP(CVRP cvrpProblem)
 {
 	bool flag = true;
 	MDKP myMDKPProblem;
 	int diminsion = cvrpProblem.getDimension()-1;
 	Utillis::FillKnapsackDetails(cvrpProblem, myMDKPProblem);
+	int val =  LDSMDKP(myMDKPProblem);
+	std::cout << val << std::endl;
+
+	/**
 	std::vector <std::vector<bool>> tours;
 	std::vector<bool> unitedTours(diminsion, false);
 
+	
 	while (flag)
 	{
+		for (int i = 0; i < unitedTours.size(); i++)
+		{
+			std::cout << "values: " << myMDKPProblem.getKnapsacks()[0].values[i] << std::endl;
+		}
+
+
 		std::vector<bool> tour = LDSMDKP(myMDKPProblem);
 		tour = Utillis::FixTours(unitedTours, tour);
 		
 		tours.push_back(tour);
 		unitedTours = Utillis::UniteTours(unitedTours, tour);
+
+		for (int i = 0; i < unitedTours.size(); i++)
+		{
+			std::cout << "tour: " << tour[i] << std::endl;
+
+		}
+
+		for (int i = 0; i < unitedTours.size(); i++)
+		{
+			std::cout << "united tour: " << unitedTours[i] << std::endl;
+
+		}
 		Utillis::UpdateKnapsackDetails(myMDKPProblem, unitedTours);
 
 		
@@ -131,5 +165,9 @@ void BranchAndBound::LDSCVRP(CVRP & cvrpProblem)
 				flag = false;
 		}				
 	}
+	*/
+	//Utillis::TravllingSalesmanProblem(cvrpProblem, tours);
 
+	return 0;
 }
+

@@ -98,7 +98,9 @@ void InputMaintaing()
 		std::cout << " Please enter the number of the Problem ( 1 - 3 )" << std::endl;
 		cin >> mdkp;
 		InitProblemMDKP();
-		BranchAndBound::LDSMDKP(mdkpProblem);
+		int maxProfit = BranchAndBound::LDSMDKP(mdkpProblem);
+		std::cout << "Optimal Value: " << maxProfit << std::endl;
+
 	}
 
 	else if (type == 2)

@@ -191,7 +191,7 @@ void Utillis::FillKnapsackDetails(CVRP & cvrpProblem, MDKP & myMDKPProblem)
 
 	for (int i = 1; i < diminsion; i++)
 	{
-		myValues.push_back(1);
+		myValues.push_back(cities[i].demand);
 		myWeights.push_back(cities[i].demand);
 	}
 
@@ -225,9 +225,6 @@ void Utillis::UpdateKnapsackDetails(MDKP & myMDKPProblem, std::vector<bool> tour
 		
 
 	}
-
-	
-
 	myKnapsack.values = myValues;
 	myKnapsacks[0] = myKnapsack;
 	myMDKPProblem.setKnapsacks(myKnapsacks);
